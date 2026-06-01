@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사회복지법제와실천 예상문제</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+  :root {
+    --primary: #1a5276;
+    --primary-light: #2e86c1;
+    --accent: #e74c3c;
+    --accent2: #f39c12;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --sidebar: #1a3a5c;
+    --sidebar-text: #cfe2f3;
+    --correct: #1e8449;
+    --wrong: #c0392b;
+    --bookmark: #e67e22;
+    --border: #d5e8f0;
+    --text: #1a252f;
+    --muted: #7f8c8d;
+    --header-h: 56px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: var(--header-h);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    z-index: 100;
+  }
+  #header .title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  #header .title span { font-weight: 300; font-size: 14px; margin-left: 8px; opacity: 0.8; }
+  #header .right-info { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  #header .right-info .tag { background: rgba(255,255,255,0.15); border-radius: 4px; padding: 3px 9px; font-size: 12px; }
+
+  /* 헤더 채점/다시하기 버튼 */
+  .header-action-btn {
+    padding: 6px 13px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    transition: opacity .15s;
+    display: none;
+  }
+  .header-action-btn:hover { opacity: .85; }
+  #btn-header-grade { background: var(--accent); color: #fff; }
+  #btn-header-retry { background: var(--bookmark); color: #fff; }
+  #btn-header-home  { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+
+  /* ── TAB BAR ── */
+  #tabbar {
+    background: #eaf2f8;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 20px;
+    gap: 4px;
+    flex-shrink: 0;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background: #dce9f5;
+    color: var(--primary);
+    font-size: 11px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background .15s;
+    flex-shrink: 0;
+  }
+  .tab-btn.active { background: var(--card); color: var(--primary); font-weight: 700; }
+
+  /* ── BODY LAYOUT ── */
+  #body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── MAIN AREA ── */
+  #main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    position: relative;
+  }
+
+  /* ── START SCREEN ── */
+  #start-screen {
+    max-width: 560px;
+    margin: 60px auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 48px 40px;
+    text-align: center;
+  }
+  #start-screen h2 { font-size: 22px; color: var(--primary); margin-bottom: 8px; }
+  #start-screen p { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+  .start-options { display: flex; flex-direction: column; gap: 14px; }
+  .start-btn {
+    padding: 18px 24px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: #f7fbff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    transition: all .2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .start-btn:hover { border-color: var(--primary-light); background: #eaf3fb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .start-btn .icon { font-size: 26px; }
+  .start-btn small { display: block; font-size: 12px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+
+  /* ── QUESTION CARD ── */
+  .q-num { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+  .q-text {
+    font-size: 15px;
+    line-height: 1.75;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: var(--text);
+    white-space: pre-line;
+  }
+  .q-box {
+    background: #f8fbfd;
+    border-left: 3px solid var(--primary-light);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #1c2e3e;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--card);
+    transition: all .15s;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .option:hover { border-color: var(--primary-light); background: #eaf3fb; }
+  /* 선택된 답: 흰 배경 + 파란 테두리 (일반 선택 상태) */
+  .option.selected { border-color: var(--primary); background: #ffffff; }
+  .option.correct { border-color: var(--correct); background: #eafaf1; color: var(--correct); }
+  .option.wrong { border-color: var(--wrong); background: #fdedec; color: var(--wrong); }
+  .option .num { font-weight: 700; min-width: 20px; }
+
+  /* feedback */
+  .feedback {
+    display: none;
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 600;
+    border-left: 3px solid;
+  }
+  .feedback.correct-fb { display: block; background: #eafaf1; color: var(--correct); border-color: var(--correct); }
+  .feedback.wrong-fb { display: block; background: #fdedec; color: var(--wrong); border-color: var(--wrong); }
+
+  /* bottom nav */
+  .q-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    padding: 9px 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+    transition: all .15s;
+  }
+  .nav-btn:hover { background: #eaf3fb; border-color: var(--primary-light); }
+  .nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .nav-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .nav-btn.primary:hover { background: var(--primary-light); }
+
+  .bm-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all .15s;
+  }
+  .bm-btn.bookmarked { color: var(--bookmark); border-color: var(--bookmark); background: #fef5e7; }
+  .bm-btn:hover { border-color: var(--bookmark); color: var(--bookmark); }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 220px;
+    background: var(--sidebar);
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 16px 12px;
+  }
+  #sidebar h4 { color: var(--sidebar-text); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; }
+  #q-grid { display: flex; flex-direction: column; gap: 4px; }
+  .q-dot {
+    width: 100%;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all .15s;
+    border: 1.5px solid transparent;
+  }
+  .q-dot:hover { background: rgba(255,255,255,0.2); }
+  /* 현재 문제: 엷은 파란 배경 */
+  .q-dot.current { border-color: #7fb3d3; color: #fff; background: rgba(100,180,255,0.25); }
+  /* 답 선택됨: 흰색 계열 강조 */
+  .q-dot.answered { background: rgba(255,255,255,0.22); color: #fff; border-color: rgba(255,255,255,0.35); }
+  .q-dot.bookmarked-dot { background: rgba(230,126,34,0.35); border-color: var(--bookmark); color: #f0a500; }
+  .q-dot.correct-dot { background: rgba(30,132,73,0.4); color: #82e0aa; }
+  .q-dot.wrong-dot { background: rgba(192,57,43,0.45); color: #f1948a; }
+
+  .q-dot .dot-num { min-width: 26px; font-weight: 700; color: rgba(255,255,255,0.75); font-size: 11px; }
+  /* 선택된 답 표시: 흰색 배경 작은 뱃지 */
+  .q-dot .dot-ans {
+    font-size: 12px;
+    margin-left: 4px;
+    background: rgba(255,255,255,0.85);
+    color: var(--sidebar);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-weight: 700;
+  }
+
+  /* result screen */
+  #result-screen {
+    max-width: 580px;
+    margin: 40px auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 40px 36px;
+    text-align: center;
+  }
+  #result-screen h2 { font-size: 24px; color: var(--primary); margin-bottom: 6px; }
+  .score-big { font-size: 64px; font-weight: 700; color: var(--primary); line-height: 1; margin: 20px 0 8px; }
+  .score-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+  .result-grid { display: flex; gap: 16px; justify-content: center; margin-bottom: 28px; }
+  .result-stat { flex: 1; padding: 16px; border-radius: 10px; }
+  .result-stat.c { background: #eafaf1; color: var(--correct); }
+  .result-stat.w { background: #fdedec; color: var(--wrong); }
+  .result-stat.b { background: #fef5e7; color: var(--bookmark); }
+  .result-stat .label { font-size: 12px; margin-bottom: 4px; }
+  .result-stat .val { font-size: 28px; font-weight: 700; }
+  .result-actions { display: flex; flex-direction: column; gap: 10px; }
+  .result-actions button {
+    padding: 14px; border-radius: 8px; border: none;
+    cursor: pointer; font-family: inherit;
+    font-size: 14px; font-weight: 700; transition: opacity .15s;
+  }
+  .result-actions button:hover { opacity: .85; }
+  .btn-a { background: var(--accent); color: #fff; }
+  .btn-b { background: var(--bookmark); color: #fff; }
+  .btn-c { background: var(--primary); color: #fff; }
+  .btn-d { background: #ecf0f1; color: var(--text); }
+
+  .hidden { display: none !important; }
+
+  /* ── EXPAND ALL VIEW ── */
+  #expand-all-screen { display: none; padding: 24px 28px; }
+  .all-q-card {
+    background: var(--card);
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .all-q-card .q-num { font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 700; }
+  .all-q-card .q-text { font-size: 14px; font-weight: 600; margin-bottom: 14px; line-height: 1.7; white-space: pre-line; }
+  .all-q-card .q-box { margin-bottom: 14px; }
+  .all-q-card .options { gap: 7px; }
+  .all-q-card .option { padding: 9px 13px; font-size: 13px; }
+
+  /* timer */
+  #timer-box { display: none; }
+  .timer-danger { color: #ff6b6b !important; animation: blink .8s step-end infinite; }
+  @keyframes blink { 50% { opacity: .4; } }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-thumb { background: #b0c4d8; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="title">사회복지법제와실천 <span>예상문제</span></div>
+  <div class="right-info">
+    <span class="tag" id="mode-tag">모드 선택 중</span>
+    <span id="progress-text" style="font-size:13px;opacity:.85"></span>
+    <div id="timer-box" style="display:none;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border-radius:6px;padding:4px 12px;">
+      <span style="font-size:11px;opacity:.8;line-height:1.3;">남은<br>시간</span>
+      <span id="timer-display" style="font-size:20px;font-weight:700;letter-spacing:1px;font-variant-numeric:tabular-nums;">20:00</span>
+    </div>
+    <!-- 헤더 우상단 채점/다시하기/홈 버튼 -->
+    <button id="btn-header-grade" class="header-action-btn" onclick="gradeQuiz()">📊 채점하기</button>
+    <button id="btn-header-retry" class="header-action-btn" onclick="retryQuiz()">🔄 다시하기</button>
+    <button id="btn-header-home"  class="header-action-btn" onclick="showStart()">🏠 처음으로</button>
+    <button id="expand-btn" onclick="toggleExpandView()" title="전체 문제 보기" style="display:none;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:6px;color:#fff;width:38px;height:38px;font-size:20px;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;">⇅</button>
+  </div>
+</div>
+
+<div id="tabbar" class="hidden"></div>
+
+<div id="body">
+  <div id="main">
+    <!-- Start Screen -->
+    <div id="start-screen">
+      <h2>⚖️ 사회복지법제와실천</h2>
+      <p>1강~15강 예상문제 · 총 <span id="total-count"></span>문항</p>
+      <div class="start-options">
+        <button class="start-btn" onclick="startQuiz('random')">
+          <span class="icon">🎲</span>
+          <div>랜덤 30문제<small>전체 문제 중 무작위로 30문항 출제 · ⏱ 20분 제한</small></div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('all')">
+          <span class="icon">📋</span>
+          <div>전체 문제 풀기<small>1강부터 15강까지 전체 문항 · 시간 제한 없음</small></div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('bookmark')">
+          <span class="icon">🔖</span>
+          <div>책갈피 문제만 풀기<small>저장된 책갈피 문제만 출제</small></div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('wrong')">
+          <span class="icon">❌</span>
+          <div>틀린 문제만 다시 풀기<small>이전 채점에서 틀린 문제만 출제</small></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden">
+      <div class="q-num" id="q-num-label"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-box hidden" id="q-box"></div>
+      <div id="options-area"></div>
+      <div class="feedback" id="q-feedback"></div>
+      <div class="q-nav">
+        <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">◀ 이전</button>
+        <div style="display:flex;gap:10px;">
+          <button class="bm-btn" id="bm-btn" onclick="toggleBookmark()">🔖 책갈피</button>
+        </div>
+        <button class="nav-btn primary" id="btn-next" onclick="navigate(1)">다음 ▶</button>
+      </div>
+    </div>
+
+    <!-- Expand All Screen -->
+    <div id="expand-all-screen"></div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden">
+      <h2>🎉 채점 결과</h2>
+      <div class="score-big" id="res-score"></div>
+      <div class="score-sub" id="res-sub"></div>
+      <div class="result-grid">
+        <div class="result-stat c"><div class="label">✅ 정답</div><div class="val" id="res-c"></div></div>
+        <div class="result-stat w"><div class="label">❌ 오답</div><div class="val" id="res-w"></div></div>
+        <div class="result-stat b"><div class="label">🔖 책갈피</div><div class="val" id="res-b"></div></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-a" onclick="startQuiz('wrong')">❌ 틀린 문제만 다시 풀기</button>
+        <button class="btn-b" onclick="startQuiz('bookmark')">🔖 책갈피 문제 풀기</button>
+        <button class="btn-c" onclick="startQuiz('all')">📋 전체 문제 다시 풀기</button>
+        <button class="btn-d" onclick="showStart()">🏠 처음으로</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sidebar" class="hidden">
+    <h4>문제 현황</h4>
+    <div id="q-grid"></div>
+  </div>
+</div>
+
+<script>
+
+const ALL_QUESTIONS = [
+  {"강": "1강", "n": 1, "text": "사회복지법을 공부한 사회복지 실천가의 역할이 아닌 것은?", "type": "mc", "opts": ["합법적으로 주어진 전문가적 재량권 발휘", "새로운 사회복지정책과 프로그램 수립", "장기적으로 사회복지기관 경영자로서의 역량을 갖춤", "법을 위반한 사람의 재판을 진행"], "ans": 3},
+  {"강": "1강", "n": 2, "text": "사회복지 실천가가 사회복지법을 공부해야 하는 이유로 볼 수 없는 것은?", "type": "mc", "opts": ["보다 나은 사회복지정책 수립에 기여", "법적 심판자의 역할 준비", "전문가적 재량권 발휘", "슈퍼바이저로서의 역량을 갖춤"], "ans": 1},
+  {"강": "1강", "n": 3, "text": "사회복지 실천가가 사회복지법을 학습해야 하는 이유가 아닌 것은?", "type": "mc", "opts": ["사회복지서비스 내용 파악", "법을 위반한 사람의 재판 진행", "보다 나은 사회복지정책 수립에 기여", "권리로서의 사회복지 이해"], "ans": 1},
+  {"강": "1강", "n": 4, "text": "법의 이념으로 적절하지 않은 것은?", "type": "mc", "opts": ["합목적성", "봉사", "법적 안정성", "정의"], "ans": 1},
+  {"강": "1강", "n": 5, "text": "법의 이념으로 볼 수 없는 것은?", "type": "mc", "opts": ["정의", "합목적성", "법적 안정성", "경쟁"], "ans": 3},
+  {"강": "1강", "n": 6, "text": "'국가의 법질서가 어떠한 표준과 가치관에 의하여 구체적으로 제정되고 실시되는 원리'로 설명할 수 있는 법의 이념은?", "type": "mc", "opts": ["합목적성", "법적안정성", "정의", "공공복지"], "ans": 0},
+  {"강": "1강", "n": 7, "text": "사회복지 가치와 이념이 구체적으로 사회복지실천 현장에서 이루어지고 국가와 사회를 강제할 수 있는 권리를 가지게 된 제반 법규를 무엇이라고 하는가?", "type": "mc", "opts": ["공무원법", "헌법", "사회복지법", "형사소송법"], "ans": 2},
+  {"강": "1강", "n": 8, "text": "법에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["법은 사람의 행위를 규율한다.", "법률안은 지자체만 제출할 수 있다.", "법의 이념은 정의, 합목적성, 법적안정성 등으로 설명할 수 있다.", "형사소송법은 법 절차를 규정한다."], "ans": 1},
+  {"강": "2강", "n": 1, "text": "사회복지법에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["사회복지법은 다른 법령에 비해 그 내용이 구체적이다.", "광의의 사회복지법은 사회복지정책의 실현과 관련된 제반 법률을 말한다.", "실질적 의미의 사회복지법은 광의와 협의로 구분할 수 있다.", "사회복지법은 사회 및 시대 변화에 따라 변화하고 있다."], "ans": 0},
+  {"강": "2강", "n": 2, "text": "사회복지법에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["사회복지가 법으로 명문화되었다는 의미는 국민이 국가나 사회의 지원을 받을 권리가 생성되었음을 의미한다.", "우리나라 사회복지법 관계서는 광의 또는 협의로 사회복지개념을 사용하고 있다.", "사회복지실천은 사회복지법을 벗어나서 이루어져도 된다.", "사회복지법은 사회복지의 가치와 이념을 실현하는 구체적 영역의 첫 단계로 볼 수 있다."], "ans": 2},
+  {"강": "2강", "n": 3, "text": "사회복지법에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["헌법에는 사회복지와 관련된 조항이 없다.", "사회복지법은 사회복지의 추상적 영역에 속한다.", "사회복지법이 갖는 의미는 국민이 국가나 사회의 지원을 받을 권리를 법으로 보장한다는 것이다.", "사회복지실천은 사회복지법을 벗어나서 이루어져도 된다."], "ans": 2},
+  {"강": "2강", "n": 4, "text": "사회복지법에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["사회복지법은 사회복지의 추상적 영역에 속한다.", "우리나라 사회복지법은 협의의 사회복지개념만을 사용하고 있다.", "사회복지법은 법의 존재 자체보다 법이 사회적 약자의 권리를 지켜주고 있는가를 살펴보는 것이 더 중요하다.", "헌법에는 사회복지와 관련된 조항이 없다."], "ans": 2},
+  {"강": "2강", "n": 5, "text": "우리나라의 법체계에 관한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["시행령은 대통령, 시행규칙은 행정 각 부처의 장이 발하는 명령이다.", "자치법규에는 조례와 규칙이 있다.", "자치법규는 행정부의 승인을 받을 필요가 없다.", "우리나라는 불문법은 인정하지 않는다."], "ans": 3},
+  {"강": "2강", "n": 6, "text": "법의 위계를 상위법에서 하위법으로 바르게 연결한 것은?", "type": "mc", "opts": ["헌법 – 법률 – 시행규칙 - 시행령", "법률 – 헌법 – 시행령 - 시행규칙", "헌법 – 법률 - 시행령 – 시행규칙", "헌법 – 명령 - 법률"], "ans": 2},
+  {"강": "2강", "n": 7, "text": "다음 법의 형식 중 가장 하위법에 해당하는 것은 무엇인가?", "type": "mc", "opts": ["법률", "헌법", "시행령", "시행규칙"], "ans": 3},
+  {"강": "2강", "n": 8, "text": "헌법을 제외하고 가장 큰 법의 형식은?", "type": "mc", "opts": ["법률", "시행령", "시행규칙", "정관"], "ans": 0},
+  {"강": "2강", "n": 9, "text": "사회복지법의 실천이념으로 적절하지 않은 것은?", "type": "mc", "opts": ["소득재분배", "인간다운 생활의 보장", "국가에 의존하는 생활", "사회통합"], "ans": 2},
+  {"강": "2강", "n": 10, "text": "사회복지법의 실천이념이 아닌 것은?", "type": "mc", "opts": ["능력에 따른 소득분배", "자립·자활", "사회복지의 증진", "사회통합"], "ans": 0},
+  {"강": "2강", "n": 11, "text": "사회복지법의 실천이념으로 볼 수 없는 것은?", "type": "mc", "opts": ["사회복지의 증진", "인간다운 생활의 보장", "소득재분배", "사회배제"], "ans": 3},
+  {"강": "2강", "n": 12, "text": "사회복지법의 기본 이념인 생존권에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["생존권은 시례가 아닌 권리의 성격을 가진다.", "생존권은 헌법에만 규정되어 있다.", "생존권은 소득 뿐 아니라 사회복지서비스 제공까지 포함하는 권리이다.", "복지권, 사회권이라고도 한다."], "ans": 1},
+  {"강": "3강", "n": 1, "text": "우리나라 사회복지입법사의 특징이 아닌 것은 무엇인가?", "type": "mc", "opts": ["사회복지법의 적용대상이 선별주의에서 보편주의로 확대되어 왔다.", "우리나라 사회복지법의 제정은 정치적 동기와는 관련이 없다.", "사회복지법의 내용에는 강행규정보다는 임의규정이 많은 편이다.", "사회복지법에 대한 정책결정이 엘리트주의적 정책결정에서 다원주의적 정책결정으로 변화되어 왔다."], "ans": 1},
+  {"강": "3강", "n": 2, "text": "사회법의 특성에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["과실책임의 원칙", "소유권의 사회성", "전체 공동체의 안녕 추구", "노동자와 자본가의 대등한 계약 필요"], "ans": 0},
+  {"강": "3강", "n": 3, "text": "사회법의 특성이 아닌 것은?", "type": "mc", "opts": ["소유권의 사회성", "과실책임의 원칙", "계약의 공정성", "집합적 책임"], "ans": 1},
+  {"강": "3강", "n": 4, "text": "사회법의 특성에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["소유권 절대의 원칙", "시민법과 특성이 동일함", "계약의 공정성", "과실책임의 원칙"], "ans": 2},
+  {"강": "3강", "n": 5, "text": "사회법의 특성에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["무과실책임(집합적 책임)", "개인 소유권의 무제한 인정", "노동자와 자본가의 불공정한 계약 인정", "시민법과 동일한 특성을 지님"], "ans": 0},
+  {"강": "3강", "n": 6, "text": "사회복지법의 기원으로 볼 수 있는 법은?", "type": "mc", "opts": ["빈민법", "사회보험법", "사회보장법", "공장법"], "ans": 0},
+  {"강": "3강", "n": 7, "text": "사회보험법을 제정한 최초의 국가는?", "type": "mc", "opts": ["미국", "영국", "프랑스", "독일"], "ans": 3},
+  {"강": "3강", "n": 8, "text": "다음 중 가장 먼저 제정된 법률은 무엇인가?", "type": "mc", "opts": ["노인복지법", "사회복지 사업법", "국민기초생활보장법", "장애인복지법"], "ans": 1},
+  {"강": "3강", "n": 9, "text": "다음 사회복지법 중 가장 최근에 제정된 법률은 무엇인가?", "type": "mc", "opts": ["노인복지법", "사회복지사업법", "영유아보육법", "발달장애인 권리보장 및 지원에 관한 법률"], "ans": 3},
+  {"강": "3강", "n": 10, "text": "2000년대 이후 사회복지입법에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["저출산·고령화사회 문제에 대비하기 위한 관련 법률들이 제정되었다.", "바우처 제도를 도입하는 법이 제정되었다.", "긴급복지지원법이 제정되었다.", "전 국민 연금이 시행되는 관련법이 제정되었다."], "ans": 3},
+  {"강": "3강", "n": 11, "text": "「국민건강보험법」과 「국민기초생활보장법」이 제정된 시기는?", "type": "mc", "opts": ["1970년대", "1980년대", "1990년대", "2000년대"], "ans": 2},
+  {"강": "3강", "n": 12, "text": "향후 우리나라 사회복지법의 과제로 옳지 않은 것은?", "type": "mc", "opts": ["임의규정에서 강행규정으로의 개정이 필요하다.", "사회복지법 적용대상이 보편주의에서 선별주의로 변경되어야 한다.", "사회복지제도 상호간 연계성을 고려한 개정 및 제정이 필요하다.", "국제 사회보장관련 법의 준수가 필요하다."], "ans": 1},
+  {"강": "3강", "n": 13, "text": "향후 우리나라 사회복지법의 과제에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["강행규정보다 임의규정이 더 많이 필요하다.", "사회복지제도 간 연계성과 통합성을 고려한 법 개정 및 제정이 필요하다.", "국제 사회보장관련 법의 준수가 필요하다.", "사회복지 권리구제 관련 입법이 필요하다."], "ans": 0},
+  {"강": "4강", "n": 1, "text": "다음 중 사회복지급여 수급권이 취약성을 가지는 이유로 옳지 않은 것은 무엇인가?", "type": "mc", "opts": ["사회복지급여 수급권의 실현을 국가의 의무가 아니라 반사적 이익으로 파악하고 있기 때문이다.", "사회복지급여 수급권이 갖는 사적 측면의 존재가 권리성을 어렵게 하고 있기 때문이다.", "사회복지급여 수급권에는 전문 기술적 급여가 포함되는데 이러한 급여를 법규범으로 규정하기 곤란하기 때문이다.", "사회복지급여 수급권이 입법기관의 입법행위에 의하여 실현되기 때문이다."], "ans": 3},
+  {"강": "4강", "n": 2, "text": "사회복지급여 수급권에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["사회복지급여 수급권은 압류가 금지되어 있다.", "사회복지급여 수급권은 민법상 권리이므로 양도가 가능하다.", "사회복지급여에 대해서는 조세 부과를 금지하고 있다.", "사회복지급여 수급권은 고의행위가 확인될 경우 제한된다."], "ans": 1},
+  {"강": "4강", "n": 3, "text": "사회복지급여 수급권 보호에 대한 내용으로 옳지 않은 것은?", "type": "mc", "opts": ["처분·압류의 금지", "조세 부과의 금지", "부정수급자 급여제한 금지", "불이익 변경의 금지"], "ans": 2},
+  {"강": "4강", "n": 4, "text": "사회복지급여 수급권에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["수급권은 처분 및 압류가 금지되어 있다.", "일정기간 수급권을 행사하지 아니하면 시효에 의하여 권리가 소멸된다.", "고의의 범죄행위 등에 대해서는 수급권을 제한할 수 있다.", "수급권자가 사망하면 수급권은 상속된다."], "ans": 3},
+  {"강": "4강", "n": 5, "text": "사회복지급여의 실체적 권리에 포함되지 않은 것은 무엇인가?", "type": "mc", "opts": ["사회보험급여 청구권", "사회복지서비스급여 청구권", "사회복지행정참여권", "공공부조급여 청구권"], "ans": 2},
+  {"강": "4강", "n": 6, "text": "사회복지급여를 청구할 수 있는 구체적 권리를 무엇이라고 하는가?", "type": "mc", "opts": ["수속적 권리", "실체적 권리", "절차적 권리", "행정적 권리"], "ans": 1},
+  {"강": "4강", "n": 7, "text": "사회복지수급권의 실체적 권리에 해당되지 않은 것은?", "type": "mc", "opts": ["사회보험 청구권", "공공부조 청구권", "사회복지서비스 청구권", "사회복지입법 청구권"], "ans": 3},
+  {"강": "4강", "n": 8, "text": "사회복지급여의 절차적 권리에 해당되지 않는 것은?", "type": "mc", "opts": ["사회보험급여쟁송권", "사회복지행정참여권", "사회복지서비스청구권", "사회복지입법청구권"], "ans": 2},
+  {"강": "4강", "n": 9, "text": "사회보장 수급권의 성격 중 국가가 정책을 행하지 않으면 사회보장에 대해 국가를 상대로 청구할 수 없다는 학설은?", "type": "mc", "opts": ["프로그램 규정설", "추상적 권리설", "구체적 권리설", "절차적 권리설"], "ans": 0},
+  {"강": "4강", "n": 10, "text": "사회권의 법적 성격 가운데 그 권리성이 강한 것에서 약한 것의 순으로 나열된 것은?", "type": "mc", "opts": ["구체적 권리 > 프로그램 규정적 권리 > 추상적 권리", "추상적 권리 > 구체적 권리 > 프로그램 규정적 권리", "프로그램 규정적 권리 > 추상적 권리 > 구체적 권리", "구체적 권리 > 추상적 권리 > 프로그램 규정적 권리"], "ans": 3},
+  {"강": "4강", "n": 11, "text": "사회복지급여 수급권 중 권리성이 가장 강한 것은?", "type": "mc", "opts": ["추상적 권리", "프로그램 규정적 권리", "임시적 권리", "구체적 권리"], "ans": 3},
+  {"강": "5강", "n": 1, "text": "행정기관에 의한 권리구제 유형이 아닌 것은?", "type": "mc", "opts": ["이의신청", "행정소송", "심사청구", "재심사청구"], "ans": 1},
+  {"강": "5강", "n": 2, "text": "사회복지법상 행정기관에 의한 권리구제 유형이 아닌 것은?", "type": "mc", "opts": ["이의신청", "민사소송", "심사청구", "재심사청구"], "ans": 1},
+  {"강": "5강", "n": 3, "text": "권리구제 절차기관 연결이 바르지 못한 것은 무엇인가?", "type": "mc", "opts": ["산재보험법 - 근로복지공단, 산업재해보상보험심사위원회", "국민건강보험법 - 국민건강보험공단, 건강보험분쟁조정위원회", "노인장기요양보험법 - 국민건강보험공단, 장기요양심판위원회", "국민기초생활보장법 - 국민연금공단, 국민기초생활보장위원회"], "ans": 3},
+  {"강": "5강", "n": 4, "text": "「국민연금법」상 규정되어 있는 권리구제 절차는 무엇인가?", "type": "mc", "opts": ["이의 신청과 심사청구", "심사청구와 재심사청구", "두 번의 이의신청", "두 번의 심사청구"], "ans": 1},
+  {"강": "5강", "n": 5, "text": "「고용보험법」상 규정되어 있는 권리구제 절차는 무엇인가?", "type": "mc", "opts": ["이의 신청, 심사청구", "두 번의 이의신청", "심사청구, 재심사청구", "두 번의 심사청구"], "ans": 2},
+  {"강": "5강", "n": 6, "text": "「산재보험법」상 규정되어 있는 권리구제 절차는 무엇인가?", "type": "mc", "opts": ["이의 신청, 심사청구", "심사청구, 재심사청구", "두 번의 이의신청", "이의신청, 심판청구"], "ans": 1},
+  {"강": "5강", "n": 7, "text": "사회복지 권리구제에 관한 설명으로 옳지 않은 것은 무엇인가?", "type": "mc", "opts": ["권리구제를 마련하는 가장 큰 이유는 수급권자의 권익을 신속하게 보호하기 위해서이다.", "사회복지법 관련 권리구제를 담당하는 특별법원이 있다.", "심사청구 과정을 거치면서 다툼이 해결되지 않을 때 행정소송 등의 법률쟁송 단계로 넘어가게 된다.", "권리구제 유형에는 행정기관에 의한 권리구제와 사법기관에 의한 권리구제가 있다."], "ans": 1},
+  {"강": "5강", "n": 8, "text": "사회복지 권리구제에 대한 설명으로 옳지 않는 것은?", "type": "mc", "opts": ["행정기관에 의한 권리구제와 사법기관에 의한 권리구제가 있다.", "이의가 있는 경우 시정과 취소를 구하는 절차를 통해서 구제받는 것이다.", "사법기관에 의한 권리구제에는 행정소송 등이 있다.", "사회복지법 중 권리구제 절차를 구체적으로 규정한 법은 없다."], "ans": 3},
+  {"강": "5강", "n": 9, "text": "사회복지 권리구제에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["우리나라에는 사회복지법 관련 권리구제를 담당하는 특별법원이 있다.", "권리구제의 목적은 사회복지기관을 우선적으로 보호하기 위함이다.", "행정기관에 의한 권리구제와 사법기관에 의한 권리구제가 있다.", "이의신청은 사법기관에 의한 권리구제 유형이다."], "ans": 2},
+  {"강": "6강", "n": 1, "text": "사회복지사의 자격요건에 해당하지 않는 것은 무엇인가?", "type": "mc", "opts": ["보건복지부장관은 전문지식과 기술을 가진 자로서 결격사유에 해당되지 아니한 자에게 자격증을 교부할 수 있다.", "사회복지사 등급은 1급·2급·3급으로 구분되며, 2019년 1월 1일부터 3급은 폐지된다.", "사회복지사 1급 및 2급 자격증은 국가시험에 합격해야 취득할 수 있다.", "법률 또는 법원의 판결에 의하여 자격이 상실 또는 정지된 자는 자격을 상실하게 된다."], "ans": 2},
+  {"강": "6강", "n": 2, "text": "사회복지사에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["사회복지사는 자격증 제도로 운영되고 있다.", "사회복지에 관한 전문지식과 기술을 가진 사람이다.", "인권존중 및 최대봉사의 의무가 있다.", "업무수행 과정에서 알게 된 비밀은 동료와 공유하여도 된다."], "ans": 3},
+  {"강": "6강", "n": 3, "text": "사회복지사에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["사회복지사 1급 자격증은 국가시험에 합격하여야 취득할 수 있다.", "사회복지에 관한 전문지식과 기술을 가진 사람이다.", "공공기관에는 사회복지사가 배치될 수 없다.", "인권존중 및 최대봉사의 의무가 있다."], "ans": 2},
+  {"강": "6강", "n": 4, "text": "사회복지사에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["2018년에 3급 자격증이 신설되었다.", "사회복지사는 사회복지에 관한 전문지식과 기술을 가진 사람이다.", "사회복지사 1급 자격증은 국가시험에 합격하여야 취득할 수 있다.", "인권존중 및 최대봉사의 의무가 있다."], "ans": 0},
+  {"강": "6강", "n": 5, "text": "사회복지사 의무 채용의 예외 시설이 아닌 것은 무엇인가?", "type": "mc", "opts": ["점자도서관과 점자도서 및 녹음도서 출판시설", "노인복지관", "어린이집", "성폭력피해상담소"], "ans": 1},
+  {"강": "6강", "n": 6, "text": "사회복지전담공무원의 권리제한에 대한 내용으로 옳지 않은 것은 무엇인가?", "type": "mc", "opts": ["국가안전보장을 위해서 권리를 제한할 수 있다.", "사회질서 유지를 위해서 권리를 제한할 수 있다.", "공공복지를 위해서 권리를 제한할 수 있다.", "근로 3권은 헌법에 보장되어 있으므로 침해될 수 없다."], "ans": 3},
+  {"강": "6강", "n": 7, "text": "사회복지공무원에게 법적으로 보장된 권한이 아닌 것은?", "type": "mc", "opts": ["직무수행권", "연금청구권", "보수청구권", "단체행동권"], "ans": 3},
+  {"강": "6강", "n": 8, "text": "「사회복지사 등의 처우 및 지위 향상을 위한 법률」에 명시된 내용이 아닌 것은?", "type": "mc", "opts": ["한국사회복지공제회 운영", "사회복지사 등의 처우 개선", "사회복지사 등 용어정의", "사회복지 자격증 발급"], "ans": 3},
+  {"강": "6강", "n": 9, "text": "「사회복지사 등의 처우 및 지위 향상을 위한 법률」에 의거 사회복지사의 복지·후생을 위한 사업 및 공제급여의 지급 등을 목적으로 설립된 기관은 무엇인가?", "type": "mc", "opts": ["사회복지공동모금회", "한국사회복지공제회", "한국사회복지사협회", "한국사회복지협의회"], "ans": 1},
+  {"강": "6강", "n": 10, "text": "「사회복지사 등의 처우 및 지위 향상을 위한 법률」에 규정된 내용으로 옳지 않은 것은?", "type": "mc", "opts": ["사회복지사 자격증을 발급할 수 있다.", "한국사회복지공제회를 설립할 수 있다.", "사회복지사 등의 보수 수준 등에 대해 3년마다 조사하고 공표하여야 한다.", "사회복지사 등의 처우를 개선하여 사회복지증진에 이바지하는 것을 목적으로 한다."], "ans": 0},
+  {"강": "7강", "n": 1, "text": "사회보장법의 특성이 아닌 것은?", "type": "mc", "opts": ["사회적 위험 발생과 욕구 변화에 따라 변화하는 법이다.", "강제적 시행의 성격을 가진다.", "모든 국가의 사회보장급여의 수준과 내용은 동일하다.", "생존권을 실현하는 제도적 장치이다."], "ans": 2},
+  {"강": "7강", "n": 2, "text": "사회보장기본법에 규정되어 있는 다음의 개념은 무엇에 대한 설명인가?\n(국가·지방자치단체 및 민간부문의 도움이 필요한 모든 국민에게 복지, 보건의료, 교육, 고용, 주거 등의 분야에서 인간다운 생활을 보장하고 상담, 재활, 돌봄 등을 통하여 국민의 삶의 질이 향상되도록 지원하는 제도)", "type": "mc", "opts": ["사회보장", "사회보험", "사회서비스", "공공부조"], "ans": 2},
+  {"강": "7강", "n": 3, "text": "생애주기에 걸쳐 보편적으로 충족되어야 하는 기본욕구와 특정한 사회위험을 고려하여 소득·서비스를 보장하는 맞춤형 사회보장제도는?", "type": "mc", "opts": ["사회서비스", "평생사회안전망", "사회보험", "공공부조"], "ans": 1},
+  {"강": "7강", "n": 4, "text": "다음은 「사회보장기본법」의 기본개념 중 무엇에 대한 설명인가?\n(국가와 지방자치단체의 책임 하에 생활 유지 능력이 없거나 생활이 어려운 국민의 최저생활을 보장하고 자립을 지원하는 제도)", "type": "mc", "opts": ["사회보험", "공공부조", "평생사회안전망", "사회서비스"], "ans": 1},
+  {"강": "7강", "n": 5, "text": "사회보장기본계획에 포함되어야 하는 내용이 아닌 것은 무엇인가?", "type": "mc", "opts": ["사회보장관련 기금 운용 방안", "사회보장위원회의 역할", "사회보장의 기본목표 및 중장기 추진방향", "필요한 재원의 규모와 조달방안"], "ans": 1},
+  {"강": "7강", "n": 6, "text": "「사회보장기본법」에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["모든 국민은 사회보장급여를 받을 권리가 있다.", "2012년 전면개정으로 사회서비스의 개념이 강화되었다.", "사회보장기본계획을 5년마다 수립하여야 함을 규정하고 있다.", "사회보장위원회는 위원들의 급여수준 등을 심의한다."], "ans": 3},
+  {"강": "7강", "n": 7, "text": "「사회보장기본법」에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["사회보장의 주체와 책임은 국민에게만 있다.", "사회보장정보시스템 구축운영을 담당하는 기관은 사회보장정보원이다.", "사회보장기본계획은 5년마다 수립하여야 한다.", "사회보장의 수급권자는 모든 국민이다."], "ans": 0},
+  {"강": "7강", "n": 8, "text": "「사회보장기본법」에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["사회보장의 주체와 책임은 국민에게만 있다.", "사회보장정보시스템 구축운영을 담당하는 기관은 한국사회복지협회이다.", "사회보장기본계획은 매년마다 수립하여야 한다.", "모든 국민은 사회보장급여를 받을 권리가 있다."], "ans": 3},
+  {"강": "7강", "n": 9, "text": "사회보장기본법상 사회보장제도의 운영과 관련된 설명으로 옳지 않은 것은 무엇인가?", "type": "mc", "opts": ["지방자치단체의 장은 소관 사회보장통계를 통계청장에게 제출해야 한다.", "국가와 지방자치단체가 사회보장제도를 운영할 때에는 이 제도를 필요로 하는 모든 국민에게 적용하여야 한다.", "국가와 지방자치단체는 사회보장에 대한 민간부문의 참여를 유도할 수 있도록 정책을 개발·시행하고 그 여건을 조성하여야 한다.", "중앙행정기관의 장과 지방자치단체의 장은 사회보장제도를 신설하거나 변경할 경우 보건복지부장관과 협의하여야 한다."], "ans": 0},
+  {"강": "7강", "n": 10, "text": "보건복지분야 정보시스템을 통합 운영·관리하는 기관은?", "type": "mc", "opts": ["한국사회복지협회", "한국사회복지사협회", "사회보장정보원", "한국정보화진흥원"], "ans": 2},
+  {"강": "8강", "n": 1, "text": "사회보험법의 특성이 아닌 것은?", "type": "mc", "opts": ["사회보험은 강제가입을 법에 규정하고 있다.", "사회보험은 권리성이 강하다.", "사회보험은 소득재분배 기능이 없다.", "사회보험은 비영리적 국가사업이다."], "ans": 2},
+  {"강": "8강", "n": 2, "text": "사회보험의 특성이 아닌 것은?", "type": "mc", "opts": ["위험을 공동으로 분담한다.", "충분한 기여금과 보험료가 필요하다.", "정부가 독점하는 운영형태를 가지고 있다.", "가입 결정은 자발적이다."], "ans": 3},
+  {"강": "8강", "n": 3, "text": "사회보험에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["가입 결정이 자발적이다.", "권리성이 약하다.", "정부가 독점하는 운영형태를 가지고 있다.", "소득재분배 기능이 없다."], "ans": 2},
+  {"강": "8강", "n": 4, "text": "사회보험과 사보험(민간보험)에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["사회보험은 강제적 가입이, 사보험은 자발적 가입이 원칙이다.", "사회보험은 정부가 독점하나 사보험은 경쟁에 맡겨져 있다.", "사회보험은 증명된 욕구에 근거하여 급여를 받지만 사보험은 그렇지 않다.", "사회보험은 제정을 완전하게 준비할 필요가 없지만 사보험은 완전한 제정을 준비하여야 한다."], "ans": 2},
+  {"강": "8강", "n": 5, "text": "국민연금법상 급여의 종류가 아닌 것은?", "type": "mc", "opts": ["노령연금", "장애연금", "유족연금", "상병보상연금"], "ans": 3},
+  {"강": "8강", "n": 6, "text": "가입기간이 10년 이상인 가입자로서 60세가 된 때부터 생존하는 동안 지급하는 국민연금 급여는 무엇인가?", "type": "mc", "opts": ["노령연금", "장애연금", "유족연금", "상병보상연금"], "ans": 0},
+  {"강": "8강", "n": 7, "text": "가입기간이 10년 이상이고 55세 이상인 자가 소득이 있는 업무에 종사하지 아니하는 경우 60세 이전이라도 지급받을 수 있는 연금은?", "type": "mc", "opts": ["분할연금", "조기노령연금", "유족연금", "반환일시금"], "ans": 1},
+  {"강": "8강", "n": 8, "text": "「국민연금법」상 가입자 종류에 해당하지 않는 것은?", "type": "mc", "opts": ["사업장가입자", "지역가입자", "임의가입자", "기본가입자"], "ans": 3},
+  {"강": "8강", "n": 9, "text": "「국민연금법」상 수급권자에 의하여 생계를 유지하고 있는 자에 대한 일종의 가족수당 성격의 부가급여를 무엇이라 하는가?", "type": "mc", "opts": ["유족연금", "장애연금", "부양가족 연금액", "분할연금"], "ans": 2},
+  {"강": "8강", "n": 10, "text": "「국민연금법」에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["급여에는 노령연금, 장애연금, 유족연금, 반환일시금이 있다.", "수급권자에게 2개 이상 급여 수급권이 생기면 모두 받을 수 있다.", "국민연금 급여액은 기본연금액과 부양가족연금액으로 구성되어 있다.", "가입기간이 10년 이상인 가입자에 대하여는 60세가 된 때부터 그가 생존하는 동안 노령연금을 지급한다."], "ans": 1},
+  {"강": "8강", "n": 11, "text": "국민연금기금에 관한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["국민연금기금은 기획재정부장관이 관리·운용한다.", "국민연금기금은 연금보험료, 기금운용수익금, 적립금, 공단의 수입지출 결산상의 잉여금으로 조성한다.", "국민연금기금의 운영에 관한 사항을 심의·의결하기 위하여 보건복지부에 국민연금기금운용위원회를 둔다.", "보건복지부장관은 매년 기금운용계획을 세워서 국민연금기금운용위원회 및 국무회의의 심의를 거쳐 대통령의 승인을 받아야 한다."], "ans": 0},
+  {"강": "8강", "n": 12, "text": "국민연금의 연금보험료 징수 기관과 전반적 관리운영 담당 기관이 바르게 연결된 것은?", "type": "mc", "opts": ["국민건강보험공단 / 국민건강보험공단", "국민건강보험공단 / 국민연금공단", "국민연금공단 / 국민건강보험공단", "국민연금공단 / 국민연금공단"], "ans": 1},
+  {"강": "8강", "n": 13, "text": "국민연금 연금보험료를 징수하는 기관은?", "type": "mc", "opts": ["근로복지공단", "국민연금공단", "국민건강보험공단", "고용센터"], "ans": 2},
+  {"강": "9강", "n": 1, "text": "국민건강보험법상 보험급여가 아닌 것은 무엇인가?", "type": "mc", "opts": ["가입자 및 피부양자에 대한 요양급여", "장애인 보장구에 대한 보험급여", "건강검진", "요양급여 이후의 간병급여"], "ans": 3},
+  {"강": "9강", "n": 2, "text": "「국민건강보험법」상 급여의 종류가 아닌 것은?", "type": "mc", "opts": ["부가급여", "요양급여", "연금급여", "건강검진"], "ans": 2},
+  {"강": "9강", "n": 3, "text": "「국민건강보험법」상 급여의 종류에 해당하는 것은?", "type": "mc", "opts": ["간병급여", "요양급여", "실업급여", "육아휴직급여"], "ans": 1},
+  {"강": "9강", "n": 4, "text": "「국민건강보험법」의 특성이 아닌 것은?", "type": "mc", "opts": ["사회연대성의 원리", "조합주의 방식", "국민의 기본적 의료문제 해결", "개인위험을 가입자 전원에게 분산"], "ans": 1},
+  {"강": "9강", "n": 5, "text": "국민건강보험 가입자에 관한 설명으로 옳은 것은 무엇인가?", "type": "mc", "opts": ["국내 체류 중인 재외국민은 가입자가 될 수 없다.", "모든 사업장의 근로자와 사용자는 직장가입자가 된다.", "직장가입자의 피부양자는 지역가입자가 된다.", "의료급여수급권자도 국민건강보험에 가입해야 한다."], "ans": 1},
+  {"강": "9강", "n": 6, "text": "「국민건강보험법」상 적용대상자에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["사망한 해의 다음해에 자격이 상실된다.", "가입자 중 직장가입자와 그 피부양자를 제외한 가입자는 지역가입자가 된다.", "국내에 거주하고 1개월이 지난 후 자격을 취득하게 된다.", "외국인 등에 대한 특례는 없다."], "ans": 1},
+  {"강": "9강", "n": 7, "text": "「국민건강보험법」상 적용대상자에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["국내에 거주하는 국민은 건강보험 가입자 및 피부양자가 된다.", "직장가입자의 직계존속도 건강보험 피부양자이다.", "가입자 중 직장가입자와 그 피부양자를 제외한 가입자는 지역가입자가 된다.", "자격은 국내에 거주하게 된 날의 30일 이후에 취득한다."], "ans": 3},
+  {"강": "9강", "n": 8, "text": "「국민건강보험법」의 가입자 중 직장가입자와 그 피부양자를 제외한 가입자를 무엇이라고 하는가?", "type": "mc", "opts": ["지역가입자", "임의가입자", "직장 외 가입자", "특수가입자"], "ans": 0},
+  {"강": "9강", "n": 9, "text": "산업재해보상보험법에 관한 설명으로 옳은 것은 무엇인가?", "type": "mc", "opts": ["산업재해보상보험은 우리나라에서 최초로 도입된 사회보험 제도이다.", "산업재해보상보험은 국민건강보험공단에서 관리한다.", "업무를 준비하거나 마무리하는 행위를 하던 중에 발생한 사고는 산업재해보상보험법상 업무상 사고에 해당되지 아니한다.", "업무상 부상 또는 질병이 7일 이내의 요양으로 치유될 수 있으면 요양급여를 지급하지 아니한다."], "ans": 0},
+  {"강": "9강", "n": 10, "text": "산업재해보상보험의 특성이 아닌 것은?", "type": "mc", "opts": ["현금급여만 제공한다.", "사업장 단위로만 가입이 가능하다.", "사업주 책임보험의 성격을 가진다.", "업무담당자의 재량권이 높은 편이다."], "ans": 0},
+  {"강": "9강", "n": 11, "text": "산업재해보상보험의 특성에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["현금급여만 제공한다.", "사업장 단위로만 가입이 가능하다.", "근로자 책임보험의 성격을 가진다.", "업무담당자의 재량권이 거의 없다."], "ans": 1},
+  {"강": "9강", "n": 12, "text": "「산업재해보상보험법」상 급여의 종류에 해당하지 않는 것은?", "type": "mc", "opts": ["장해급여", "상병보상연금", "연금급여", "휴업급여"], "ans": 2},
+  {"강": "9강", "n": 13, "text": "재해로 인해 일하지 못하는 기간 동안 임금 대신 지급하는 「산업재해보상보험법」상 급여는 무엇인가?", "type": "mc", "opts": ["요양급여", "휴업급여", "장해급여", "간병급여"], "ans": 1},
+  {"강": "9강", "n": 14, "text": "「산업재해보상보험법」상 업무상 재해로 인정되지 않을 확률이 높은 사례는?", "type": "mc", "opts": ["회사의 체력단련실에서 운동을 하다가 다친 경우", "회사에서 작업중 프레스 기계에 손을 다친 경우", "회사에서 근무중 다친 부상이 원인이 되어 질병이 발생한 경우", "회사의 친한 동료 몇사람과 함께한 술자리에서 다친 경우"], "ans": 3},
+  {"강": "10강", "n": 1, "text": "고용보험법에서 규정하는 급여의 종류가 아닌 것은 무엇인가?", "type": "mc", "opts": ["구직급여", "직업능력개발수당", "특례요양비", "육아휴직급여"], "ans": 2},
+  {"강": "10강", "n": 2, "text": "「고용보험법」상 급여의 종류가 아닌 것은?", "type": "mc", "opts": ["육아휴직급여", "직업능력개발수당", "해산급여", "구직급여"], "ans": 2},
+  {"강": "10강", "n": 3, "text": "「고용보험법」에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["고용보험 피보험자격은 이직한 날 상실된다.", "임신 중 여성에게 출산 전·후를 통해 90일의 출산전후 휴가를 지급한다.", "근로의사가 없어 취업하지 못한 상태에 있어도 구직급여를 받을 수 있다.", "자영업자는 실업급여를 받을 수 없다."], "ans": 1},
+  {"강": "10강", "n": 4, "text": "「고용보험법」상 피보험자격은 언제 취득하는가?", "type": "mc", "opts": ["동 법이 적용되는 사업에 고용된 날", "동 법이 적용되는 사업에 고용된 다음날", "동 법이 적용되는 사업에 고용된 다음 달", "동 법이 적용되는 사업에 고용된 3개월 이후"], "ans": 0},
+  {"강": "10강", "n": 5, "text": "「고용보험법」상 급여인 출산전후 휴가는 출산 전·후 몇 일간 주어지는가?", "type": "mc", "opts": ["30일", "60일", "90일", "120일"], "ans": 2},
+  {"강": "10강", "n": 6, "text": "노인장기요양보험법에 대한 설명으로 옳지 않은 것은 무엇인가?", "type": "mc", "opts": ["장기요양인정 유효기간은 최소 1년 이상이다.", "장기요양등급은 1등급부터 3등급까지 판정된다.", "장기요양사업의 관리운영기관은 국민건강보험공단이다.", "노인장기요양보험법은 2007년에 제정되었다."], "ans": 1},
+  {"강": "10강", "n": 7, "text": "「노인장기요양보험법」에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["장기요양인정의 유효기간은 1년이다.", "동 법에서 노인은 65세 이상을 말한다.", "동 법은 2007년에 제정되었다.", "자신의 집에 거주하면서 요양급여를 받는 것은 시설급여이다."], "ans": 3},
+  {"강": "10강", "n": 8, "text": "노인장기요양보험법상 장기요양요원이 수급자의 가정 등을 방문하여 신체활동 및 가사활동 등을 지원하는 장기요양급여는 무엇인가?", "type": "mc", "opts": ["방문요양", "방문간호", "주·야간보호", "단기보호"], "ans": 0},
+  {"강": "10강", "n": 9, "text": "「노인장기요양보험법」에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["장기요양사업의 관리운영기관은 국민건강보험공단이다.", "동법에서 노인은 60세 이상을 말한다.", "장기요양인정의 유효기간은 6개월이다.", "노인장기요양보험법은 2010년에 제정되었다."], "ans": 0},
+  {"강": "10강", "n": 10, "text": "「노인장기요양보험법」에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["동 법에서 노인은 60세 이상을 말한다.", "동법은 2007년에 제정되었다.", "자신의 집에 거주하면서 요양급여를 받는 것은 시설급여이다.", "장기요양보험료율을 심의하는 기관은 국민건강보험공단이다."], "ans": 1},
+  {"강": "10강", "n": 11, "text": "장기요양급여 중 노인전문병원 또는 요양병원에 입원한 때 장기요양에 사용되는 비용 일부를 지급하는 급여는?", "type": "mc", "opts": ["시설급여", "요양병원 간병비", "특례요양비", "가족요양비"], "ans": 1},
+  {"강": "11강", "n": 1, "text": "공공부조의 특성이 아닌 것은?", "type": "mc", "opts": ["자산조사를 실시한다.", "소수의 빈곤층을 대상으로 한다.", "사후 대응책의 성격을 가진다.", "소득재분배 기능이 없다."], "ans": 3},
+  {"강": "11강", "n": 2, "text": "공공부조의 특성이 아닌 것은?", "type": "mc", "opts": ["별도의 기금을 통해 재원을 조성한다.", "자격요건을 갖춘 대상자에게 제한하여 급여를 제공한다.", "소득재분배적 기능을 가진다.", "빈곤에 대한 최후의 국가적 대응이다."], "ans": 0},
+  {"강": "11강", "n": 3, "text": "수급권자를 부양할 책임이 있는 사람으로서 수급권자의 1촌의 직계혈족 및 그 배우자를 무엇이라고 하는가?", "type": "mc", "opts": ["부양의무자", "보장기관", "수급자", "차상위계층"], "ans": 0},
+  {"강": "11강", "n": 4, "text": "국민기초생활보장법상 급여의 기본원칙이 아닌 것은 무엇인가?", "type": "mc", "opts": ["공공책임의 원칙", "최고생활보장의 원칙", "보충성의 원리", "타법우선의 원칙"], "ans": 1},
+  {"강": "11강", "n": 5, "text": "「국민기초생활보장법」상 수급권자에 해당하지 아니하는 계층으로서 소득 인정액이 기준 중위소득의 100분의 50이하인 계층은?", "type": "mc", "opts": ["빈곤층", "차상위계층", "중산층", "생활보호대상자"], "ans": 1},
+  {"강": "11강", "n": 6, "text": "「국민기초생활보장법」상 수급자에게 임차료, 수선유지비, 그밖의 수급품을 지급하는 급여는 무엇인가?", "type": "mc", "opts": ["장제급여", "교육급여", "생계급여", "주거급여"], "ans": 3},
+  {"강": "11강", "n": 7, "text": "수급자에게 의복, 음식물 및 연료비와 그 밖에 일상생활에 기본적으로 필요한 금품을 지급하는 급여는?", "type": "mc", "opts": ["주거급여", "교육급여", "생계급여", "장제급여"], "ans": 2},
+  {"강": "11강", "n": 8, "text": "의료급여법에 관한 설명으로 옳은 것은 무엇인가?", "type": "mc", "opts": ["의료급여비용은 전부 의료급여기금에서 부담한다.", "의료급여를 받을 권리는 양도 또는 압류할 수 있다.", "의료급여 내용에 건강검진은 포함되지 않는다.", "국내에 입양된 18세 미만의 아동도 수급권자에 포함된다."], "ans": 3},
+  {"강": "11강", "n": 9, "text": "「의료급여법」에 관한 설명으로 옳은 것은?", "type": "mc", "opts": ["의료급여기관은 1차 의료기관과 2차 의료기관으로 구분된다.", "의료급여 수급권자는 국민기초생활보장법에 따른 의료급여 수급자에 한정된다.", "수급권자가 의료기금의 부담으로 의료급여를 받을 수 있는 일수는 연간 365일이다.", "의료급여를 받을 권리는 양도가 가능하다."], "ans": 2},
+  {"강": "11강", "n": 10, "text": "「의료급여법」에 통원서비스를 주로 제공하는 의료기관은?", "type": "mc", "opts": ["1차 의료기관", "2차 의료기관", "3차 의료기관", "4차 의료기관"], "ans": 0},
+  {"강": "12강", "n": 1, "text": "사회복지사업법에서 규정하고 있는 법률이 아닌 것은 무엇인가?", "type": "mc", "opts": ["식품기부 활성화에 관한 법률", "긴급복지지원법", "근로기준법", "성매매방지 및 피해자보호 등에 관한 법률"], "ans": 2},
+  {"강": "12강", "n": 2, "text": "「사회복지사업법」에서 규정되어 있는 내용이 아닌 것은?", "type": "mc", "opts": ["사회복지사 등", "사회복지법인", "사회복지공동모금", "사회복지업무의 전자화"], "ans": 2},
+  {"강": "12강", "n": 3, "text": "「사회복지사업법」에서 규정되어 있는 내용이 아닌 것은?", "type": "mc", "opts": ["사회복지업무의 전산화", "사회복지법인", "기초생활보장 수급자 선정 기준", "사회복지의 날 지정, 운영"], "ans": 2},
+  {"강": "12강", "n": 4, "text": "「사회복지사업법」의 내용으로 옳지 않은 것은?", "type": "mc", "opts": ["사회보험 수급권자 선정", "사회복지업무의 전자화", "사회복지의 날 지정, 운영", "시설설치 방해금지"], "ans": 0},
+  {"강": "12강", "n": 5, "text": "사회복지공동모금회법에 대한 설명으로 옳지 않은 것은 무엇인가?", "type": "mc", "opts": ["기부금품은 기부하는 자의 의사에 반하여 모집하여서는 안된다.", "모금회는 언론기관을 모금창구로 지정할 수 없다.", "공동모금재원은 당해 회계연도에 지출하는 것을 원칙으로 한다.", "사회복지재원을 공동으로 마련하여 공동으로 배분하는 활동에 관한 법이다."], "ans": 1},
+  {"강": "12강", "n": 6, "text": "「사회복지공동모금회법」상 사회복지공동모금회의 기능이 아닌 것은?", "type": "mc", "opts": ["사회복지공동모금", "교육훈련", "공동모금재원의 배분", "사회복지사 보수교육"], "ans": 3},
+  {"강": "12강", "n": 7, "text": "영유아보육법상 어린이집에 해당하지 않는 것은 무엇인가?", "type": "mc", "opts": ["지역아동센터", "직장어린이집", "국공립어린이집", "협동어린이집"], "ans": 0},
+  {"강": "12강", "n": 8, "text": "「영유아보육법」상 어린이집에 해당하지 않는 것은 무엇인가?", "type": "mc", "opts": ["직장어린이집", "사회복지법인 어린이집", "지역아동센터", "민간어린이집"], "ans": 2},
+  {"강": "12강", "n": 9, "text": "「아동복지법」상 아동은 누구를 말하는가?", "type": "mc", "opts": ["12세 미만인 사람", "14세 미만인 사람", "16세 미만인 사람", "18세 미만인 사람"], "ans": 3},
+  {"강": "12강", "n": 10, "text": "「아동복지법」상 아동의 보호자가 아닌 사람은?", "type": "mc", "opts": ["이웃주민", "친권자", "후견인", "업무 등의 관계로 사실상 아동을 보호하는 자"], "ans": 0},
+  {"강": "12강", "n": 11, "text": "「아동복지법」에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["아동의 보호자는 친권자만을 말한다.", "아동은 18세 미만인 사람을 말한다.", "지역아동센터는 아동복지시설에 포함되지 않는다.", "아동학대 예방 및 방지에 대한 내용은 규정되어 있지 않다."], "ans": 1},
+  {"강": "13강", "n": 1, "text": "노인복지법상 노인복지시설의 종류에 해당하지 않는 것은 무엇인가?", "type": "mc", "opts": ["재가노인복지시설", "주민지원센터", "노인주거복지시설", "노인보호전문기관"], "ans": 1},
+  {"강": "13강", "n": 2, "text": "「노인복지법」상 노인복지시설의 종류에 해당하지 않는 것은?", "type": "mc", "opts": ["노인요양시설", "주민센터", "재가노인복지시설", "노인복지관"], "ans": 1},
+  {"강": "13강", "n": 3, "text": "「노인복지법」상 노인복지시설의 종류에 해당하지 않는 것은?", "type": "mc", "opts": ["학대피해노인 전용쉼터", "노인복지관", "건강가정지원센터", "노인요양시설"], "ans": 2},
+  {"강": "13강", "n": 4, "text": "「노인복지법」에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["노인 보건 및 복지를 위한 실태조사를 3년마다 실시하여야 한다.", "독거노인종합지원센터 설치·운영이 2018년 4월부터 시행되었다.", "노인복지시설의 종류에는 노인복지관과 경로당만 있다.", "요양보호사는 노인 등의 신체활동, 가사활동 지원 등의 업무를 전문적으로 수행하는 사람이다."], "ans": 2},
+  {"강": "13강", "n": 5, "text": "장애인복지법의 내용으로 옳지 않은 것은 무엇인가?", "type": "mc", "opts": ["장애인 실태조사는 3년마다 실시하여야 한다.", "장애인이란 신체적, 정신적 장애로 오랫동안 일상생활이나 사회생활에서 상당한 제약을 받는 자를 말한다.", "우리나라에는 10개의 장애유형이 있다.", "장애인복지법에는 정부와 국민의 연대책임을 규정하고 있다."], "ans": 2},
+  {"강": "13강", "n": 6, "text": "「장애인복지법」에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["장애인 자립생활센터를 운영하도록 하고 있다.", "장애인실태조사를 실시하도록 하고 있다.", "장애에 대한 사회적 인식개선 사업을 실시하도록 하고 있다.", "매년 5월 20일 장애인의 날을 지정하고 있다."], "ans": 3},
+  {"강": "13강", "n": 7, "text": "정신건강증진 및 정신질환자 복지서비스 지원에 관한 법률상 정신질환자의 입원 방법이 아닌 것은 무엇인가?", "type": "mc", "opts": ["자의입원", "보호의무자에 의한 입원", "의료기관장에 의한 입원", "응급입원"], "ans": 2},
+  {"강": "13강", "n": 8, "text": "「정신건강증진 및 정신질환자 복지서비스 지원에 관한 법률」의 기본 이념이 아닌 것은?", "type": "mc", "opts": ["모든 국민은 정신질환으로부터 보호받을 권리를 가진다.", "모든 정신질환자는 인간으로서의 존엄과 가치를 보장받아야 한다.", "정신질환자에 대해서는 입원 또는 입소를 최소화한다.", "정신질환자가 입원해야 할 경우 본인의 의지보다는 가족의 의견을 우선한다."], "ans": 3},
+  {"강": "14강", "n": 1, "text": "청소년복지지원법에 규정된 내용으로 옳지 않은 것은 무엇인가?", "type": "mc", "opts": ["학교 외부의 교육적 도움이 필요한 청소년에 대한 교육적 선도 기간은 6개월 이내를 원칙으로 하고 있다.", "동법에서 규정하고 있는 청소년은 9세 이상 20세 이하인 사람을 말한다.", "청소년 복지시설에 청소년쉼터가 포함되어 있다.", "성별 특성을 고려하여 청소년의 건강한 성장을 지원해야 함을 명시하고 있다."], "ans": 1},
+  {"강": "14강", "n": 2, "text": "「청소년복지법」상 청소년은 누구를 말하는가?", "type": "mc", "opts": ["9세 이상 18세 이하", "9세 이상 20세 이하", "9세 이상 24세 이하", "9세 이상 30세 이하"], "ans": 2},
+  {"강": "14강", "n": 3, "text": "가정폭력방지 및 피해자보호 등에 관한 법률에서 명시한 금지조항이 아닌 것은 무엇인가?", "type": "mc", "opts": ["상담소, 보호시설 등의 영리목적 운영의 금지", "직무상 알게 된 비밀누설 금지", "가정폭력 실태조사 결과 발표 금지", "상담소, 보호시설 등의 유사명칭 사용금지"], "ans": 2},
+  {"강": "14강", "n": 4, "text": "「가정폭력방지 및 피해자보호 등에 관한 법률」에서 명시한 금지조항이 아닌 것은?", "type": "mc", "opts": ["영리목적 운영의 금지", "가정폭력 실태조사 금지", "비밀누설 금지", "유사명칭 사용 금지"], "ans": 1},
+  {"강": "14강", "n": 5, "text": "한부모가족지원법에 따른 지원대상자의 범위에 해당하지 않는 대상은 누구인가?", "type": "mc", "opts": ["부모가 가정의 불화 등으로 가출하여 부모의 부양을 받을 수 없는 아동", "부모가 사망하거나 생사가 분명하지 아니한 아동을 양육하는 조모", "부모가 장기간 경제적 능력을 상실하여 부양을 받을 수 없는 아동", "혼인신고를 하지 않고 사실혼 관계에 있는 부모를 가진 아동"], "ans": 3},
+  {"강": "14강", "n": 6, "text": "「한부모가족지원법」상 한부모가족복지시설에 해당하지 않는 것은?", "type": "mc", "opts": ["모자가족복지시설", "한부모가족복지상담소", "한부모가족 영구지원 복지시설", "미혼모자가족복지시설"], "ans": 2},
+  {"강": "14강", "n": 7, "text": "「한부모가족지원법」에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["한부모가족이란 모자가족 또는 부자가족을 말한다.", "일시지원 복지시설은 한부모가족복지시설이 포함되지 않는다.", "사실혼 관계에 있는 미혼자는 동법에서 정한 모(母)의 정의에 포함되지 않는다.", "한부모가족의 모 또는 부와 아동은 한부모가족 관련 정책결정과정에 참여할 권리가 있다."], "ans": 1},
+  {"강": "14강", "n": 8, "text": "「다문화가족지원법」상 다문화가족을 위한 국가와 지방자치단체의 복지 지원 내용이 아닌 것은?", "type": "mc", "opts": ["생활정보 제공 및 교육지원", "다문화가족의 해외이민 지원", "의료 및 건강관리 지원", "다국어에 의한 서비스 제공"], "ans": 1},
+  {"강": "14강", "n": 9, "text": "「다문화가족지원법」상 다문화가족지원센터의 주요 업무가 아닌 것은?", "type": "mc", "opts": ["다문화가족을 위한 교육·상담", "후원가족 연계", "결혼이민자 등에 대한 한국어교육", "일자리 알선"], "ans": 1},
+  {"강": "15강", "n": 1, "text": "기초연금 선정기준액을 정함에 있어 65세 이상인 사람 중 기초연금 수급자의 비율로 정하고 있는 기준은 무엇인가?", "type": "mc", "opts": ["100분의 50", "100분의 60", "100분의 70", "100분의 80"], "ans": 2},
+  {"강": "15강", "n": 2, "text": "「기초연금법」상 기초연금 선정기준액을 정함에 있어 65세 이상인 사람 중 기초연금 수급자의 비율로 정하고 있는 기준은?", "type": "mc", "opts": ["100분의 60", "100분의 70", "100분의 80", "100분의 90"], "ans": 1},
+  {"강": "15강", "n": 3, "text": "기초연금 수령은 몇 세부터인가?", "type": "mc", "opts": ["55세", "60세", "65세", "70세"], "ans": 2},
+  {"강": "15강", "n": 4, "text": "다음 중 긴급복지지원법상 '위기상황'에 해당하지 않는 것은 무엇인가?", "type": "mc", "opts": ["중한 질병 또는 부상을 당한 경우", "이혼한 경우", "주소득자가 구금시설에 수용되는 등의 사유로 소득을 상실한 경우", "화재 등으로 거주하는 주택에서 생활하기 곤란하게 된 경우"], "ans": 1},
+  {"강": "15강", "n": 5, "text": "「긴급복지지원법」에서 정하고 있는 생계유지 등에 필요한 기본적인 긴급지원 기간은?", "type": "mc", "opts": ["2개월", "1개월", "1일", "3개월"], "ans": 1},
+  {"강": "15강", "n": 6, "text": "「긴급복지지원법」상 위기상황에 해당하지 않은 것은?", "type": "mc", "opts": ["주 소득자의 사망으로 생계유지 등이 어렵게 된 경우", "주 소득자의 중한 질병 또는 부상으로 생계유지 등이 어렵게 된 경우", "주 소득자가 화재를 당해 생계유지 등이 어렵게 된 경우", "주 소득자가 이혼을 하여 생계유지 등이 어렵게 된 경우"], "ans": 3},
+  {"강": "15강", "n": 7, "text": "「긴급복지지원법」에 대한 설명으로 옳지 않은 것은?", "type": "mc", "opts": ["급변하는 사회의 새로운 문제에 대응하여 제정된 법이다.", "위기상황에 처한 사람에게 신속하게 지원하는 것을 원칙으로 한다.", "긴급지원대상자 발견 시 관할 시장·군수·구청장에게 이 사실을 신고하여야 한다.", "생계유지 등에 필요한 긴급지원 기간은 3개월이다."], "ans": 3},
+  {"강": "15강", "n": 8, "text": "「긴급복지지원법」에 대한 설명으로 옳은 것은?", "type": "mc", "opts": ["기존 관련 법률에서 지원할 수 있는 사람이나 문제는 제외하는 것이 원칙이다.", "생계유지 등에 필요한 긴급지원 기간은 6개월이다.", "긴급지원 종류에는 금전지원만 있다.", "동 법은 2015년에 제정되었다."], "ans": 3}
+];
+
+document.getElementById('total-count').textContent = ALL_QUESTIONS.length;
+
+// ==============================
+// STATE
+// ==============================
+let questions = [];
+let currentIdx = 0;
+let answers = {};
+let bookmarks = new Set(JSON.parse(localStorage.getItem('sw_law_bm') || '[]'));
+let wrongSet = new Set(JSON.parse(localStorage.getItem('sw_law_wrong') || '[]'));
+let graded = false;
+let currentMode = '';
+let expandView = false;
+
+// ── TIMER ──
+let timerInterval = null;
+let timerSeconds = 20 * 60;
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = 20 * 60;
+  updateTimerDisplay();
+  const box = document.getElementById('timer-box');
+  box.style.display = 'flex';
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      alert('⏰ 시험 시간이 종료되었습니다!');
+      gradeQuiz();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timer-box').style.display = 'none';
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const txt = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const el = document.getElementById('timer-display');
+  el.textContent = txt;
+  el.className = timerSeconds <= 60 ? 'timer-danger' : '';
+}
+
+// ── EXPAND / COLLAPSE ──
+function toggleExpandView() {
+  expandView = !expandView;
+  const btn = document.getElementById('expand-btn');
+  const quizScreen = document.getElementById('quiz-screen');
+  const expandScreen = document.getElementById('expand-all-screen');
+  if (expandView) {
+    btn.textContent = '⊟';
+    btn.title = '한 문제씩 보기';
+    quizScreen.classList.add('hidden');
+    expandScreen.style.display = 'block';
+    renderExpandAll();
+  } else {
+    btn.textContent = '⇅';
+    btn.title = '전체 문제 보기';
+    expandScreen.style.display = 'none';
+    quizScreen.classList.remove('hidden');
+    renderQuestion();
+  }
+}
+
+function renderExpandAll() {
+  const screen = document.getElementById('expand-all-screen');
+  screen.innerHTML = '';
+  const nums = ['①','②','③','④'];
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'all-q-card';
+    card.id = `all-q-${i}`;
+
+    const numDiv = document.createElement('div');
+    numDiv.className = 'q-num';
+    numDiv.textContent = `${i + 1} / ${questions.length} 번 문제 · ${q.강}`;
+    card.appendChild(numDiv);
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'q-text';
+    textDiv.textContent = q.text;
+    card.appendChild(textDiv);
+
+    if (q.context) {
+      const box = document.createElement('div');
+      box.className = 'q-box';
+      box.textContent = q.context;
+      card.appendChild(box);
+    }
+
+    const optsArea = document.createElement('div');
+    optsArea.className = 'options';
+    q.opts.forEach((opt, oi) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      div.innerHTML = `<span class="num">${nums[oi]}</span><span>${opt}</span>`;
+      if (answers[i] !== undefined) {
+        if (oi === q.ans) div.classList.add('correct');
+        else if (answers[i] === oi && answers[i] !== q.ans) div.classList.add('wrong');
+        else if (answers[i] === oi) div.classList.add('selected');
+      } else {
+        if (!graded) div.onclick = () => { answers[i] = oi; renderExpandAll(); renderGrid(); };
+      }
+      optsArea.appendChild(div);
+    });
+    card.appendChild(optsArea);
+
+    if (answers[i] !== undefined) {
+      const fb = document.createElement('div');
+      const ok = checkCorrect(q, answers[i]);
+      fb.className = `feedback ${ok ? 'correct-fb' : 'wrong-fb'}`;
+      if (ok) fb.textContent = '✓ 정답입니다!';
+      else {
+        fb.textContent = `✗ 오답입니다. 정답: ${nums[q.ans]} ${q.opts[q.ans]}`;
+      }
+      card.appendChild(fb);
+    }
+
+    screen.appendChild(card);
+  });
+}
+
+function saveBookmarks() { localStorage.setItem('sw_law_bm', JSON.stringify([...bookmarks])); }
+function saveWrong() { localStorage.setItem('sw_law_wrong', JSON.stringify([...wrongSet])); }
+
+function checkCorrect(q, ua) {
+  return parseInt(ua) === q.ans;
+}
+
+// ==============================
+// NAVIGATION
+// ==============================
+function showStart() {
+  document.getElementById('start-screen').classList.remove('hidden');
+  document.getElementById('quiz-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('expand-all-screen').style.display = 'none';
+  document.getElementById('tabbar').classList.add('hidden');
+  document.getElementById('sidebar').classList.add('hidden');
+  document.getElementById('mode-tag').textContent = '모드 선택 중';
+  document.getElementById('progress-text').textContent = '';
+  document.getElementById('expand-btn').style.display = 'none';
+  setHeaderBtns(false, false, false);
+  stopTimer();
+  graded = false; answers = {}; questions = []; currentIdx = 0; expandView = false;
+}
+
+function setHeaderBtns(grade, retry, home) {
+  document.getElementById('btn-header-grade').style.display = grade ? 'inline-block' : 'none';
+  document.getElementById('btn-header-retry').style.display = retry ? 'inline-block' : 'none';
+  document.getElementById('btn-header-home').style.display = home ? 'inline-block' : 'none';
+}
+
+function retryQuiz() {
+  if (!confirm('다시 풀기 하면 현재 답이 초기화됩니다. 계속하시겠습니까?')) return;
+  startQuiz(currentMode);
+}
+
+function startQuiz(mode) {
+  currentMode = mode;
+  graded = false; answers = {}; currentIdx = 0; expandView = false;
+  let useTimer = false;
+
+  if (mode === 'random') {
+    questions = shuffle([...ALL_QUESTIONS]).slice(0, 30);
+    document.getElementById('mode-tag').textContent = '랜덤 30문제';
+    useTimer = true;
+  } else if (mode === 'all') {
+    questions = [...ALL_QUESTIONS];
+    document.getElementById('mode-tag').textContent = `전체 ${ALL_QUESTIONS.length}문제`;
+    useTimer = false;
+  } else if (mode === 'bookmark') {
+    const bmIds = [...bookmarks];
+    questions = ALL_QUESTIONS.filter((_, i) => bmIds.includes(i));
+    if (questions.length === 0) { alert('📌 책갈피된 문제가 없습니다.'); return; }
+    document.getElementById('mode-tag').textContent = `책갈피 ${questions.length}문제`;
+    useTimer = false;
+  } else if (mode === 'wrong') {
+    questions = [...wrongSet].map(i => ALL_QUESTIONS[i]).filter(Boolean);
+    if (questions.length === 0) { alert('✅ 틀린 문제가 없습니다!'); return; }
+    document.getElementById('mode-tag').textContent = `오답 ${questions.length}문제`;
+    useTimer = false;
+  }
+
+  document.getElementById('start-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('expand-all-screen').style.display = 'none';
+  document.getElementById('quiz-screen').classList.remove('hidden');
+  document.getElementById('tabbar').classList.remove('hidden');
+  document.getElementById('sidebar').classList.remove('hidden');
+  document.getElementById('expand-btn').style.display = 'flex';
+  document.getElementById('expand-btn').textContent = '⇅';
+  setHeaderBtns(true, true, true);
+
+  if (useTimer) {
+    startTimer();
+  } else {
+    stopTimer();
+  }
+
+  buildTabbar();
+  renderQuestion();
+  renderGrid();
+}
+
+function navigate(dir) {
+  const newIdx = currentIdx + dir;
+  if (newIdx < 0 || newIdx >= questions.length) return;
+  currentIdx = newIdx;
+  renderQuestion();
+  renderGrid();
+}
+
+function goToQuestion(i) {
+  if (expandView) {
+    const card = document.getElementById(`all-q-${i}`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    currentIdx = i; renderGrid(); return;
+  }
+  currentIdx = i; renderQuestion(); renderGrid();
+}
+
+// ── TABBAR (강 단위) ──
+function buildTabbar() {
+  const bar = document.getElementById('tabbar');
+  bar.innerHTML = '';
+  const groups = [...new Set(questions.map(q => q.강))];
+  groups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn';
+    btn.dataset.group = g;
+    btn.onclick = () => {
+      const idx = questions.findIndex(q => q.강 === g);
+      if (idx >= 0) goToQuestion(idx);
+    };
+    bar.appendChild(btn);
+  });
+  updateTabbar();
+}
+
+function updateTabbar() {
+  const groups = [...new Set(questions.map(q => q.강))];
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const g = btn.dataset.group;
+    const total = questions.filter(q => q.강 === g).length;
+    const done = questions.filter((q, idx) => q.강 === g && answers[idx] !== undefined).length;
+    btn.textContent = `${g} (${done}/${total})`;
+    btn.classList.toggle('active', questions[currentIdx] && questions[currentIdx].강 === g);
+  });
+}
+
+// ==============================
+// RENDER QUESTION
+// ==============================
+function renderQuestion() {
+  const q = questions[currentIdx];
+  if (!q) return;
+
+  document.getElementById('q-num-label').textContent = `${currentIdx + 1} / ${questions.length} 번 문제 · ${q.강}`;
+  document.getElementById('q-text').textContent = q.text;
+
+  const qBox = document.getElementById('q-box');
+  if (q.context) { qBox.textContent = q.context; qBox.classList.remove('hidden'); }
+  else { qBox.classList.add('hidden'); }
+
+  const optsArea = document.getElementById('options-area');
+  optsArea.innerHTML = '';
+
+  const nums = ['①','②','③','④'];
+  const ua = answers[currentIdx];
+
+  const wrap = document.createElement('div');
+  wrap.className = 'options';
+  q.opts.forEach((opt, oi) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `<span class="num">${nums[oi]}</span><span>${opt}</span>`;
+    if (ua !== undefined) {
+      if (oi === q.ans) div.classList.add('correct');
+      else if (ua === oi && ua !== q.ans) div.classList.add('wrong');
+      else if (ua === oi) div.classList.add('selected');
+    } else {
+      div.onclick = () => selectOption(oi);
+    }
+    wrap.appendChild(div);
+  });
+  optsArea.appendChild(wrap);
+
+  // feedback
+  const fb = document.getElementById('q-feedback');
+  if (ua !== undefined) {
+    const ok = checkCorrect(q, ua);
+    fb.className = `feedback ${ok ? 'correct-fb' : 'wrong-fb'}`;
+    if (ok) fb.textContent = '✓ 정답입니다!';
+    else {
+      fb.textContent = `✗ 오답입니다. 정답: ${nums[q.ans]} ${q.opts[q.ans]}`;
+    }
+  } else {
+    fb.className = 'feedback';
+  }
+
+  // bookmark
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  const bmBtn = document.getElementById('bm-btn');
+  if (bookmarks.has(origIdx)) { bmBtn.classList.add('bookmarked'); bmBtn.textContent = '🔖 책갈피됨'; }
+  else { bmBtn.classList.remove('bookmarked'); bmBtn.textContent = '🔖 책갈피'; }
+
+  document.getElementById('btn-prev').disabled = currentIdx === 0;
+  document.getElementById('btn-next').textContent = currentIdx === questions.length - 1 ? '완료' : '다음 ▶';
+
+  const answered = Object.keys(answers).length;
+  document.getElementById('progress-text').textContent = `${answered} / ${questions.length} 문제 응답`;
+
+  updateTabbar();
+}
+
+function selectOption(val) {
+  if (graded) return;
+  answers[currentIdx] = val;
+  renderQuestion();
+  renderGrid();
+  document.getElementById('progress-text').textContent = `${Object.keys(answers).length} / ${questions.length} 문제 응답`;
+}
+
+function toggleBookmark() {
+  const q = questions[currentIdx];
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  if (bookmarks.has(origIdx)) bookmarks.delete(origIdx);
+  else bookmarks.add(origIdx);
+  saveBookmarks();
+  renderQuestion();
+  renderGrid();
+}
+
+// ==============================
+// RENDER GRID
+// ==============================
+function renderGrid() {
+  const grid = document.getElementById('q-grid');
+  grid.innerHTML = '';
+  const nums = ['①','②','③','④'];
+  questions.forEach((q, i) => {
+    const origIdx = ALL_QUESTIONS.indexOf(q);
+    const div = document.createElement('div');
+    div.className = 'q-dot';
+
+    const numEl = document.createElement('span');
+    numEl.className = 'dot-num';
+    numEl.textContent = i + 1;
+    div.appendChild(numEl);
+
+    if (answers[i] !== undefined) {
+      const ansEl = document.createElement('span');
+      ansEl.className = 'dot-ans';
+      ansEl.textContent = nums[answers[i]];
+      div.appendChild(ansEl);
+    }
+
+    div.onclick = () => goToQuestion(i);
+
+    // 우선순위: current > correct/wrong (채점 후) > answered > bookmark
+    if (graded) {
+      if (checkCorrect(q, answers[i])) div.classList.add('correct-dot');
+      else if (answers[i] !== undefined) div.classList.add('wrong-dot');
+    } else {
+      if (answers[i] !== undefined) div.classList.add('answered');
+    }
+    if (bookmarks.has(origIdx)) div.classList.add('bookmarked-dot');
+    if (i === currentIdx) div.classList.add('current');
+
+    grid.appendChild(div);
+  });
+}
+
+// ==============================
+// GRADE
+// ==============================
+function gradeQuiz() {
+  graded = true;
+  stopTimer();
+  document.getElementById('expand-btn').style.display = 'none';
+  document.getElementById('expand-all-screen').style.display = 'none';
+  expandView = false;
+
+  let correct = 0, wrong = 0;
+  questions.forEach((q, i) => {
+    const origIdx = ALL_QUESTIONS.indexOf(q);
+    if (checkCorrect(q, answers[i])) { correct++; wrongSet.delete(origIdx); }
+    else { wrong++; wrongSet.add(origIdx); }
+  });
+  saveWrong();
+
+  const unanswered = questions.length - Object.keys(answers).length;
+  const score = Math.round((correct / questions.length) * 100);
+
+  document.getElementById('result-screen').classList.remove('hidden');
+  document.getElementById('quiz-screen').classList.add('hidden');
+  document.getElementById('res-score').textContent = `${score}점`;
+  document.getElementById('res-sub').textContent = `총 ${questions.length}문제 중 ${correct}문제 정답`;
+  document.getElementById('res-c').textContent = correct;
+  document.getElementById('res-w').textContent = wrong + unanswered;
+  document.getElementById('res-b').textContent = bookmarks.size;
+  setHeaderBtns(false, false, true);
+  renderGrid();
+}
+
+// ==============================
+// UTILS
+// ==============================
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+</script>
+</body>
+</html>
