@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>장애인복지론 예상문제 151~300</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+  :root {
+    --primary: #1a5276;
+    --primary-light: #2e86c1;
+    --accent: #e74c3c;
+    --accent2: #f39c12;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --sidebar: #1a3a5c;
+    --sidebar-text: #cfe2f3;
+    --correct: #1e8449;
+    --wrong: #c0392b;
+    --bookmark: #e67e22;
+    --border: #d5e8f0;
+    --text: #1a252f;
+    --muted: #7f8c8d;
+    --header-h: 56px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #header {
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: var(--header-h);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    z-index: 100;
+  }
+  #header .title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  #header .title span { font-weight: 300; font-size: 14px; margin-left: 8px; opacity: 0.8; }
+  #header .right-info { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  #header .right-info .tag { background: rgba(255,255,255,0.15); border-radius: 4px; padding: 3px 9px; font-size: 12px; }
+
+  .header-action-btn {
+    padding: 6px 13px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    transition: opacity .15s;
+    display: none;
+  }
+  .header-action-btn:hover { opacity: .85; }
+  #btn-header-grade { background: #e74c3c; color: #fff; }
+  #btn-header-retry { background: #e67e22; color: #fff; }
+  #btn-header-home  { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+
+  #tabbar {
+    background: #eaf2f8;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 20px;
+    gap: 4px;
+    flex-shrink: 0;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background: #dce9f5;
+    color: var(--primary);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    transition: background .15s;
+    white-space: nowrap;
+  }
+  .tab-btn.active { background: var(--card); color: var(--primary); font-weight: 700; }
+
+  #body { display: flex; flex: 1; overflow: hidden; }
+
+  #main { flex: 1; overflow-y: auto; padding: 24px 28px; position: relative; }
+
+  #start-screen {
+    max-width: 560px;
+    margin: 40px auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 48px 40px;
+    text-align: center;
+  }
+  #start-screen h2 { font-size: 22px; color: var(--primary); margin-bottom: 8px; }
+  #start-screen p { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+  .start-options { display: flex; flex-direction: column; gap: 14px; }
+  .start-btn {
+    padding: 18px 24px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: #f7fbff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    transition: all .2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .start-btn:hover { border-color: var(--primary-light); background: #eaf3fb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .start-btn .icon { font-size: 26px; }
+  .start-btn small { display: block; font-size: 12px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+
+  .q-num { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+  .q-text { font-size: 15px; line-height: 1.75; font-weight: 500; margin-bottom: 20px; color: var(--text); }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--card);
+    transition: all .15s;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .option:hover { border-color: var(--primary-light); background: #eaf3fb; }
+  .option.selected { border-color: var(--primary); background: #d6eaf8; color: var(--primary); font-weight: 600; }
+  .option.correct { border-color: var(--correct); background: #eafaf1; color: var(--correct); }
+  .option.wrong { border-color: var(--wrong); background: #fdedec; color: var(--wrong); }
+  .option.show-correct { border-color: var(--correct); background: #eafaf1; color: var(--correct); }
+  .option .num { font-weight: 700; min-width: 20px; }
+
+  .option.disabled { cursor: default; pointer-events: none; opacity: 0.7; }
+
+  .explanation {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: #fdfaf0;
+    border-left: 3px solid var(--accent2);
+    border-radius: 4px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #5d4037;
+  }
+  .explanation.show { display: block; }
+  .exp-label { font-weight: 700; color: var(--accent2); margin-bottom: 4px; }
+
+  .q-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    padding: 9px 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+    transition: all .15s;
+  }
+  .nav-btn:hover { background: #eaf3fb; border-color: var(--primary-light); }
+  .nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .nav-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .nav-btn.primary:hover { background: var(--primary-light); }
+
+  .bm-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all .15s;
+  }
+  .bm-btn.bookmarked { color: var(--bookmark); border-color: var(--bookmark); background: #fef5e7; }
+  .bm-btn:hover { border-color: var(--bookmark); color: var(--bookmark); }
+
+  #sidebar {
+    width: 220px;
+    background: var(--sidebar);
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 16px 12px;
+  }
+  #sidebar h4 { color: var(--sidebar-text); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; }
+  #q-grid { display: flex; flex-direction: column; gap: 4px; }
+  .q-dot {
+    width: 100%;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all .15s;
+    border: 1.5px solid transparent;
+  }
+  .q-dot:hover { background: rgba(255,255,255,0.2); }
+  .q-dot.current { border-color: #7fb3d3; color: #fff; background: rgba(255,255,255,0.15); }
+  .q-dot.answered { background: rgba(255,255,255,0.15); color: #aed6f1; }
+  .q-dot.bookmarked-dot { background: rgba(230,126,34,0.35); border-color: var(--bookmark); color: #f0a500; }
+  .q-dot.correct-dot { background: rgba(30,132,73,0.4); color: #82e0aa; }
+  .q-dot.wrong-dot { background: rgba(192,57,43,0.45); color: #f1948a; }
+  .q-dot .dot-num { min-width: 22px; font-weight: 700; color: rgba(255,255,255,0.75); font-size: 11px; }
+  .q-dot .dot-ans { font-size: 12px; margin-left: 4px; background: rgba(255,255,255,0.88); color: var(--sidebar); border-radius: 3px; padding: 1px 5px; font-weight: 700; }
+
+  .sidebar-score { margin-top: 18px; padding: 12px; background: rgba(255,255,255,0.07); border-radius: 8px; color: var(--sidebar-text); font-size: 12px; line-height: 1.8; }
+  .sidebar-score strong { font-size: 20px; color: #fff; }
+  .score-actions { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .score-actions button { padding: 8px 10px; border-radius: 6px; border: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; }
+  .btn-grade { background: var(--accent); color: #fff; }
+  .btn-retry { background: var(--bookmark); color: #fff; }
+  .btn-home { background: rgba(255,255,255,0.15); color: #fff; }
+
+  #result-screen {
+    max-width: 580px;
+    margin: 40px auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 40px 36px;
+    text-align: center;
+  }
+  #result-screen h2 { font-size: 24px; color: var(--primary); margin-bottom: 6px; }
+  .score-big { font-size: 64px; font-weight: 700; color: var(--primary); line-height: 1; margin: 20px 0 8px; }
+  .score-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+  .result-grid { display: flex; gap: 16px; justify-content: center; margin-bottom: 28px; }
+  .result-stat { flex: 1; padding: 16px; border-radius: 10px; }
+  .result-stat.c { background: #eafaf1; color: var(--correct); }
+  .result-stat.w { background: #fdedec; color: var(--wrong); }
+  .result-stat.b { background: #fef5e7; color: var(--bookmark); }
+  .result-stat .label { font-size: 12px; margin-bottom: 4px; }
+  .result-stat .val { font-size: 28px; font-weight: 700; }
+  .result-actions { display: flex; flex-direction: column; gap: 10px; }
+  .result-actions button { padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 700; transition: opacity .15s; }
+  .result-actions button:hover { opacity: .85; }
+  .btn-a { background: var(--accent); color: #fff; }
+  .btn-b { background: var(--bookmark); color: #fff; }
+  .btn-c { background: var(--primary); color: #fff; }
+  .btn-d { background: #ecf0f1; color: var(--text); }
+
+  .hidden { display: none !important; }
+
+  #expand-all-screen { display: none; padding: 24px 28px; }
+  .all-q-card { background: var(--card); border-radius: 10px; border: 1.5px solid var(--border); padding: 20px 22px; margin-bottom: 18px; }
+  .all-q-card .q-num { font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 700; }
+  .all-q-card .q-text { font-size: 14px; font-weight: 600; margin-bottom: 14px; line-height: 1.7; }
+  .all-q-card .options { gap: 7px; }
+  .all-q-card .option { padding: 9px 13px; font-size: 13px; }
+
+  #timer-box { display: none; }
+  .timer-danger { color: #ff6b6b !important; animation: blink .8s step-end infinite; }
+  @keyframes blink { 50% { opacity: .4; } }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-thumb { background: #b0c4d8; border-radius: 3px; }
+
+
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="title">장애인복지론 <span>예상문제</span></div>
+  <div class="right-info">
+    <span class="tag" id="mode-tag">모드 선택 중</span>
+    <span id="progress-text" style="font-size:13px;opacity:.85"></span>
+    <div id="timer-box" style="display:none;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border-radius:6px;padding:4px 12px;">
+      <span style="font-size:11px;opacity:.8;line-height:1.3;">남은<br>시간</span>
+      <span id="timer-display" style="font-size:20px;font-weight:700;letter-spacing:1px;font-variant-numeric:tabular-nums;">20:00</span>
+    </div>
+    <button id="btn-header-grade" class="header-action-btn" onclick="gradeQuiz()">📊 채점하기</button>
+    <button id="btn-header-retry" class="header-action-btn" onclick="retryQuiz()">🔄 다시하기</button>
+    <button id="btn-header-home"  class="header-action-btn" onclick="showStart()">🏠 처음으로</button>
+    <button id="expand-btn" onclick="toggleExpandView()" title="전체보기/한문제씩" style="display:none;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:6px;color:#fff;width:38px;height:38px;font-size:20px;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;">⇅</button>
+  </div>
+</div>
+
+<div id="tabbar" class="hidden"></div>
+
+<div id="body">
+  <div id="main">
+    <!-- Start Screen -->
+    <div id="start-screen">
+      <h2>♿ 장애인복지론</h2>
+      <p>예상문제 151~300번 · 총 150문항</p>
+      <div class="start-options">
+        <button class="start-btn" onclick="startQuiz('random')">
+          <span class="icon">🎲</span>
+          <div>
+            랜덤 30문제
+            <small>무작위 30문항 · ⏱ 20분 제한 · 답 클릭 즉시 정답·해설 표시</small>
+          </div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('all')">
+          <span class="icon">📋</span>
+          <div>
+            전체 문제 풀기
+            <small>151~300번 전체 150문항 · 답 클릭 즉시 정답·해설 표시</small>
+          </div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('bookmark')">
+          <span class="icon">🔖</span>
+          <div>
+            책갈피 문제만 풀기
+            <small>저장된 책갈피 문제만 출제 · 답 클릭 즉시 정답·해설 표시</small>
+          </div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('wrong')">
+          <span class="icon">❌</span>
+          <div>
+            틀린 문제만 다시 풀기
+            <small>이전에 틀린 문제만 출제 · 답 클릭 즉시 정답·해설 표시</small>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden">
+      <div class="q-num" id="q-num-label"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="explanation" id="explanation">
+        <div class="exp-label">💡 해설</div>
+        <div id="exp-text"></div>
+      </div>
+      <div class="q-nav">
+        <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">◀ 이전</button>
+        <div style="display:flex;gap:10px;">
+          <button class="bm-btn" id="bm-btn" onclick="toggleBookmark()">🔖 책갈피</button>
+        </div>
+        <button class="nav-btn primary" id="btn-next" onclick="navigate(1)">다음 ▶</button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden">
+      <h2>🎉 채점 결과</h2>
+      <div class="score-big" id="res-score"></div>
+      <div class="score-sub" id="res-sub"></div>
+      <div class="result-grid">
+        <div class="result-stat c"><div class="label">✅ 정답</div><div class="val" id="res-c"></div></div>
+        <div class="result-stat w"><div class="label">❌ 오답</div><div class="val" id="res-w"></div></div>
+        <div class="result-stat b"><div class="label">🔖 책갈피</div><div class="val" id="res-b"></div></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-a" onclick="startQuiz('wrong')">❌ 틀린 문제만 다시 풀기</button>
+        <button class="btn-b" onclick="startQuiz('bookmark')">🔖 책갈피 문제 풀기</button>
+        <button class="btn-c" onclick="startQuiz('all')">📋 전체 문제 다시 풀기</button>
+        <button class="btn-d" onclick="showStart()">🏠 처음으로</button>
+      </div>
+    </div>
+
+    <!-- Expand All Screen -->
+    <div id="expand-all-screen"></div>
+  </div>
+
+  <div id="sidebar" class="hidden">
+    <h4>문제 현황</h4>
+    <div id="q-grid"></div>
+    <div class="sidebar-score">
+      <div id="sb-progress">0 / 0 응답</div>
+      <div class="score-actions">
+        <button class="btn-retry" onclick="retryQuiz()">🔄 다시하기</button>
+        <button class="btn-home" onclick="showStart()">🏠 처음으로</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==============================
+// QUESTION DATA (151~300)
+// ==============================
+const ALL_QUESTIONS = [
+  // 151~160
+  {n:151, q:"장애는 '사회적 구성물'(social constructs)이라는 설명에 가장 부합하는 것은?", opts:["장애는 개인의 신체적·정신적 손상 자체를 의미한다.","장애는 의학적으로만 진단되며 사회와는 무관한 개념이다.","장애는 손상과 별개로 사회적 환경과 태도에 의해 만들어질 수 있다.","장애는 시대나 사회에 따라 변하지 않는 고정적인 개념이다."], ans:2, exp:"장애는 단순한 손상이 아니라 사회가 만든 물리적·사회적 장벽으로 인해 발생하는 사회적으로 구성된 개념입니다."},
+  {n:152, q:"ICF(2001)의 장애 개념에 대한 설명으로 옳은 것은?", opts:["장애의 원인을 개인의 손상에만 두는 일차원적 모델이다.","장애를 신체 기능과 구조, 활동, 사회적 참여가 상호 작용하는 다차원적 구조로 이해한다.","장애는 오로지 사회가 만든 것이므로 개인 요인은 고려하지 않는다.","장애인을 정상화하는 것이 목표이므로 치료 중심 접근을 강조한다."], ans:1, exp:"ICF는 건강상태와 상황요인(환경 및 개인 요인)이 서로 영향을 주고받는 다차원적 구조를 통해 장애를 이해합니다."},
+  {n:153, q:"의료적 모델과 사회적 모델에 대한 설명으로 옳은 것은?", opts:["의료적 모델은 장애를 사회 구조와 차별의 문제로 본다.","사회적 모델은 장애를 개인의 기능 손실로만 본다.","의료적 모델은 장애를 '결함'으로, 사회적 모델은 장애를 '사회가 만든 것'으로 본다.","사회적 모델은 장애 해결을 치료·재활 중심으로 본다."], ans:2, exp:"의료적 모델은 장애를 개인의 문제로 보며, 사회적 모델은 사회 구조적 장벽의 문제로 봅니다."},
+  {n:154, q:"장애학(Disability Studies)의 주요 관점으로 옳지 않은 것은?", opts:["장애는 사회적 구성물이라는 관점을 포함한다.","장애인의 권리, 정체성, 사회 구조 분석을 중요하게 본다.","장애는 복지와 보호의 대상이라는 관점을 유지한다.","장애를 개인적 문제가 아닌 사회적 문제로 본다."], ans:2, exp:"장애학은 시혜·보호 중심의 접근을 비판하고 장애를 권리와 사회 구조의 문제로 확장하여 분석합니다."},
+  {n:155, q:"『자본주의와 장애』(마타 러셀 저)에서 주장하는 내용으로 가장 적절한 것은?", opts:["자본주의는 장애인의 고용과 생산성을 높이는 체계이다.","자본주의는 장애인의 생존을 복지제도로 보장한다.","자본주의는 생산성 기준에 맞지 않는 장애인을 구조적으로 배제한다.","자본주의는 장애인을 지역공동체 중심의 통합 대상으로 본다."], ans:2, exp:"해당 저서에서는 자본주의가 경쟁과 효율 중심 체계 속에서 장애인을 '비생산적 존재'로 취급하며 배제한다고 분석합니다."},
+  {n:156, q:"우리나라에서 장애인으로 공식 인정받기 위해 필요한 절차는?", opts:["장애등급심사 자동 등록","지방자치단체가 지정하는 대상자 자동 선정","병원 진단서 제출만으로 등록 처리","장애인 등록 신청 및 심사"], ans:3, exp:"현재 우리나라 장애인복지 서비스는 '장애인등록제'를 통해 신청, 진단, 심사의 과정을 거쳐 이루어집니다."},
+  {n:157, q:"장애등급제가 폐지된 주요 이유로 가장 적절한 것은?", opts:["급수를 더 세분화하기 위해서이다.","장애인의 개별 욕구가 아니라 의학적 손상 정도만 반영했기 때문이다.","모든 장애인이 동일한 서비스를 받도록 하기 위해서이다.","장애 유형 구분이 사라졌기 때문이다."], ans:1, exp:"장애등급제는 장애인을 등급으로 구분하여 차별하는 체제를 만든다는 비판과 욕구를 반영하지 못한다는 이유로 폐지되었습니다."},
+  {n:158, q:"2019년 장애등급제 폐지 이후 도입된 서비스 지원 방식은?", opts:["장애특성 분류 시스템","소득기반 자격제도","장애인 서비스 지원 종합조사","의료진 중심 심사평가제도"], ans:2, exp:"장애인 서비스 지원 종합조사는 기능적 평가 외에 사회활동과 환경 등을 평가하여 욕구 기반으로 서비스를 배분합니다."},
+  {n:159, q:"장애인 실태조사가 가지는 주요 정책적 의미로 옳은 것은?", opts:["장애인의 삶의 조건을 파악하여 정책 근거 자료로 활용된다.","장애 발생 원인만을 조사하여 통계화한다.","의료기록을 통해 진단체계를 표준화한다.","장애 범주를 축소하여 관리 편의성을 높인다."], ans:0, exp:"실태조사는 소득, 고용, 건강, 교육 등 현실을 수치로 보여주며 정책 개선과 예산 편성의 근거가 됩니다."},
+  {n:160, q:"우리나라 장애인의 삶과 관련된 설명으로 옳은 것은?", opts:["실태조사를 통해 장애인의 모든 삶을 완벽히 파악할 수 있다.","실태조사는 2000년대 이후에 처음 실시되었다.","일상생활 도움 제공자는 대부분 전문 돌봄 인력이다.","장애인의 장애 원인은 약 88%가 질환이나 사고 등 후천적 원인이다."], ans:3, exp:"실태조사에 따르면 우리나라 장애인의 88%가 후천적 원인으로 장애가 발생하며, 도움 제공자는 가족(82.1%)이 대부분입니다."},
+
+  // 161~170
+  {n:161, q:"장애인복지를 '권리'로 보는 관점에 대한 설명으로 가장 적절한 것은?", opts:["장애인은 사회적 보호의 대상이므로 복지는 선택적으로 제공된다.","복지는 개인의 능력에 따라 차등적으로 보장되어야 한다.","국가는 인간다운 삶을 보장할 의무가 있으며 복지는 시민의 권리이다.","장애인복지는 민간 중심 자선체계를 기반으로 한다."], ans:2, exp:"권리 기반 관점은 복지를 '시혜'가 아닌 '국가의 의무'와 '시민권'으로 봅니다."},
+  {n:162, q:"정상화(normalization) 원리에 대한 설명으로 옳은 것은?", opts:["장애인이 가능한 한 일반적·일상적 환경에서 살아가도록 보장해야 한다는 원리이다.","장애인의 자립과 선택보다는 안전을 우선시하는 원리이다.","장애인을 특수 환경에서 분리하여 보호하는 것을 의미한다.","정상화는 경제적 자립을 기준으로 장애인을 구분하는 원리이다."], ans:0, exp:"정상화는 장애인의 삶이 분리나 격리가 아닌 일상생활 중심이어야 한다는 원리로, 통합과 자립의 기초가 됩니다."},
+  {n:163, q:"자기결정(self-determination) 개념에 대한 설명으로 가장 적절한 것은?", opts:["장애인 스스로 해결해야 하므로 타인의 지원을 배제하는 것이다.","전문가가 대신 결정해 주는 것이 더 안전하다는 관점이다.","장애인이 자신의 삶과 서비스에 대해 선택·결정할 권리를 갖는다는 개념이다.","국가가 정한 기준에 따라 서비스를 일괄적으로 제공하는 방식이다."], ans:2, exp:"자기결정권은 단순히 '혼자 하기'가 아니라 선택권과 통제권을 보장하는 것이 핵심입니다."},
+  {n:164, q:"자립생활(independent living) 모델에 대한 설명으로 가장 적절한 것은?", opts:["자립은 타인의 도움 없이 혼자 생활하는 상태를 말한다.","자립은 시설에서 안정적으로 생활하는 것을 강조한다.","자립은 장애인이 필요한 지원을 선택하여 자신의 삶을 통제하는 것이다.","자립 생활에서 가장 우선되는 목표는 직업을 가지는 것이다."], ans:2, exp:"자립생활은 '도움이 없는 것'이 아니라 '도움을 선택할 수 있는 권리'와 자기결정이 핵심입니다."},
+  {n:165, q:"장애인복지의 실천 방향으로 가장 적절한 것은?", opts:["사례관리","급진사회복지실천","잔여주의적 사회복지 실천","단순 서비스 제공"], ans:1, exp:"장애인복지는 단순 서비스 제공을 넘어 사회 구조의 변화를 추구하는 급진사회복지실천의 관점이 필요합니다."},
+  {n:166, q:"해외 장애인복지 역사에 대한 설명으로 옳은 것은?", opts:["1960년대에는 시설수용정책이 강화되었다.","미국은 1970년대에 장애아동의 교육을 보장하는 법률을 제정하였다.","유엔은 1981년 이후 장기 계획을 수립하지 않았다.","「미국 장애인법(ADA)」은 교육 분야에만 적용되는 제한적 법률이었다."], ans:1, exp:"미국은 1975년 「장애아동교육법」을 제정하여 교육권을 보장했으며, ADA는 고용, 교통 등 사회 전반에 적용되는 포괄적 차별금지법입니다."},
+  {n:167, q:"1950~1980년대 한국 장애인복지 역사에 대한 설명으로 옳은 것은?", opts:["1950년대에는 일반 장애인이 국가 복지의 중심 대상이었다.","1961년 「생활보호법」 제정으로 빈곤 장애인도 국가 보호대상에 포함되었다.","1977년 제정된 「특수교육진흥법」은 입학 차별을 허용하였다.","초기에는 산업재해 장애인 지원이 전혀 없었다."], ans:1, exp:"1961년 「생활보호법」은 빈곤 장애인을 보호대상에 포함했으며, 1963년 「산업재해보상보험법」으로 산재 지원이 시작되었습니다."},
+  {n:168, q:"1977년 제정되어 장애인의 교육권을 보장한 최초의 법은?", opts:["장애인복지법","발달장애인법","장애인차별금지법","특수교육진흥법"], ans:3, exp:"1977년 제정된 「특수교육진흥법」은 장애인의 교육 기회를 보장하고 입학 차별을 금지한 최초의 법률입니다."},
+  {n:169, q:"2007년 제정되어 모든 생활 영역에서 장애인 차별을 금지한 법은?", opts:["장애인차별금지법","장애인연금법","산업재해보상보험법","한국수화언어법"], ans:0, exp:"2007년 제정된 「장애인차별금지 및 권리구제 등에 관한 법률」은 전 영역에서의 차별금지를 명시했습니다."},
+  {n:170, q:"장애인 인권 보장을 위한 법·제도 개선 방향으로 가장 적절한 것은?", opts:["장애 유형에 따라 권리를 차등 보장해야 한다.","복지시설 확충이 법 제정보다 우선되어야 한다.","차별금지 조항과 권리구제 절차의 실효성을 확보해야 한다.","문화 인식 개선만 있으면 법은 필요 없다."], ans:2, exp:"우리나라는 법 제정 이후 실제 구제 절차와 집행력 등 실효성을 확보하는 것이 핵심 과제입니다."},
+
+  // 171~180
+  {n:171, q:"정치의 삼각형에 대한 설명으로 옳지 않은 것은?", opts:["삼각형 세 요소는 이념, 정책, 세력이다.","정책 이면에는 이념과 세력 관계가 있다.","사회복지는 중립적이기 때문에 정치의 삼각형과 무관하다.","정책의 방향을 이해하려면 이념을 참조해야 한다."], ans:2, exp:"사회복지정책은 특정 이념을 가진 세력이 만드는 것으로, 중립적이지 않은 정치적인 영역입니다."},
+  {n:172, q:"장애등급제 폐지 이후 장애인정책의 방향으로 가장 적절한 것은?", opts:["급여를 등급에 따라 일괄 지원한다.","장애인의 욕구·환경을 반영한 맞춤형 서비스를 강화한다.","장애 유형별로 지원을 차별화한다.","서비스를 축소하고 자가부담으로 전환한다."], ans:1, exp:"등급제 폐지의 핵심은 의료 기준이 아닌 '욕구 기반의 맞춤형 서비스 전환'입니다."},
+  {n:173, q:"장애인정책의 향후 과제로 옳지 않은 것은?", opts:["서비스 중복과 전달체계 분절 해결","장애인의 선택권·참여권 확대","지역 간 서비스 격차 해소","장애 등을 기준으로 한 선별적 복지 강화"], ans:3, exp:"장애인정책은 선별적·시혜적 복지에서 보편적·권리적 복지로 확장되는 것이 핵심 과제입니다."},
+  {n:174, q:"우리나라 장애인정책 전달체계의 기본 구조로 옳은 것은?", opts:["중앙정부 → 민간단체 → 지역사회","지방정부 단독 설계 및 집행","중앙정부 → 광역지방자치단체 → 기초지방자치단체","민간 조직의 선 평가 후 집행"], ans:2, exp:"현재 전달체계는 중앙에서 기초지자체로 이어지는 수직적 구조를 가지고 있습니다."},
+  {n:175, q:"장애인정책 전달체계의 문제점으로 가장 적절한 것은?", opts:["단일체계로 운영되어 통합성이 높다.","전달체계가 분절되어 있어 통합 지원이 어렵다.","장애인의 참여가 과도하여 효율성이 떨어진다.","각 지방정부의 서비스 수준이 동일하다."], ans:1, exp:"부처별 분절과 사업 중복, 지역별 편차는 전달체계의 주요 구조적 문제입니다."},
+  {n:176, q:"장애인 소득보장이 중요한 이유로 가장 적절한 것은?", opts:["장애인은 노동 참여율이 높아 추가 지원이 필요 없다.","소득보장은 개인 책임이므로 선택적이다.","구조적으로 빈곤 위험이 높고 장애로 인한 추가비용이 발생하기 때문이다.","대부분 가족의 지원으로 생계가 유지되기 때문이다."], ans:2, exp:"장애인은 노동시장 배제와 차별, 추가비용 발생 등으로 빈곤 위험이 높아 공적 소득보장이 필수적입니다."},
+  {n:177, q:"'탈상품화'의 개념과 가장 관련이 깊은 것은?", opts:["노동능력에 따른 급여 차등 지급","노동시장 참여와 관계없이 최소한의 삶을 유지하도록 보장하는 것","생산성 향상을 위한 경제 보조금","시장 노동 참여 시에만 복지 권리 확대"], ans:1, exp:"탈상품화는 인간이 노동력을 상품으로 팔지 않아도 삶이 유지될 수 있는 정도를 의미하는 사회권적 개념입니다."},
+  {n:178, q:"2023년 장애인 실태조사 결과 장애인이 국가에 요구하는 복지서비스 1순위는?", opts:["교육 지원","문화활동 지원","소득보장","아동권 보장"], ans:2, exp:"실태조사 결과 장애인의 43.9%가 소득보장을 가장 우선적인 요구사항으로 꼽았습니다."},
+  {n:179, q:"한국의 대표적인 장애인 소득보장제도에 해당하는 것은?", opts:["장애인연금, 장애수당, 기초생활보장","장애연금, 장애수당, 활동지원","성년후견, 장애보험, 근로장려금","장애급여, 산재보험, 의료부조"], ans:0, exp:"장애인연금, 장애수당, 기초생활보장이 한국의 주요 소득보장제도입니다."},
+  {n:180, q:"장애인 소득보장정책의 향후 과제로 가장 적절한 것은?", opts:["장애급여 축소 및 노동 유도","수급자격 제한을 통한 예산 절감","가족의 부양 책임 강화","급여 현실화 및 빈곤 사각지대 해소"], ans:3, exp:"소득보장 강화를 위해 급여 수준 개선과 사각지대 제거가 논의되고 있습니다."},
+
+  // 181~190
+  {n:181, q:"장애인 의무고용제도의 기본 취지로 가장 적절한 것은?", opts:["고용을 시장 자율에 맡기기 위해","기업의 선택 사항으로 보장하기 위해","법적 기준에 따라 장애인의 고용 기회를 확대하기 위해","직업훈련을 가족이 지원하도록 하기 위해"], ans:2, exp:"의무고용제도는 장애인 고용을 기업의 법적 책임으로 규정하여 노동시장 진입을 보장하는 정책입니다."},
+  {n:182, q:"'지원고용'(supported employment)에 대한 설명으로 옳은 것은?", opts:["장애인을 시설에서 보호하며 활동을 대신해 주는 것","장애인을 일터에 직접 배치하고 직무 및 적응 지원을 제공하는 것","취업 전 사전교육만을 중심으로 하는 것","고용을 민간단체가 대신 책임지는 것"], ans:1, exp:"지원고용은 먼저 현장에 배치한 뒤 직무지원을 제공하여 지속적인 취업이 가능하게 돕는 방식입니다."},
+  {n:183, q:"우리나라 장애인 고용의 대표적 문제로 가장 적절한 것은?", opts:["고용이 특정 직무·저임금·단순노동에 편중되어 있다.","고용률은 높지만 유지율이 낮다.","중증장애인의 고용률이 더 높다.","공공부문에만 고용이 집중되어 있다."], ans:0, exp:"저임금 직무 편중과 기업 규모별 격차 등은 장애인 고용의 주요 구조적 문제입니다."},
+  {n:184, q:"장애인 고용 확대를 위해 필요한 정책 방향으로 적절한 것은?", opts:["고용부담금 폐지 및 자율성 강화","장애 유형별 분리고용 활성화","통합고용환경 구축과 차별금지제도의 실효성 강화","보호고용 중심 정책 유지"], ans:2, exp:"고용정책은 통합고용과 권리 기반의 노동 접근을 지향해야 합니다."},
+  {n:185, q:"장애인의 노동권 보장에 대한 설명으로 가장 적절한 것은?", opts:["노동권은 선택적 권리이다.","복지와 고용은 분리되어야 한다.","생산성이 낮으므로 보장이 어렵다.","노동은 권리이며 참여 기회의 동등성 보장이 중요하다."], ans:3, exp:"장애인 노동권은 기회 평등과 합리적 편의 제공을 전제로 하는 기본적인 권리입니다."},
+  {n:186, q:"특수교육과 통합교육에 대한 설명으로 가장 적절한 것은?", opts:["통합교육은 일반학교에서 분리하여 교육하는 것이다.","특수교육은 장애인을 일반교육 체계에만 포함시키는 것이다.","통합교육은 장애·비장애 학생이 동일한 환경에서 함께 학습하는 것이다.","특수교육은 선택할 수 있는 교육권을 보장하지 않는다."], ans:2, exp:"통합교육은 '같은 공간에서의 개별적 지원'을 원리로 합니다."},
+  {n:187, q:"우리나라에서 가장 많은 특수교육 대상자가 교육을 받고 있는 곳은?", opts:["특수학급","일반학급","특수학교","특수교육지원센터"], ans:0, exp:"특수교육 대상자의 57.9%가 일반학교 내 특수학급에서 교육을 받습니다."},
+  {n:188, q:"「장애인 등에 대한 특수교육법」의 주요 목적을 가장 잘 설명한 것은?", opts:["장애학생을 일반학교와 완전히 분리하여 교육하는 것","생애주기별 맞춤형 교육을 제공하고 통합교육을 촉진하는 것","대학 진학을 의무화하는 것","독립된 평생교육기관을 만드는 것"], ans:1, exp:"이 법은 통합된 교육 환경을 제공하여 자아실현과 사회통합에 기여하는 것을 목적으로 합니다."},
+  {n:189, q:"통합교육 실현의 주요 과제로 적절한 것은?", opts:["특수학교 수 증가 중심 정책","일반학교 내 장애학생 지원체계 강화","등교 제한 조치 확대","복지급여 우선 확대"], ans:1, exp:"통합교육을 위해서는 교사와 보조 인력 등 실질적인 지원체계 강화가 필수적입니다."},
+  {n:190, q:"장애인 평생교육권 보장의 필요성에 대한 설명으로 가장 적절한 것은?", opts:["청소년기까지만 보장되면 충분하다.","졸업 이후 국가 개입은 불필요하다.","교육권에서 배제될 가능성이 높으므로 성인기 이후 기회 보장이 필수적이다.","비장애인의 영역이므로 우선순위가 낮다."], ans:2, exp:"장애인은 학령기 이후 교육 기회가 급감하므로 생애주기별 교육권 보장이 중요합니다."},
+
+  // 191~200
+  {n:191, q:"장애인 건강권의 개념으로 가장 적절한 것은?", opts:["의료비를 국가가 전액 부담하는 것이다.","의료기관 내에서만 보장되는 권리이다.","정보·의료·예방 서비스에 차별 없이 접근할 권리이다.","비장애인에게만 적용되는 권리이다."], ans:2, exp:"건강권은 접근성과 정보를 포함하는 포괄적 권리 개념입니다."},
+  {n:192, q:"2017년 「장애인 건강권 및 의료접근성 보장에 관한 법률」 제정의 의의는?", opts:["의료비 지원을 가족 책임으로 규정한 것","건강을 '권리'로 법제화하고 의료 접근성 보장을 의무화한 것","의료기관의 진료 제한을 허용한 것","민간단체 중심 운영을 규정한 것"], ans:1, exp:"이 법은 건강을 '복지'가 아닌 '권리'로 인식하는 제도적 기반을 확립했습니다."},
+  {n:193, q:"장애인의 주거권 보장에 대한 설명으로 가장 적절한 것은?", opts:["지역사회 살 권리와 주거 지원은 연결된 권리이다.","시설 이용은 선택권과 무관하게 결정된다.","시설 중심 보호가 가장 안정적인 형태이다.","법적 근거가 없다."], ans:0, exp:"주거권과 자립권은 결합된 권리이며, 시설에서 지역사회로의 전환이 정책의 흐름입니다."},
+  {n:194, q:"사회서비스의 개념으로 옳은 것은?", opts:["현금급여 중심의 복지급여","경제적 자립만을 위한 일자리","돌봄·활동지원·상담 등 생활 전반의 비현금성 지원 서비스","비공식 지원 시스템"], ans:2, exp:"사회서비스는 일상생활과 참여를 돕는 비현금형 서비스를 포괄합니다."},
+  {n:195, q:"장애인의 건강·주거·사회서비스 보장의 공통적 과제로 가장 적절한 것은?", opts:["지역별 격차 해소 및 맞춤형 지원체계 구축","정책 대상 축소 및 선별 강화","가족 중심 돌봄 체계 강화","시설 중심으로의 재편"], ans:0, exp:"지역별 격차를 줄이고 통합적인 맞춤형 지원체계를 구축하는 것이 공통 과제입니다."},
+  {n:196, q:"탈시설 정책의 기본 목표로 가장 적절한 것은?", opts:["시설에 안전하게 보호하는 것","지역사회와 분리하는 것","지역사회에서 스스로 선택·통제하며 살 수 있도록 보장하는 것","예산 절감을 위해 인원을 줄이는 것"], ans:2, exp:"탈시설은 지역사회 기반의 자립적 삶과 시민권 보장이 핵심입니다."},
+  {n:197, q:"우리나라 탈시설 정책 추진 과정에서의 대표적 문제로 옳은 것은?", opts:["당사자 참여가 과도하다.","지역사회 기반 서비스가 충분하다.","시설 중심 예산 구조와 지역 간 격차가 여전히 크다.","모든 탈시설이 강제 퇴소 방식이다."], ans:2, exp:"로드맵 수립에도 불구하고 서비스 수준과 예산의 지역별 편차가 큰 것이 문제입니다."},
+  {n:198, q:"탈시설 이후 성공적인 지역사회 정착을 위해 필요한 조건은?", opts:["무조건적인 시설 폐쇄","가족의 돌봄 강화","그룹홈 일괄 배치","주거, 소득, 고용, 건강이 연계된 통합 지원 체계"], ans:3, exp:"탈시설은 주거와 서비스, 사회참여가 함께 보장되어야 실현 가능합니다."},
+  {n:199, q:"자립생활(independent living)의 개념으로 옳은 것은?", opts:["완전히 혼자 생활하는 것","자신의 삶을 스스로 선택하고 결정하며 대등하게 상호 의존하며 사는 것","시설의 전적인 보호에 의존하는 것","직업을 가지는 것만이 유일한 조건임"], ans:1, exp:"자립생활은 '비의존'이 아니라 자기결정권에 기반한 상호의존적 삶을 의미합니다."},
+  {n:200, q:"장애인 자립생활센터의 주요 역할에 해당하는 것은?", opts:["자립을 위한 동료상담, 정보 제공 등을 수행한다.","장애대학생의 시험시간 조정을 담당한다.","시설 입소 업무를 주로 담당한다.","주거시설을 직접 건설하는 기관이다."], ans:0, exp:"자립생활센터는 탈시설 지원과 동료상담 등 지역사회 자립을 돕는 당사자 중심 기관입니다."},
+
+  // 201~210
+  {n:201, q:"장애 여성의 '다중 차별'을 설명하는 관점으로 가장 적절한 것은?", opts:["장애와 여성이라는 두 가지 범주가 독립적으로 작동한다.","장애 차별보다 여성 차별이 항상 우선한다.","장애, 성별, 빈곤, 가족 역할 등이 결합하여 복합적인 불평등을 형성한다.","장애 여성을 권리의 주체가 아닌 보호의 객체로만 본다."], ans:2, exp:"다중 차별은 여러 정체성(장애, 성별 등)이 중첩되어 단순히 합산된 것 이상의 복합적이고 독특한 사회적 배제를 만들어내는 현상을 의미합니다."},
+  {n:202, q:"고령 장애인이 겪는 '이중적 주변화'의 결과로 보기 어려운 것은?", opts:["노인 복지 정책에서의 소외","장애인 복지 정책에서의 소외","두 복지 영역 사이의 서비스 중복 수혜","정책적 사각지대 발생"], ans:2, exp:"이중적 주변화는 오히려 두 영역 모두에서 배제되어 필요한 서비스를 받지 못하는 사각지대가 발생하는 것을 의미합니다."},
+  {n:203, q:"장애인 가족 지원 정책 중 '휴식 지원 서비스'의 주된 목적은?", opts:["가족의 경제적 자립 지원","장애 당사자의 취업 알선","가족의 돌봄 부담 완화 및 심리적 안정 도모","장애 아동의 의료비 전액 지원"], ans:2, exp:"휴식 지원은 돌봄 노동에 지친 가족들에게 쉼과 힐링 프로그램을 제공하여 가족 해체를 예방하고 기능을 강화하는 데 목적이 있습니다."},
+  {n:204, q:"「장애인차별금지법」상 차별의 원인이 2가지 이상이고 그 주된 원인이 '장애'라고 인정되는 경우의 처리는?", opts:["차별로 보지 않는다.","다른 원인을 먼저 해결한 후 차별 여부를 판단한다.","해당 행위를 이 법에 따른 차별로 본다.","장애인복지법에 따라 처벌한다."], ans:2, exp:"차별 판단 시 여러 원인이 섞여 있더라도 장애가 주된 원인이라면 차별로 간주합니다."},
+  {n:205, q:"장애인 이동권 운동의 시발점이 된 사건은?", opts:["1981년 세계 장애인의 해 선포","2001년 오이도역 리프트 추락 사고","2007년 장애인차별금지법 제정","2019년 장애등급제 폐지"], ans:1, exp:"2001년 오이도역 사고는 장애인의 이동할 권리가 생존과 직결된 인권 문제임을 대중에게 알린 결정적 계기였습니다."},
+  {n:206, q:"낸시 프레이저(Fraser)가 제시한 정의의 요소 중 '장애인의 목소리가 정책에 반영되는 것'과 관련된 것은?", opts:["경제적 분배","문화적 인정","정치적 참여","의료적 보상"], ans:2, exp:"프레이저는 정의로운 사회를 위해 자원의 분배와 존재의 인정뿐만 아니라, 의사결정 과정에서의 '참여'를 필수 요소로 꼽았습니다."},
+  {n:207, q:"장애인 정책의 '국가 책임 강화'를 위해 가장 필요한 조치는?", opts:["민간 자선 단체에 대한 기부 독려","가족 돌봄에 대한 보상금만 지급","권리 기반의 예산 확보 및 보편적 서비스 전달체계 구축","장애인 시설의 대형화 및 집중 관리"], ans:2, exp:"국가 책임 강화는 복지를 시혜가 아닌 국가의 의무로 인식하고, 예산과 제도를 통해 안정적으로 지원하는 것을 의미합니다."},
+  {n:208, q:"「장애인권리보장법(안)」이 지향하는 핵심 패러다임은?", opts:["의료적·재활적 관점 유지","공급자 중심의 효율적 관리","권리 주체로서의 자립과 지역사회 통합","선별적 복지를 통한 예산 절감"], ans:2, exp:"해당 법안은 장애인을 보호 대상이 아닌 권리 주체로 명문화하고, 지역사회에서의 평등한 삶을 보장하는 데 목적이 있습니다."},
+  {n:209, q:"장애 유형 중 '외부 신체 기능의 장애'에 해당하는 것은?", opts:["신장 장애","간 장애","안면 장애","심장 장애"], ans:2, exp:"안면 장애는 겉으로 드러나는 변형에 의한 장애로 외부 신체 기능 장애로 분류됩니다. 나머지 세 유형은 내부 기관 장애입니다."},
+  {n:210, q:"'정상화(Normalization)' 이론의 창시자로 알려진 학자는?", opts:["마이클 올리버(M. Oliver)","울펜스버거(W. Wolfensberger)","에스핑 안데르센(Esping-Andersen)","존 롤스(J. Rawls)"], ans:1, exp:"울펜스버거는 정상화 개념을 체계화하여 '사회적 역할 가치화(SRV)' 이론으로 발전시켰습니다."},
+
+  // 211~220
+  {n:211, q:"장애 개념을 '건강 상태'와 '상황 요인'의 상호작용으로 보는 틀은?", opts:["ICIDH","ICIDH-2","ICF","IMF"], ans:2, exp:"ICF(2001)는 개인의 신체 기능뿐만 아니라 환경적, 개인적 요인을 통합하여 장애를 설명합니다."},
+  {n:212, q:"장애인 복지 패러다임의 변화 중 '시설 수용' 이후의 단계는?", opts:["보호","지원(재활)","자립","배제"], ans:1, exp:"패러다임은 '보호(수용)' → '지원(재활)' → '자립(사회 참여)'의 순서로 변화해 왔습니다."},
+  {n:213, q:"장애인 연금의 종류 중 근로 능력 상실로 인한 소득 감소를 보전해 주는 것은?", opts:["기초급여","부가급여","장애수당","의료급여"], ans:0, exp:"기초급여는 소득 보전, 부가급여는 장애로 인한 추가 비용 보전이 목적입니다."},
+  {n:214, q:"장애인 고용 유형 중 시각장애인 안마사 제도와 같이 특정 직종을 유보하는 방식은?", opts:["할당 고용","보호 고용","지원 고용","유보 고용"], ans:3, exp:"유보 고용은 특정 직종에 대해 특정 장애인에게 독점적 고용 권리를 부여하는 제도입니다."},
+  {n:215, q:"「장애인차별금지법」에서 규정한 '정당한 편의 제공 거부'의 사례로 옳은 것은?", opts:["점자 유도 블록이 없는 지하철역 입구","휠체어 이용자를 위한 경사로 설치 거부","수어 통역 서비스가 없는 공공기관 민원실","위 항목 모두 해당"], ans:3, exp:"장애인의 권리 행사를 위해 필요한 수단(시설, 서비스 등)을 제공하지 않는 것은 모두 정당한 편의 제공 거부에 의한 차별입니다."},
+  {n:216, q:"장애인 자립생활(IL) 운동의 3대 핵심 원칙이 아닌 것은?", opts:["소비자 주권","자기 결정권","전문가의 주도적 결정","자조(Self-help)"], ans:2, exp:"자립생활 모델은 전문가 중심에서 벗어나 장애인 당사자(소비자)의 주권을 강조합니다."},
+  {n:217, q:"장애의 원인을 개인의 신체적 결함으로 보고 '치료'를 목표로 하는 모델은?", opts:["사회적 모델","의료적(개별적) 모델","시민권 모델","자립생활 모델"], ans:1, exp:"의료적 모델은 장애를 고쳐야 할 '비극'이나 '결함'으로 규정합니다."},
+  {n:218, q:"마이클 올리버(Oliver)가 정립한 장애 이론은 무엇인가?", opts:["개별적 모델","사회적 모델","재활 모델","도덕적 모델"], ans:1, exp:"올리버는 장애를 사회적 장벽과 억압의 결과로 보는 사회적 모델의 선구자입니다."},
+  {n:219, q:"WHO의 ICF 분류에서 '신체적 구조나 기능의 손실'을 의미하는 용어는?", opts:["활동(Activity)","참여(Participation)","손상(Impairment)","상황적 요인"], ans:2, exp:"손상은 신체적 부분의 이상이나 상실을 뜻하는 기술적 용어입니다."},
+  {n:220, q:"정신적 장애(Mental Disability)에 해당하는 것은?", opts:["지병 장애","지적 장애","신장 장애","안면 장애"], ans:1, exp:"정신적 장애에는 지적 장애, 자폐성 장애, 정신 장애가 포함됩니다."},
+
+  // 221~230
+  {n:221, q:"우리나라 장애인 등록제에서 판정 기준이 되는 주요 문서는?", opts:["재산 증명서","장애진단서 및 심사 서류","취업 활동 확인서","가족관계 증명서"], ans:1, exp:"장애인 등록은 의학적 판정과 공단의 심사 과정을 거쳐 최종 결정됩니다."},
+  {n:222, q:"에스핑 안데르센의 '탈상품화(De-commodification)' 수준이 높다는 것은 무엇을 뜻하나?", opts:["복지 혜택이 적어 시장 노동에 전적으로 의존한다.","노동력을 팔지 않고도 국가의 지원으로 생계 유지가 가능하다.","장애인이 만든 제품을 시장에서 비싸게 판다.","기업의 자율적 장애인 고용이 활발하다."], ans:1, exp:"탈상품화는 시장 의존도를 낮추고 사회권을 강화하는 복지 수준을 나타내는 지표입니다."},
+  {n:223, q:"장애인 소득보장 제도인 '공공부조'에 해당하는 것은?", opts:["장애연금(국민연금)","산업재해보상보험","장애인연금","민간 장애보험"], ans:2, exp:"장애인연금은 기여와 상관없이 세금으로 지원되는 공공부조 성격의 제도입니다."},
+  {n:224, q:"장애인 의무고용제도(할당제)에서 의무 고용률을 지키지 않은 100인 이상 기업이 내는 돈은?", opts:["고용장려금","고용부담금","과태료","시설 이용료"], ans:1, exp:"의무 고용 미이행 시 고용부담금을 징수하며, 이를 통해 고용 촉진 기금을 마련합니다."},
+  {n:225, q:"장애 학생에게 통합된 교육 환경을 제공하기 위해 일반학교에 설치된 학급은?", opts:["특수학교","특수학급","대안학급","일반학급"], ans:1, exp:"일반학교 내 특수학급은 통합교육을 실천하는 가장 보편적인 형태입니다."},
+  {n:226, q:"「장애인차별금지법」의 시정 기구이자 차별 진정을 접수하는 국가 기구는?", opts:["보건복지부","국가인권위원회","경찰청","법원"], ans:1, exp:"국가인권위원회는 장애 차별에 대한 조사 및 권고 권한을 가진 전담 기구입니다."},
+  {n:227, q:"장애인의 건강권을 보장하기 위해 도입된 '장애인 건강주치의' 제도의 목적은?", opts:["장애인의 취업 알선","중증장애인의 만성질환 및 건강 관리","장애 판정 등급 조정","휠체어 수리 지원"], ans:1, exp:"건강주치의는 장애 특성에 맞는 체계적인 건강 관리 서비스를 제공하기 위해 도입되었습니다."},
+  {n:228, q:"장애인이 시설에서 나와 지역사회에서 자립적으로 사는 것을 지향하는 흐름은?", opts:["시설 대형화","탈시설화","격리 보호","의료적 재활"], ans:1, exp:"탈시설화는 대규모 수용 위주의 정책에서 지역사회 기반 자립 정책으로의 변화를 뜻합니다."},
+  {n:229, q:"장애 여성의 이중적 차별(장애+여성)을 표현하는 대표적 비유는?", opts:["낮달","보름달","태양","등대"], ans:0, exp:"낮에 떠 있는 달처럼 존재하지만 우리 사회에서 그 욕구와 권리가 보이지 않는 상황을 비유합니다."},
+  {n:230, q:"장애인 복지 실천에서 전문가의 역할을 '옹호자(Advocator)'로 보는 모델은?", opts:["의료 모델","자립생활 모델","도덕 모델","격리 모델"], ans:1, exp:"자립생활 모델에서는 사회복지사가 장애인의 권리를 대변하고 연대하는 옹호자 역할을 수행합니다."},
+
+  // 231~240
+  {n:231, q:"「장애인복지법」상 장애인 실태조사의 주기는 몇 년인가?", opts:["1년","3년","5년","10년"], ans:1, exp:"법에 따라 매 3년마다 전국적인 장애인 실태조사를 실시하여 정책에 반영합니다."},
+  {n:232, q:"장애인 활동지원 서비스의 '본인부담금' 결정 기준은?", opts:["장애 유형","수급자의 소득 수준","신청 날짜","활동지원사의 학력"], ans:1, exp:"본인부담금은 이용자의 경제적 능력에 따라 차등적으로 부과됩니다."},
+  {n:233, q:"장애인 평생교육의 필요성으로 가장 적절하지 않은 것은?", opts:["학령기 이후 교육 단절 방지","사회 참여 역량 강화","장애인의 무조건적인 대학 진학 유도","시민 교육 기회 제공"], ans:2, exp:"평생교육은 자아실현과 삶의 질 향상을 위한 것이지 특정 상급 학교 진학을 강제하는 것이 아닙니다."},
+  {n:234, q:"장애인 가족 지원 정책 중 '부모 상담' 서비스의 효과는?", opts:["경제적 수입 증대","장애 자녀의 완치","부모의 양육 스트레스 완화 및 정보 공유","가사 노동의 완전한 해소"], ans:2, exp:"상담을 통해 정서적 지지를 얻고 장애 특성에 맞는 양육 정보를 얻을 수 있습니다."},
+  {n:235, q:"장애인 거주시설의 '소규모화' 및 '가정형 거주'의 사례는?", opts:["요양병원","대형 수용시설","공동생활가정(그룹홈)","전문 재활 센터"], ans:2, exp:"그룹홈은 일반 가정과 유사한 주거 환경에서 소규모로 거주하며 자립을 준비하는 시설입니다."},
+  {n:236, q:"WHO의 ICIDH-2(1997)가 강조한 장애 개념의 핵심은?", opts:["개인적 비극","환경과의 상호작용","의료적 완치","시설 수용의 효율성"], ans:1, exp:"ICIDH-2는 장애를 개인의 상태와 환경 간의 상호작용으로 이해하기 시작한 전환점이었습니다."},
+  {n:237, q:"미국에서 1990년 제정된 포괄적 장애인 인권 법률은?", opts:["ADA","CRPD","IEP","IMF"], ans:0, exp:"ADA(Americans with Disabilities Act)는 세계 최초의 포괄적 장애인 차별금지법입니다."},
+  {n:238, q:"장애인 복지 전달체계 중 가장 기초가 되는 행정 접점은?", opts:["보건복지부","광역시청","읍·면·동 행정복지센터","국립재활원"], ans:2, exp:"장애인 서비스의 상담, 신청, 접수는 모두 거주지 읍면동 센터에서 시작됩니다."},
+  {n:239, q:"장애 발생 원인 중 약 88% 이상을 차지하는 비중은?", opts:["선천적 원인","후천적 원인(질병, 사고 등)","유전적 원인","원인 불명"], ans:1, exp:"실태조사 결과 대다수의 장애는 살아가면서 겪는 사고나 질병 등 후천적 요인에 의해 발생합니다."},
+  {n:240, q:"장애 학생 교육에서 '최소 제한 환경(LRE)'의 의미는?", opts:["장애 학생을 학교에서 격리하는 것","장애 학생을 비장애 학생과 최대한 통합된 환경에 두는 것","집에서만 공부하게 하는 것","병원 내 학급에서만 교육받는 것"], ans:1, exp:"장애 학생이 가능한 한 일반 학생들과 소통하며 배울 수 있는 기회를 보장하는 원칙입니다."},
+
+  // 241~250
+  {n:241, q:"장애인 연금의 수급 기준인 '소득인정액' 산정 시 포함되는 항목은?", opts:["소득 평가액","재산의 소득 환산액","위 항목 모두 해당","오로지 월급만 해당"], ans:2, exp:"소득뿐만 아니라 보유한 재산까지 가치로 환산하여 수급 여부를 결정합니다."},
+  {n:242, q:"장애인 고용 촉진을 위해 장애인 고용률이 높은 사업주에게 주는 돈은?", opts:["고용부담금","고용장려금","영업 정지금","복지 수당"], ans:1, exp:"의무 고용률을 초과하여 장애인을 고용한 사업주에게는 장려금을 지급하여 독려합니다."},
+  {n:243, q:"장애인 활동지원 서비스의 '수급 자격 유효기간'은 보통 몇 년인가?", opts:["1년","3년","5년","무제한"], ans:1, exp:"자격 심사 후 3년이 지나면 갱신 신청을 통해 재심사를 받아야 합니다."},
+  {n:244, q:"장애인 차별 유형 중 '장애인을 도와준다는 명목으로 사회적 참여 기회를 제한하는 것'은?", opts:["직접 차별","간접 차별","정당한 사유 없는 배제","선의의 배려이므로 차별이 아님"], ans:2, exp:"동정이나 보호라는 명목일지라도 당사자의 의사에 반하여 참여를 막는 것은 차별이 될 수 있습니다."},
+  {n:245, q:"장애인 거주시설 이용자의 '자기 결정권' 보장을 위한 실천 방안은?", opts:["시설 규율을 엄격히 적용","기상, 식사 등 일과를 장애인이 직접 선택하게 함","관리자의 지시를 무조건 따르게 함","외부 면회를 금지함"], ans:1, exp:"일상의 아주 작은 부분부터 스스로 결정하는 과정이 자립의 시작입니다."},
+  {n:246, q:"「장애인복지법」에 명시된 '장애인의 날'은 언제인가?", opts:["4월 20일","5월 5일","12월 3일","10월 1일"], ans:0, exp:"장애인에 대한 국민적 관심을 높이기 위해 법으로 정한 기념일입니다."},
+  {n:247, q:"고령 장애인을 위한 맞춤형 서비스 중 '주거 개조'의 구체적 사례는?", opts:["휠체어 경사로 설치 및 화장실 안전바 설치","대형 TV 설치","벽지 색상 변경","정원 가꾸기"], ans:0, exp:"신체적 불편을 고려하여 낙상을 예방하고 이동의 편리성을 높이는 개조가 중요합니다."},
+  {n:248, q:"장애인 가족 내 '비장애 형제자매'에 대한 지원이 필요한 이유는?", opts:["부모의 관심 소외로 인한 정서적 어려움 해소","미래의 잠재적 돌봄 제공자로서의 역량 강화","위 항목 모두 해당","형제자매는 지원 대상이 아님"], ans:2, exp:"비장애 형제자매 역시 가족의 일원으로서 독특한 심리적, 사회적 부담을 가질 수 있습니다."},
+  {n:249, q:"장애인 접근권 보장을 위해 도입된 '유니버설 디자인(UD)'의 특징은?", opts:["장애인 전용 시설을 더 많이 만드는 것","장애인뿐만 아니라 누구나 사용하기 편리하게 처음부터 설계하는 것","특정 부유층만을 위한 고급 디자인","전문가들만 이해할 수 있는 디자인"], ans:1, exp:"모든 사람을 위한 설계(Design for All)를 지향합니다."},
+  {n:250, q:"장애인 자립생활(IL) 모델에서 '장애'를 바라보는 관점은?", opts:["치료해야 할 질병","사회 구조와 환경이 만들어낸 결과","개인의 불운과 비극","신의 저주"], ans:1, exp:"자립생활 모델은 장애를 물리적 장벽과 사회적 태도에 의해 구성된 정체성으로 봅니다."},
+
+  // 251~260
+  {n:251, q:"장애인 인권의 기본 의미로 가장 적절한 것은?", opts:["인간으로서 존엄과 권리를 동등하게 보장받는 것이다.","장애인을 보호시설에 우선적으로 배치하는 것이다.","장애인을 위한 의료서비스만 확대하는 것이다.","장애 유형을 더 세분화하는 것이다."], ans:0, exp:"장애인 인권의 핵심은 장애를 이유로 차별받지 않고 모든 사람이 존엄성과 권리를 동등하게 보장받는 것입니다."},
+  {n:252, q:"이동권의 의미로 가장 적절한 것은?", opts:["장애인이 국가의 허락을 받아 이동하는 권리","누구나 원하는 곳으로 안전하게 이동할 수 있는 권리","소득이 높은 사람만 이용할 수 있는 권리","장애인만 사용할 수 있는 권리"], ans:1, exp:"이동권은 장애인을 포함한 모든 사람이 안전하게 원하는 곳으로 이동할 수 있는 기본적인 권리입니다."},
+  {n:253, q:"장애인 차별을 '구조적 차별'로 이해하는 관점에 대한 설명으로 가장 적절한 것은?", opts:["차별은 개인의 의도와 감정에서만 발생한다고 본다.","장애인 차별은 주로 장애인의 능력 부족에서 비롯된다고 본다.","차별은 제도·환경·문화 등 장애인의 참여를 제한하는 구조 속에서 발생한다고 본다.","차별은 대부분 사적인 관계에서만 발생한다고 본다."], ans:2, exp:"구조적 차별은 상대방의 '의도'가 아니라 제도·공간·규범 등이 장애인을 자동으로 배제하는 구조를 지칭합니다."},
+  {n:254, q:"「장애인차별금지 및 권리구제 등에 관한 법률」의 핵심 의의로 옳은 것은?", opts:["장애인을 보호·시혜 대상으로 규정하였다.","장애인의 전 영역(교육, 고용, 이동 등)에서의 차별을 금지하고 권리구제 체계를 마련하였다.","차별을 금지하되 구제 절차는 포함하지 않았다.","장애인 차별 문제를 민간 자율에 맡기는 법사상이다."], ans:1, exp:"「장애인차별금지법」은 차별금지뿐만 아니라 구제 절차, 손해배상 청구 등을 명시한 권리보장형 법률입니다."},
+  {n:255, q:"장애인 차별을 판단할 때 '의도보다 결과가 중요하다'는 주장의 근거로 적절한 것은?", opts:["의도적 차별만이 법적 문제로 인정된다.","결과적으로 불평등이 발생하지 않으면 차별이 아니다.","차별은 가해자의 의도가 아니라 장애인에게 미치는 영향으로 판단해야 한다.","차별은 개인의 성격 문제이다."], ans:2, exp:"인권 관점에서는 가해자의 의도가 없더라도 결과적으로 불평등을 초래했다면 차별로 판단해야 합니다."},
+  {n:256, q:"장애인 운동의 핵심 의의에 대한 설명으로 가장 적절한 것은?", opts:["장애인을 전문가 중심으로 보호하는 체계를 강화하는 것이다.","장애인을 복지 수혜자로만 인정하는 것이다.","장애인이 권리의 주체로서 사회구조 변화를 요구하는 운동이다.","장애인의 재활치료 확대를 최우선 목표로 한다."], ans:2, exp:"장애인 운동은 장애인을 보호받는 대상에서 권리 주장 주체로 전환한 사회 운동입니다."},
+  {n:257, q:"현대 장애인 운동의 출발점으로 평가되는 사건은?", opts:["1981년 유엔 세계 장애인의 해","1972년 미국 버클리 자립생활센터(CIL) 설립","2001년 오이도역 리프트 추락 사고","2007년 「장애인차별금지법」 제정"], ans:1, exp:"미국 버클리 자립생활센터 설립은 당사자 중심, 자립, 권리 운동이 결합된 현대 장애인 운동 모델의 시초입니다."},
+  {n:258, q:"자립생활(IL) 운동의 철학으로 가장 적절한 것은?", opts:["자립은 '도움 없음'이 아니라 '도움을 선택할 권리'에 기반한다.","자립은 모든 지원 없이 혼자 사는 것을 의미한다.","장애인은 가능하면 보호시설에서 지내야 한다.","자립은 경제적 자립만 달성하면 된다."], ans:0, exp:"'누가 도울 것인가, 어떻게 살 것인가를 스스로 선택하는 것'이 자립이므로 자립생활 운동의 핵심은 자기결정권입니다."},
+  {n:259, q:"우리나라 장애인 운동이 '이동권 운동'을 통해 본격화된 계기로 적절한 것은?", opts:["「장애인고용촉진법」 제정","탈시설 로드맵 발표","장애등급제 도입","2001년 오이도역 리프트 추락 사고"], ans:3, exp:"오이도역 사고는 '장애인은 이동할 권리가 없다'는 현실을 드러내며 대중적 장애인 운동을 촉발하였습니다."},
+  {n:260, q:"전국장애인차별철폐연대(전장연) 운동 방식의 특징으로 적절한 것은?", opts:["비당사자 중심의 전문가 주도 운동이다.","법 제정 요구보다는 문화 활동을 중심으로 한다.","직접행동과 제도·정책 개혁 요구를 병행한다.","시설 중심 복지정책만을 요구한다."], ans:2, exp:"전장연은 지하철 시위 등 직접행동과 제도·정책 개혁 요구라는 이중 전략을 활용하는 것이 특징입니다."},
+
+  // 261~270
+  {n:261, q:"장애인 정책을 설계할 때 가장 중요한 기본 원리는 무엇인가?", opts:["장애인을 시혜의 대상으로 보는 관점","장애인의 권리를 기반으로 정책을 설계하는 것","장애를 개인 문제로만 바라보는 것","장애인을 서비스 대상자로만 보는 것"], ans:1, exp:"장애인정책은 장애인을 권리의 주체로 인정하고 권리가 실현되도록 하는 것에 중점을 두어야 합니다."},
+  {n:262, q:"장애인 복지의 미래 패러다임 변화 방향으로 가장 적절한 것은?", opts:["시설 중심 보호체계를 강화한다.","선별적 복지를 중심으로 한다.","권리 기반·맞춤형 지원·지역사회 통합 중심으로 전환한다.","의료 중심 재활정책을 확대한다."], ans:2, exp:"미래 장애인복지는 권리, 자립, 통합, 참여를 지향하며 보편적 사회권 보장으로 전환하는 것이 핵심입니다."},
+  {n:263, q:"「장애인권리보장법(안)」의 핵심 목적은 무엇인가?", opts:["장애인을 권리의 주체로 인정하고 사회참여를 보장한다.","장애인을 특별한 보호 대상자로만 본다.","장애인을 치료 중심으로 관리한다.","장애인복지시설을 확대한다."], ans:0, exp:"「장애인권리보장법(안)」은 의료적·시혜적 관점에서 벗어나 장애인을 권리의 주체로 명확히 하고 자립과 참여를 보장하고자 합니다."},
+  {n:264, q:"장애의 다양성과 교차성을 반영한 정책 설계가 필요한 이유로 적절한 것은?", opts:["장애인은 대부분 동일한 욕구를 가진 집단이다.","장애 유형별 차이가 거의 없으므로 단일 서비스가 효율적이다.","교차성 정책은 장애인 인권과 무관한 영역이다.","장애는 성별·연령·지역·계층과 결합하여 복합적 불평등을 만든다."], ans:3, exp:"장애는 단일 문제가 아니라 성별, 지역, 빈곤, 고령화 등과 결합하여 복합적인 정책 차별을 낳기 때문입니다."},
+  {n:265, q:"장애인복지정책에서 '국가책임 강화'가 의미하는 바에 가장 가까운 것은 무엇인가?", opts:["장애인 본인과 가족이 모든 문제를 알아서 해결하도록 맡기는 것","장애인에게 필요한 지원을 민간기관이 자율적으로 결정하도록 하는 것","국가가 장애인의 권리 보장과 복지서비스를 책임지고 체계적으로 지원하는 것","장애인 지원을 일시적인 자선이나 기부에 의존하는 것"], ans:2, exp:"국가책임 강화는 장애인 복지를 개인이나 가족의 몫으로 남겨두지 않고 국가와 지자체가 제도와 예산을 통해 보장하는 원칙입니다."},
+  {n:266, q:"휠체어를 이용하는 사람이 계단을 올라가지 못하는 이유는 장애인이기 때문이다.", opts:["O","X"], ans:1, exp:"사회적 모델의 관점에서 보면, 계단을 올라가지 못하는 이유는 장애인 개인의 문제라기보다 엘리베이터나 경사로가 설치되지 않은 환경 때문입니다."},
+  {n:267, q:"장애이론 중 사회적 모델에 대한 설명으로 옳은 것은?", opts:["차별적인 사회 기제를 없애는 것이 중요한 쟁점이다.","장애는 개인의 손상에서 비롯된 문제로 간주한다.","재활전문가의 역할이 중요하다.","장애를 스스로 극복하는 것이 중요하다."], ans:0, exp:"사회적 모델은 장애를 사회적 억압이나 환경적 장벽의 결과로 보고 이를 개선하는 것을 중시합니다."},
+  {n:268, q:"장애등급제와 관련된 설명으로 적절하지 않은 것은?", opts:["장애인을 등급으로 구분하는 것은 차별하는 체제를 만드는 것이다.","장애인서비스지원종합조사는 장애등급제 폐지와 상관이 없다.","장애등급제는 온전하게 폐지되었다고 볼 수 없다.","장애등급제 폐지는 1,842일간 장애인운동의 결과로 이루어낸 결과이다."], ans:1, exp:"서비스 지원 종합조사는 장애등급제 폐지 이후 장애인의 욕구와 환경에 따른 맞춤형 지원을 위해 도입된 핵심 도구입니다."},
+  {n:269, q:"장애인실태조사와 관련된 설명으로 옳지 않은 것은?", opts:["장애인실태조사는 3년의 주기로 실시한다.","장애인의 모든 삶을 드러내기에는 한계가 있다.","2023년 실태조사 결과 장애인이 사회에 요구하는 사항 중 1위는 소득보장이다.","실태조사는 일상생활에 대한 내용만 담겨있다."], ans:3, exp:"실태조사에는 일상생활뿐만 아니라 소득, 고용, 교육, 건강, 주거 등 장애인의 삶 전반에 걸친 내용이 포함됩니다."},
+  {n:270, q:"급진사회복지실천에 대한 설명으로 옳은 것은?", opts:["사회관리가 아닌 사례관리 관점이다.","서비스 제공이 가장 중요하다.","개인과 환경간의 변화를 강조한다.","선별복지적 관점이다."], ans:2, exp:"급진사회복지실천은 단순히 개인을 돕는 것을 넘어 사회 구조적 변화와 환경의 변화를 추구합니다."},
+
+  // 271~280
+  {n:271, q:"우리나라 장애인복지 역사에 대한 설명으로 옳지 않은 것은?", opts:["장애인관련 다양한 법들이 제정되었다.","UN장애인권리협약이 우리나라에서는 아직 비준되지 않았다.","2000년대 이후 중증장애인 중심의 장애인운동이 시작되었다.","장애인복지법은 1980년대에 제정되었다."], ans:1, exp:"우리나라는 UN 장애인권리협약(CRPD)을 이미 비준(2008년)하였습니다."},
+  {n:272, q:"관련부처가 합동으로 5년마다 수립하고 장애인정책의 종합적인 비전과 목표, 세부 과제 등의 내용을 담은 계획은 장애인정책종합계획이다.", opts:["O","X"], ans:0, exp:"법에 근거하여 5년마다 수립되는 우리나라 장애인 정책의 범정부적 중장기 계획입니다."},
+  {n:273, q:"장애인 소득보장에 대한 설명으로 옳은 것은?", opts:["우리나라 장애인 소득보장제도에 장애수당은 없다.","생존권 보장 관점에서 국가가 노력하여야 한다.","장애인가구의 빈곤은 장애인 개인의 문제이다.","탈상품화와는 관련이 없는 내용이다."], ans:1, exp:"헌법 제34조 등에 근거하여 국가는 장애인의 생존권을 보장하기 위해 소득보장 제도를 마련할 의무가 있습니다."},
+  {n:274, q:"한나 아렌트가 설명한 인간의 활동적 삶의 영역에 포함되지 않는 것은?", opts:["노동","작업","침묵","활동"], ans:2, exp:"아렌트는 인간의 활동적 삶을 노동(Labor), 작업(Work), 행위(Action)의 세 영역으로 구분했습니다."},
+  {n:275, q:"장애인 고용과 관련된 설명으로 옳지 않은 것은?", opts:["장애인 노동을 이해하는 새로운 시각이 필요하다.","고용의 질보다 고용의 양적인 측면에 더 중점을 두고 있다.","장애인 고용률은 전체 인구보다 낮다.","장애인 고용제도 유형에는 경쟁고용만 있다."], ans:3, exp:"장애인 고용에는 경쟁고용뿐만 아니라 보호고용, 지원고용, 할당고용 등 다양한 유형이 존재합니다."},
+  {n:276, q:"장애 학생 교육에 대한 내용으로 적절하지 않은 것은?", opts:["「장애인 등에 대한 특수교육법」에 관련 내용을 규정하고 있다.","「장애인평생교육법」이 제정되었다.","특수학교를 통한 분리교육이 최우선적으로 이루어져야 한다.","특수교육 대상은 장애인복지법상 장애인과 일치하지는 않는다."], ans:2, exp:"현대 특수교육은 분리가 아닌 일반 학생과 함께 배우는 통합교육을 최우선적 가치로 지향합니다."},
+  {n:277, q:"장애인 건강권과 관련된 설명으로 옳지 않은 것은?", opts:["장애인 건강권 보장을 위한 법률이 제정되었다.","장애인의 건강 불평등은 확인된 바 없다.","장애친화병원 도입이 필요하다.","건강권 보장을 위한 다양한 조건이 갖추어져야 한다."], ans:1, exp:"장애인은 비장애인에 비해 만성질환 유병률이 높고 미충족 의료율이 높은 등 심각한 건강 불평등을 겪고 있습니다."},
+  {n:278, q:"장애인활동지원은 대표적인 장애인복지관련 전자바우처이다.", opts:["O","X"], ans:0, exp:"장애인 활동지원 서비스는 바우처(이용권)를 통해 제공되는 대표적인 사회서비스입니다."},
+  {n:279, q:"탈시설과 관련된 내용으로 적절하지 않은 것은?", opts:["좋은 시설은 없다.","우리나라는 2021년 탈시설 장애인지역사회자립지원로드맵을 발표하였다.","탈시설의 주요한 목표는 자립생활이다.","아직 관련된 법이 마련되지는 않았다."], ans:3, exp:"2021년 로드맵 발표 등 정책적 기반이 마련되고 있으며, 자립생활 지원을 위한 법적 근거가 존재합니다."},
+  {n:280, q:"탈시설 관련 대담에 나온 활동가의 소속단체는 참여연대이다.", opts:["O","X"], ans:1, exp:"해당 대담자(김정아 활동가)의 소속 단체는 '장애와 인권 발바닥 행동'입니다."},
+
+  // 281~290
+  {n:281, q:"장애 여성에 대한 설명으로 옳은 것은?", opts:["우리 사회에서 다중 차별을 겪는 대표적 집단이다.","장애 남성과 고용률 차이는 없다.","실태조사 결과 대졸의 비율이 가장 높다.","장애 여성을 보호의 대상으로 보아야 한다."], ans:0, exp:"장애 여성은 장애와 성별, 빈곤 등이 겹쳐 발생하는 다중 차별의 상황에 놓여 있습니다."},
+  {n:282, q:"장애인 가족에 대한 설명으로 옳지 않은 것은?", opts:["장애인 가족은 형제자매, 부모, 자녀 등 다양한 구성원이 있다.","현 정책은 장애인에 대한 책임을 가족보다는 국가와 사회에 두고 있다.","「장애아동복지지원법」은 장애인 가족 지원과 관련된 정책을 규정하는 법이다.","장애인 형제자매에 대한 지원방안이 확대될 필요가 있다."], ans:1, exp:"여전히 장애인 돌봄의 상당 부분을 가족이 부담하고 있어, 국가 책임을 더 강화해야 한다는 지적이 많습니다."},
+  {n:283, q:"접근권은 이동권만을 말하는 것이다.", opts:["O","X"], ans:1, exp:"접근권은 물리적 공간의 이동권뿐만 아니라 정보 접근권 등 사회 전반의 시설과 서비스에 대한 접근을 모두 포함합니다."},
+  {n:284, q:"장애인 차별에 대한 설명으로 옳은 것은?", opts:["키오스크는 장애인 차별과 전혀 상관이 없다.","구조적 차별보다는 개인적 차별 해소가 우선 이루어져야 한다.","보편적 설계가 장애인 차별을 해소해나가는 하나의 방안이 될 수 있다.","장애인 차별은 고용 영역에서만 이루어지고 있다."], ans:2, exp:"보편적 설계(유니버설 디자인)는 처음부터 장애 유무와 관계없이 누구나 편리하게 사용하도록 하여 차별적 환경을 제거합니다."},
+  {n:285, q:"「장애인활동지원에 관한 법률」은 장애인 운동의 결과로 제정된 법이다.", opts:["O","X"], ans:0, exp:"장애인 활동지원 제도는 당사자들의 끊임없는 권리 투쟁과 운동을 통해 2011년 법제화되었습니다."},
+  {n:286, q:"장애인 연금 기초급여액의 인상과 관련하여 정부가 목표로 했던 금액(2021년 기준)은?", opts:["20만 원","30만 원","40만 원","50만 원"], ans:1, exp:"제5차 장애인 정책종합계획에 따라 기초급여액을 30만 원까지 인상하는 것이 추진되었습니다."},
+  {n:287, q:"장애인 경제 자립 기반 강화를 위해 소득보장과 함께 연계가 강화되어야 할 서비스는?", opts:["의료 서비스","고용 지원 서비스","여가 서비스","시설 수용 서비스"], ans:1, exp:"단순히 연금만 주는 것이 아니라 일할 수 있는 장애인에게는 고용 서비스를 연계하여 자립을 돕는 것이 중요합니다."},
+  {n:288, q:"장애인 이동권 보장을 위해 전국적으로 도입 및 보급 확대가 필요한 버스의 종류는?", opts:["2층 버스","고속 버스","저상 버스","관광 버스"], ans:2, exp:"저상버스는 휠체어 이용자가 안전하게 탑승할 수 있도록 바닥이 낮게 설계된 버스입니다."},
+  {n:289, q:"장애인 복지 실천의 패러다임이 의료적 모델에서 사회적 모델로 변화할 때 반영되어야 할 법률은?", opts:["국민연금법","장애인복지법","아동복지법","노인복지법"], ans:1, exp:"장애인복지법 상의 장애 정의와 체계를 사회적 모델에 맞게 개정하라는 UN의 권고사항이 있습니다."},
+  {n:290, q:"장애인 정책 수립 시 장애를 성별, 연령, 계층 등과 함께 고려하는 관점을 무엇이라 하는가?", opts:["일차원적 관점","분리주의 관점","교차성(Intersectionality) 관점","개별화 관점"], ans:2, exp:"장애가 다른 정체성과 결합하여 복합적인 차별을 낳는 것을 이해하는 관점입니다."},
+
+  // 291~300
+  {n:291, q:"장애인의 탈시설을 위해 주거 지원뿐만 아니라 보장되어야 할 다른 영역은?", opts:["소득 및 고용","건강 및 의료","교육 및 문화","위 항목 모두 포함"], ans:3, exp:"탈시설은 삶의 전 영역에서 차별 없는 접근과 지원이 동시에 이루어져야 실현 가능합니다."},
+  {n:292, q:"특수교육 지원을 내실화하기 위해 정책적으로 추진되는 과제는?", opts:["특수학교 및 특수학급 신·증설","통합교육 지원 강화","장애 학생 고등교육 지원 확대","위 항목 모두 포함"], ans:3, exp:"제5차 장애인 정책종합계획 등에서 교육권 보장을 위해 추진되는 중점 과제들입니다."},
+  {n:293, q:"장애인 건강권 보장을 위해 전담 의사가 만성질환을 체계적으로 관리해주는 제도는?", opts:["장애인 활동지원 제도","장애인 건강 주치의 제도","장애인 연금 제도","장애인 보조기기 제도"], ans:1, exp:"건강 주치의는 장애 특성에 맞는 체계적인 건강 서비스를 제공하기 위해 도입되었습니다."},
+  {n:294, q:"발달장애인의 개인별 특성에 맞는 복지 서비스를 연계하고 지원하는 전문 기관은?", opts:["노인복지관","장애인 자립생활센터","발달장애인지원센터","동사무소"], ans:2, exp:"발달장애인법에 근거하여 설치된 센터로 권리 옹호와 서비스 지원을 담당합니다."},
+  {n:295, q:"장애인 복지의 미래 지향점 중 '포용 사회'가 의미하는 것은?", opts:["장애인이 사회에서 보이지 않게 하는 사회","장애인이 비장애인을 똑같이 닮아가는 사회","장애 여부와 관계없이 누구나 사회 시스템 내에서 권리를 누리는 사회","시설을 아주 대규모로 지어 보호하는 사회"], ans:2, exp:"다름을 인정하고 물리적·사회적 장벽을 제거하여 모두가 시민으로서 공존하는 사회입니다."},
+  {n:296, q:"장애인 차별 구제를 위해 국가인권위원회에 진정을 넣었을 때 나올 수 있는 조치는?", opts:["피진정인에게 사형 선고","피진정인의 전 재산 몰수","차별 행위의 중지 및 원상 회복 등의 권고","장애 판정 즉시 취소"], ans:2, exp:"인권위는 조사 후 시정 권고를 내리며, 이를 이행하지 않을 경우 법무부 장관이 시정 명령을 내릴 수 있습니다."},
+  {n:297, q:"장애인 권익 옹호 활동 중 장애인 당사자가 스스로 목소리를 내는 것을 무엇이라 하는가?", opts:["자선 활동","자기 옹호(Self-Advocacy)","대리 결정","병원 재활"], ans:1, exp:"자립생활 모델의 핵심 가치로 당사자가 자기 삶의 주권자임을 선언하는 활동입니다."},
+  {n:298, q:"장애인 서비스 지원 종합조사에서 평가하는 항목이 아닌 것은?", opts:["옷 갈아입기","배변 돕기","최종 학력","사회 활동(외출 등)"], ans:2, exp:"종합조사는 일상생활 수행 능력과 서비스 필요도를 평가하며 학력 등은 직접적 항목이 아닙니다."},
+  {n:299, q:"장애 발생 원인 중 사고나 질병 등 후천적 요인이 차지하는 비중은?", opts:["약 10%","약 50%","약 88% 이상","약 100%"], ans:2, exp:"대다수의 장애는 살아가면서 발생하는 사고나 질환에 의해 발생합니다."},
+  {n:300, q:"장애인 복지의 궁극적인 지향점은 무엇인가?", opts:["장애인의 자립과 완전한 사회 참여","장애인의 시설 수용과 안전한 보호","장애인의 무조건적인 재활 치료 완료","장애인을 시혜와 동정의 대상으로 유지"], ans:0, exp:"모든 장애인 복지 정책과 법률은 장애인이 시민으로서 평등한 권리를 누리며 자립적으로 사회에 참여하는 것을 목표로 합니다."},
+];
+
+// ==============================
+// STATE
+// ==============================
+let questions = [];
+let currentIdx = 0;
+let answers = {};       // 선택한 답 저장
+let revealed = {};      // 즉시 피드백: 답을 확정(클릭)한 문제 추적
+let bookmarks = new Set(JSON.parse(localStorage.getItem('pw2_bm') || '[]'));
+let wrongSet = new Set(JSON.parse(localStorage.getItem('pw2_wrong') || '[]'));
+let graded = false;
+let currentMode = '';
+let expandView = false;
+
+let timerInterval = null;
+let timerSeconds = 20 * 60;
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = 20 * 60;
+  updateTimerDisplay();
+  document.getElementById('timer-box').style.display = 'flex';
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      alert('⏰ 시험 시간이 종료되었습니다!');
+      gradeQuiz();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timer-box').style.display = 'none';
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const txt = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const el = document.getElementById('timer-display');
+  el.textContent = txt;
+  el.className = timerSeconds <= 60 ? 'timer-danger' : '';
+}
+
+function toggleExpandView() {
+  expandView = !expandView;
+  const btn = document.getElementById('expand-btn');
+  const quizScreen = document.getElementById('quiz-screen');
+  const expandScreen = document.getElementById('expand-all-screen');
+  if (expandView) {
+    btn.textContent = '⊟';
+    quizScreen.classList.add('hidden');
+    expandScreen.style.display = 'block';
+    renderExpandAll();
+  } else {
+    btn.textContent = '⇅';
+    expandScreen.style.display = 'none';
+    quizScreen.classList.remove('hidden');
+    renderQuestion();
+  }
+}
+
+function renderExpandAll() {
+  const screen = document.getElementById('expand-all-screen');
+  screen.innerHTML = '';
+  const nums = ['①','②','③','④'];
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'all-q-card';
+    card.id = `all-q-${i}`;
+
+    const numDiv = document.createElement('div');
+    numDiv.className = 'q-num';
+    numDiv.textContent = `${i + 1} / ${questions.length} 번 문제 (원번호 ${q.n}번)`;
+    card.appendChild(numDiv);
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'q-text';
+    textDiv.textContent = q.q;
+    card.appendChild(textDiv);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options';
+    const optNums = q.opts.length === 2 ? ['①','②'] : nums;
+    const isRevealed = revealed[i] !== undefined;
+    q.opts.forEach((opt, oi) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      div.innerHTML = `<span class="num">${optNums[oi]}</span><span>${opt}</span>`;
+      if (isRevealed) {
+        if (oi === q.ans) div.classList.add('correct');
+        else if (answers[i] === oi) div.classList.add('wrong');
+        div.style.cursor = 'default';
+        div.style.pointerEvents = 'none';
+      } else {
+        if (answers[i] === oi) div.classList.add('selected');
+        div.onclick = () => { selectOption(oi); renderExpandAll(); };
+      }
+      optsDiv.appendChild(div);
+    });
+    card.appendChild(optsDiv);
+
+    if (isRevealed) {
+      const expDiv = document.createElement('div');
+      expDiv.className = 'explanation show';
+      expDiv.innerHTML = `<div class="exp-label">💡 해설</div><div>${q.exp}</div>`;
+      card.appendChild(expDiv);
+    }
+    screen.appendChild(card);
+  });
+}
+
+function saveBookmarks() { localStorage.setItem('pw2_bm', JSON.stringify([...bookmarks])); }
+function saveWrong() { localStorage.setItem('pw2_wrong', JSON.stringify([...wrongSet])); }
+
+function showStart() {
+  document.getElementById('start-screen').classList.remove('hidden');
+  document.getElementById('quiz-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('expand-all-screen').style.display = 'none';
+  document.getElementById('tabbar').classList.add('hidden');
+  document.getElementById('sidebar').classList.add('hidden');
+  document.getElementById('mode-tag').textContent = '모드 선택 중';
+  document.getElementById('progress-text').textContent = '';
+  document.getElementById('expand-btn').style.display = 'none';
+  setHeaderBtns(false, false, false);
+  stopTimer();
+  graded = false;
+  answers = {};
+  revealed = {};
+  questions = [];
+  currentIdx = 0;
+  expandView = false;
+}
+
+function setHeaderBtns(grade, retry, home) {
+  document.getElementById('btn-header-grade').style.display = grade ? 'inline-block' : 'none';
+  document.getElementById('btn-header-retry').style.display = retry ? 'inline-block' : 'none';
+  document.getElementById('btn-header-home').style.display = home ? 'inline-block' : 'none';
+}
+
+function retryQuiz() {
+  if (!confirm('다시 풀기 하면 현재 답이 초기화됩니다. 계속하시겠습니까?')) return;
+  startQuiz(currentMode);
+}
+
+function startQuiz(mode) {
+  currentMode = mode;
+  graded = false;
+  answers = {};
+  revealed = {};
+  currentIdx = 0;
+  expandView = false;
+  let useTimer = false;
+
+  if (mode === 'random') {
+    questions = shuffle([...ALL_QUESTIONS]).slice(0, 30);
+    document.getElementById('mode-tag').textContent = '랜덤 30문제';
+    useTimer = true;
+  } else if (mode === 'all') {
+    questions = [...ALL_QUESTIONS];
+    document.getElementById('mode-tag').textContent = '전체 150문제';
+    useTimer = false;
+  } else if (mode === 'bookmark') {
+    const bmIds = [...bookmarks];
+    questions = ALL_QUESTIONS.filter((_, i) => bmIds.includes(i));
+    if (questions.length === 0) { alert('📌 책갈피된 문제가 없습니다.'); return; }
+    document.getElementById('mode-tag').textContent = `책갈피 ${questions.length}문제`;
+    useTimer = false;
+  } else if (mode === 'wrong') {
+    questions = [...wrongSet].map(i => ALL_QUESTIONS[i]).filter(Boolean);
+    if (questions.length === 0) { alert('✅ 틀린 문제가 없습니다!'); return; }
+    document.getElementById('mode-tag').textContent = `오답 ${questions.length}문제`;
+    useTimer = false;
+  }
+
+  document.getElementById('start-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('expand-all-screen').style.display = 'none';
+  document.getElementById('quiz-screen').classList.remove('hidden');
+  document.getElementById('tabbar').classList.remove('hidden');
+  document.getElementById('sidebar').classList.remove('hidden');
+  document.getElementById('expand-btn').style.display = 'flex';
+  document.getElementById('expand-btn').textContent = '⇅';
+  setHeaderBtns(false, true, true);
+
+  if (useTimer) startTimer();
+  else stopTimer();
+
+  buildTabbar();
+  renderQuestion();
+  renderGrid();
+}
+
+function navigate(dir) {
+  if (dir === 1 && currentIdx === questions.length - 1) {
+    // 마지막 문제에서 '완료' 클릭 → 결과 화면
+    gradeQuiz();
+    return;
+  }
+  const newIdx = currentIdx + dir;
+  if (newIdx < 0 || newIdx >= questions.length) return;
+  currentIdx = newIdx;
+  renderQuestion();
+  renderGrid();
+}
+
+function goToQuestion(i) {
+  if (expandView) {
+    const card = document.getElementById(`all-q-${i}`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    currentIdx = i;
+    renderGrid();
+    return;
+  }
+  currentIdx = i;
+  renderQuestion();
+  renderGrid();
+}
+
+function buildTabbar() {
+  const bar = document.getElementById('tabbar');
+  bar.innerHTML = '';
+  const total = questions.length;
+  const groupSize = 10;
+  const numGroups = Math.ceil(total / groupSize);
+  for (let g = 0; g < numGroups; g++) {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn';
+    btn.dataset.group = g;
+    const start = g * groupSize + 1;
+    const end = Math.min((g + 1) * groupSize, total);
+    btn.textContent = `${start}~${end}`;
+    btn.onclick = () => goToQuestion(g * groupSize);
+    bar.appendChild(btn);
+  }
+  updateTabbar();
+}
+
+function updateTabbar() {
+  const groupSize = 10;
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const g = parseInt(btn.dataset.group);
+    const start = g * groupSize;
+    const end = Math.min((g + 1) * groupSize, questions.length);
+    const total = end - start;
+    const done = Object.keys(answers).filter(k => parseInt(k) >= start && parseInt(k) < end).length;
+    const numStart = start + 1;
+    const numEnd = end;
+    btn.textContent = `${numStart}~${numEnd} (${done}/${total})`;
+    const curGroup = Math.floor(currentIdx / groupSize);
+    btn.classList.toggle('active', g === curGroup);
+  });
+}
+
+function renderQuestion() {
+  const q = questions[currentIdx];
+  if (!q) return;
+
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  document.getElementById('q-num-label').textContent = `${currentIdx + 1} / ${questions.length} 번 문제 (원번호 ${q.n}번)`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-text').style.fontWeight = '600';
+
+  const optsCont = document.getElementById('options');
+  optsCont.innerHTML = '';
+
+  const nums = q.opts.length === 2 ? ['①','②'] : ['①','②','③','④'];
+  const isRevealed = revealed[currentIdx] !== undefined; // 이 문제에서 이미 답 클릭했는지
+
+  q.opts.forEach((opt, oi) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `<span class="num">${nums[oi]}</span><span>${opt}</span>`;
+
+    if (isRevealed) {
+      // 답 클릭 후: 정답/오답 색상 표시, 클릭 불가
+      const chosen = answers[currentIdx];
+      if (oi === q.ans) div.classList.add('correct');
+      else if (chosen === oi) div.classList.add('wrong');
+      // 클릭 비활성화 (pointer-events none)
+      div.style.cursor = 'default';
+      div.style.pointerEvents = 'none';
+    } else {
+      // 답 클릭 전: 선택 가능
+      if (answers[currentIdx] === oi) div.classList.add('selected');
+      div.onclick = () => selectOption(oi);
+    }
+    optsCont.appendChild(div);
+  });
+
+  // 해설: 답 클릭 후 즉시 표시
+  const expEl = document.getElementById('explanation');
+  const expText = document.getElementById('exp-text');
+  if (isRevealed) {
+    expEl.classList.add('show');
+    expText.textContent = q.exp;
+  } else {
+    expEl.classList.remove('show');
+  }
+
+  // 책갈피
+  const bmBtn = document.getElementById('bm-btn');
+  if (bookmarks.has(origIdx)) {
+    bmBtn.classList.add('bookmarked');
+    bmBtn.textContent = '🔖 책갈피됨';
+  } else {
+    bmBtn.classList.remove('bookmarked');
+    bmBtn.textContent = '🔖 책갈피';
+  }
+
+  document.getElementById('btn-prev').disabled = currentIdx === 0;
+  document.getElementById('btn-next').textContent = currentIdx === questions.length - 1 ? '완료' : '다음 ▶';
+
+  const answered = Object.keys(revealed).length;
+  document.getElementById('progress-text').textContent = `${answered} / ${questions.length} 문제 응답`;
+  document.getElementById('sb-progress').textContent = `${answered} / ${questions.length} 응답`;
+
+  updateTabbar();
+}
+
+function selectOption(oi) {
+  if (revealed[currentIdx] !== undefined) return; // 이미 확정된 경우 무시
+  answers[currentIdx] = oi;
+  revealed[currentIdx] = oi; // 즉시 확정 & 피드백
+
+  // 오답 세트 업데이트
+  const q = questions[currentIdx];
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  if (oi === q.ans) wrongSet.delete(origIdx);
+  else wrongSet.add(origIdx);
+  saveWrong();
+
+  renderQuestion();
+  renderGrid();
+}
+
+function toggleBookmark() {
+  const q = questions[currentIdx];
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  if (bookmarks.has(origIdx)) bookmarks.delete(origIdx);
+  else bookmarks.add(origIdx);
+  saveBookmarks();
+  renderQuestion();
+  renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('q-grid');
+  grid.innerHTML = '';
+  const nums = ['①','②','③','④'];
+  questions.forEach((q, i) => {
+    const origIdx = ALL_QUESTIONS.indexOf(q);
+    const div = document.createElement('div');
+    div.className = 'q-dot';
+
+    const numEl = document.createElement('span');
+    numEl.className = 'dot-num';
+    numEl.textContent = q.n;
+    div.appendChild(numEl);
+
+    if (answers[i] !== undefined) {
+      const ansEl = document.createElement('span');
+      ansEl.className = 'dot-ans';
+      const optNums = q.opts.length === 2 ? ['①','②'] : nums;
+      ansEl.textContent = optNums[answers[i]];
+      div.appendChild(ansEl);
+    }
+
+    div.onclick = () => goToQuestion(i);
+
+    if (i === currentIdx) div.classList.add('current');
+    if (bookmarks.has(origIdx)) div.classList.add('bookmarked-dot');
+
+    // 답을 클릭(확정)한 경우 정답/오답 색상 표시
+    if (revealed[i] !== undefined) {
+      if (answers[i] === q.ans) div.classList.add('correct-dot');
+      else div.classList.add('wrong-dot');
+    } else if (answers[i] !== undefined) {
+      div.classList.add('answered');
+    }
+    grid.appendChild(div);
+  });
+}
+
+function gradeQuiz() {
+  stopTimer();
+  document.getElementById('expand-btn').style.display = 'none';
+  document.getElementById('expand-all-screen').style.display = 'none';
+  expandView = false;
+
+  let correct = 0, wrong = 0, unanswered = 0;
+  questions.forEach((q, i) => {
+    const origIdx = ALL_QUESTIONS.indexOf(q);
+    if (revealed[i] === undefined) {
+      unanswered++;
+      wrongSet.add(origIdx);
+    } else if (answers[i] === q.ans) {
+      correct++;
+      wrongSet.delete(origIdx);
+    } else {
+      wrong++;
+      wrongSet.add(origIdx);
+    }
+  });
+  saveWrong();
+
+  const total = questions.length;
+  const score = Math.round((correct / total) * 100);
+
+  document.getElementById('result-screen').classList.remove('hidden');
+  document.getElementById('quiz-screen').classList.add('hidden');
+  document.getElementById('res-score').textContent = `${score}점`;
+  document.getElementById('res-sub').textContent = `총 ${total}문제 중 ${correct}문제 정답`;
+  document.getElementById('res-c').textContent = correct;
+  document.getElementById('res-w').textContent = wrong + unanswered;
+  document.getElementById('res-b').textContent = bookmarks.size;
+  setHeaderBtns(false, false, true);
+  renderGrid();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+</script>
+</body>
+</html>
