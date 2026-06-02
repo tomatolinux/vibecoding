@@ -600,6 +600,7 @@ const ALL_QUESTIONS = [
 let questions = [];
 let currentIdx = 0;
 let answers = {};
+let revealed = {}; // 클릭으로 확정한 문제 인덱스 기록
 let bookmarks = new Set(JSON.parse(localStorage.getItem('pw_bm') || '[]'));
 let wrongSet = new Set(JSON.parse(localStorage.getItem('pw_wrong') || '[]'));
 let graded = false;
@@ -682,18 +683,21 @@ function renderExpandAll() {
       const div = document.createElement('div');
       div.className = 'option';
       div.innerHTML = `<span class="num">${nums[oi]}</span><span>${opt}</span>`;
-      if (graded) {
+      const isRev = revealed[i] !== undefined;
+      if (graded || isRev) {
         if (oi === q.ans) div.classList.add('correct');
         else if (answers[i] === oi && answers[i] !== q.ans) div.classList.add('wrong');
+        div.style.cursor = 'default';
+        div.style.pointerEvents = 'none';
       } else {
         if (answers[i] === oi) div.classList.add('selected');
-        div.onclick = () => { answers[i] = oi; renderExpandAll(); renderGrid(); };
+        div.onclick = () => { selectOption(oi); renderExpandAll(); };
       }
       optsDiv.appendChild(div);
     });
     card.appendChild(optsDiv);
 
-    if (graded) {
+    if (graded || revealed[i] !== undefined) {
       const expDiv = document.createElement('div');
       expDiv.className = 'explanation show';
       expDiv.innerHTML = `<div class="exp-label">💡 해설</div><div>${q.exp}</div>`;
@@ -720,6 +724,7 @@ function showStart() {
   stopTimer();
   graded = false;
   answers = {};
+  revealed = {};
   questions = [];
   currentIdx = 0;
   expandView = false;
@@ -740,6 +745,7 @@ function startQuiz(mode) {
   currentMode = mode;
   graded = false;
   answers = {};
+  revealed = {};
   currentIdx = 0;
   expandView = false;
   let useTimer = false;
@@ -853,15 +859,25 @@ function renderQuestion() {
   optsCont.innerHTML = '';
 
   const nums = ['①','②','③','④'];
+  const isRevealed = revealed[currentIdx] !== undefined;
+
   q.opts.forEach((opt, oi) => {
     const div = document.createElement('div');
     div.className = 'option';
     div.innerHTML = `<span class="num">${nums[oi]}</span><span>${opt}</span>`;
 
     if (graded) {
+      // 최종 채점 후 보기
       const chosen = answers[currentIdx];
       if (oi === q.ans) div.classList.add('correct');
       else if (chosen === oi && chosen !== q.ans) div.classList.add('wrong');
+    } else if (isRevealed) {
+      // 클릭 직후 즉시 피드백 (랜덤/전체 모드)
+      const chosen = answers[currentIdx];
+      if (oi === q.ans) div.classList.add('correct');
+      else if (chosen === oi) div.classList.add('wrong');
+      div.style.cursor = 'default';
+      div.style.pointerEvents = 'none';
     } else {
       if (answers[currentIdx] === oi) div.classList.add('selected');
       div.onclick = () => selectOption(oi);
@@ -871,7 +887,7 @@ function renderQuestion() {
 
   const expEl = document.getElementById('explanation');
   const expText = document.getElementById('exp-text');
-  if (graded) {
+  if (graded || isRevealed) {
     expEl.classList.add('show');
     expText.textContent = q.exp;
   } else {
@@ -890,7 +906,7 @@ function renderQuestion() {
   document.getElementById('btn-prev').disabled = currentIdx === 0;
   document.getElementById('btn-next').textContent = currentIdx === questions.length - 1 ? '완료' : '다음 ▶';
 
-  const answered = Object.keys(answers).length;
+  const answered = Object.keys(revealed).length;
   document.getElementById('progress-text').textContent = `${answered} / ${questions.length} 문제 응답`;
   document.getElementById('sb-progress').textContent = `${answered} / ${questions.length} 응답`;
 
@@ -899,7 +915,17 @@ function renderQuestion() {
 
 function selectOption(oi) {
   if (graded) return;
+  if (revealed[currentIdx] !== undefined) return; // 이미 확정된 문제는 재클릭 불가
   answers[currentIdx] = oi;
+  revealed[currentIdx] = oi;
+
+  // 오답 세트 즉시 업데이트
+  const q = questions[currentIdx];
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  if (oi === q.ans) wrongSet.delete(origIdx);
+  else wrongSet.add(origIdx);
+  saveWrong();
+
   renderQuestion();
   renderGrid();
 }
@@ -942,6 +968,9 @@ function renderGrid() {
     if (graded) {
       if (answers[i] === q.ans) div.classList.add('correct-dot');
       else if (answers[i] !== undefined) div.classList.add('wrong-dot');
+    } else if (revealed[i] !== undefined) {
+      if (answers[i] === q.ans) div.classList.add('correct-dot');
+      else div.classList.add('wrong-dot');
     } else {
       if (answers[i] !== undefined) div.classList.add('answered');
     }
@@ -963,7 +992,7 @@ function gradeQuiz() {
   });
   saveWrong();
 
-  const unanswered = questions.length - Object.keys(answers).length;
+  const unanswered = questions.length - Object.keys(revealed).length;
   const score = Math.round((correct / questions.length) * 100);
 
   document.getElementById('result-screen').classList.remove('hidden');
