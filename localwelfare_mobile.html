@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>지역사회복지론 워크북 연습문제</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+  :root {
+    --primary: #1a5276;
+    --primary-light: #2e86c1;
+    --accent: #e74c3c;
+    --accent2: #f39c12;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --sidebar: #1a3a5c;
+    --sidebar-text: #cfe2f3;
+    --correct: #1e8449;
+    --wrong: #c0392b;
+    --bookmark: #e67e22;
+    --border: #d5e8f0;
+    --text: #1a252f;
+    --muted: #7f8c8d;
+    --header-h: 56px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: var(--header-h);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    z-index: 100;
+  }
+  #header .title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  #header .title span { font-weight: 300; font-size: 14px; margin-left: 8px; opacity: 0.8; }
+  #header .right-info { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  #header .right-info .tag { background: rgba(255,255,255,0.15); border-radius: 4px; padding: 3px 9px; font-size: 12px; }
+
+  /* 헤더 우상단 채점/처음으로 버튼 */
+  .header-action-btn {
+    padding: 6px 13px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    transition: opacity .15s;
+    display: none;
+  }
+  .header-action-btn:hover { opacity: .85; }
+  #btn-header-grade { background: #e74c3c; color: #fff; }
+  #btn-header-retry { background: #e67e22; color: #fff; }
+  #btn-header-home  { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+
+  /* ── TAB BAR ── */
+  #tabbar {
+    background: #eaf2f8;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 20px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .tab-btn {
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background: #dce9f5;
+    color: var(--primary);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    transition: background .15s;
+  }
+  .tab-btn.active { background: var(--card); color: var(--primary); font-weight: 700; }
+
+  /* ── BODY LAYOUT ── */
+  #body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── MAIN AREA ── */
+  #main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    position: relative;
+  }
+
+  /* ── START SCREEN ── */
+  #start-screen {
+    max-width: 560px;
+    margin: 60px auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 48px 40px;
+    text-align: center;
+  }
+  #start-screen h2 { font-size: 22px; color: var(--primary); margin-bottom: 8px; }
+  #start-screen p { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+  .start-options { display: flex; flex-direction: column; gap: 14px; }
+  .start-btn {
+    padding: 18px 24px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: #f7fbff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    transition: all .2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .start-btn:hover { border-color: var(--primary-light); background: #eaf3fb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .start-btn .icon { font-size: 26px; }
+  .start-btn small { display: block; font-size: 12px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+
+  /* ── QUESTION CARD ── */
+  .q-num { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+  .q-text {
+    font-size: 15px;
+    line-height: 1.75;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .q-box {
+    background: #f8fbfd;
+    border-left: 3px solid var(--primary-light);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #1c2e3e;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--card);
+    transition: all .15s;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .option:hover { border-color: var(--primary-light); background: #eaf3fb; }
+  /* 사용자가 선택한 답: 파란 배경으로 문제번호와 명확히 구분 */
+  .option.selected { border-color: var(--primary); background: #d6eaf8; color: var(--primary); font-weight: 600; }
+  .option.correct { border-color: var(--correct); background: #eafaf1; color: var(--correct); }
+  .option.wrong { border-color: var(--wrong); background: #fdedec; color: var(--wrong); }
+  .option.show-correct { border-color: var(--correct); background: #eafaf1; color: var(--correct); }
+  .option .num { font-weight: 700; min-width: 20px; }
+
+  /* explanation */
+  .explanation {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: #fdfaf0;
+    border-left: 3px solid var(--accent2);
+    border-radius: 4px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #5d4037;
+  }
+  .explanation.show { display: block; }
+  .exp-label { font-weight: 700; color: var(--accent2); margin-bottom: 4px; }
+
+  /* bottom nav */
+  .q-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    padding: 9px 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+    transition: all .15s;
+  }
+  .nav-btn:hover { background: #eaf3fb; border-color: var(--primary-light); }
+  .nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .nav-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .nav-btn.primary:hover { background: var(--primary-light); }
+
+  .bm-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all .15s;
+  }
+  .bm-btn.bookmarked { color: var(--bookmark); border-color: var(--bookmark); background: #fef5e7; }
+  .bm-btn:hover { border-color: var(--bookmark); color: var(--bookmark); }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 220px;
+    background: var(--sidebar);
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 16px 12px;
+  }
+  #sidebar h4 { color: var(--sidebar-text); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; }
+  #q-grid { display: flex; flex-direction: column; gap: 4px; }
+  .q-dot {
+    width: 100%;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all .15s;
+    border: 1.5px solid transparent;
+  }
+  .q-dot:hover { background: rgba(255,255,255,0.2); }
+  .q-dot.current { border-color: #7fb3d3; color: #fff; background: rgba(255,255,255,0.15); }
+  .q-dot.answered { background: rgba(255,255,255,0.15); color: #aed6f1; }
+  .q-dot.bookmarked-dot { background: rgba(230,126,34,0.35); border-color: var(--bookmark); color: #f0a500; }
+  .q-dot.correct-dot { background: rgba(30,132,73,0.4); color: #82e0aa; }
+  .q-dot.wrong-dot { background: rgba(192,57,43,0.45); color: #f1948a; }
+
+  .q-dot .dot-num {
+    min-width: 22px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.75);
+    font-size: 11px;
+  }
+  /* 선택된 답 표시: 흰 배경 뱃지 - 문제번호와 배경 명확히 구분 */
+  .q-dot .dot-ans {
+    font-size: 12px;
+    margin-left: 4px;
+    background: rgba(255,255,255,0.88);
+    color: var(--sidebar);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-weight: 700;
+  }
+
+  .sidebar-score {
+    margin-top: 18px;
+    padding: 12px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 8px;
+    color: var(--sidebar-text);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .sidebar-score strong { font-size: 20px; color: #fff; }
+
+  .score-actions { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .score-actions button {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .btn-grade { background: var(--accent); color: #fff; }
+  .btn-retry { background: var(--bookmark); color: #fff; }
+  .btn-home { background: rgba(255,255,255,0.15); color: #fff; }
+
+  /* result screen */
+  #result-screen {
+    max-width: 580px;
+    margin: 40px auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 40px 36px;
+    text-align: center;
+  }
+  #result-screen h2 { font-size: 24px; color: var(--primary); margin-bottom: 6px; }
+  .score-big { font-size: 64px; font-weight: 700; color: var(--primary); line-height: 1; margin: 20px 0 8px; }
+  .score-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+  .result-grid { display: flex; gap: 16px; justify-content: center; margin-bottom: 28px; }
+  .result-stat { flex: 1; padding: 16px; border-radius: 10px; }
+  .result-stat.c { background: #eafaf1; color: var(--correct); }
+  .result-stat.w { background: #fdedec; color: var(--wrong); }
+  .result-stat.b { background: #fef5e7; color: var(--bookmark); }
+  .result-stat .label { font-size: 12px; margin-bottom: 4px; }
+  .result-stat .val { font-size: 28px; font-weight: 700; }
+  .result-actions { display: flex; flex-direction: column; gap: 10px; }
+  .result-actions button {
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    transition: opacity .15s;
+  }
+  .result-actions button:hover { opacity: .85; }
+  .btn-a { background: var(--accent); color: #fff; }
+  .btn-b { background: var(--bookmark); color: #fff; }
+  .btn-c { background: var(--primary); color: #fff; }
+  .btn-d { background: #ecf0f1; color: var(--text); }
+
+  .hidden { display: none !important; }
+
+  /* ── EXPAND ALL VIEW ── */
+  #expand-all-screen { display: none; padding: 24px 28px; }
+  #expand-all-screen.active { display: block; }
+  .all-q-card {
+    background: var(--card);
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .all-q-card .q-num { font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 700; }
+  .all-q-card .q-text { font-size: 14px; font-weight: 600; margin-bottom: 14px; line-height: 1.7; }
+  .all-q-card .options { gap: 7px; }
+  .all-q-card .option { padding: 9px 13px; font-size: 13px; }
+
+  #timer-box { display: none; }
+
+  .timer-danger { color: #ff6b6b !important; animation: blink .8s step-end infinite; }
+  @keyframes blink { 50% { opacity: .4; } }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-thumb { background: #b0c4d8; border-radius: 3px; }
+
+  /* 답을 고른 문제는 바로 채점되므로 더 이상 바꿀 수 없음 */
+  .option.locked { cursor: default; }
+  .option.locked:hover { border-color: inherit; }
+  .option.correct.locked:hover, .option.show-correct.locked:hover { border-color: var(--correct); background: #eafaf1; }
+  .option.wrong.locked:hover { border-color: var(--wrong); background: #fdedec; }
+  .option.locked:not(.correct):not(.wrong):hover { border-color: var(--border); background: var(--card); }
+  .feedback { font-weight: 700; margin-bottom: 4px; }
+  .feedback.ok { color: var(--correct); }
+  .feedback.ng { color: var(--wrong); }
+
+  /* 사이드바 상단 버튼 묶음 (폰 모드에서만 표시) */
+  #side-actions { display: none; }
+  #btn-phone { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); display: inline-block; }
+
+  /* ── PHONE MODE ── */
+  body.phone { height: 100dvh; }
+  body.phone #header { height: 40px; padding: 0 10px; }
+  body.phone #header .title { font-size: 14px; }
+  body.phone #header .title span { display: none; }
+  body.phone.quiz-on #header { display: none; }
+  body.phone #main { padding: 10px 12px; }
+  body.phone #start-screen { margin: 12px auto; padding: 22px 16px; }
+  body.phone #start-screen h2 { font-size: 18px; }
+  body.phone #start-screen p { margin-bottom: 16px; }
+  body.phone .start-options { gap: 8px; }
+  body.phone .start-btn { padding: 11px 14px; font-size: 14px; }
+  body.phone .start-btn .icon { font-size: 20px; }
+
+  body.phone .q-num { font-size: 11px; margin-bottom: 4px; }
+  body.phone .q-text { font-size: 14.5px; line-height: 1.55; margin-bottom: 10px; }
+  body.phone .q-box { padding: 8px 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.6; }
+  body.phone .options { gap: 5px; }
+  body.phone .option { padding: 8px 10px; gap: 8px; font-size: 13.5px; line-height: 1.45; border-radius: 6px; }
+  body.phone .explanation { margin-top: 8px; padding: 8px 10px; font-size: 12.5px; line-height: 1.55; }
+  body.phone .q-nav { margin-top: 12px; padding-top: 10px; }
+  body.phone .nav-btn { padding: 8px 14px; }
+  body.phone .bm-btn { padding: 7px 11px; }
+  body.phone #expand-all-screen { padding: 0; }
+  body.phone .all-q-card { padding: 10px 12px; margin-bottom: 10px; }
+  body.phone .all-q-card .q-text { margin-bottom: 8px; }
+  body.phone .all-q-card .options { gap: 5px; }
+  body.phone .all-q-card .option { padding: 7px 10px; }
+  body.phone #result-screen { margin: 12px auto; padding: 20px 16px; }
+  body.phone .score-big { font-size: 44px; margin: 10px 0 6px; }
+  body.phone .result-grid { gap: 8px; margin-bottom: 14px; }
+  body.phone .result-stat { padding: 10px 6px; }
+  body.phone .result-actions button { padding: 10px; }
+
+  body.phone #side-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  body.phone #side-actions button {
+    flex: 1 1 auto; padding: 7px 6px; border-radius: 6px; border: none; cursor: pointer;
+    font-family: inherit; font-size: 12px; font-weight: 700; white-space: nowrap;
+  }
+  #sa-grade { background: #e74c3c; color: #fff; }
+  #sa-retry { background: #e67e22; color: #fff; }
+  #sa-home, #sa-expand, #sa-phone { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3) !important; }
+  #sa-timer { flex-basis: 100%; text-align: center; color: #fff; font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+
+  /* 폰 가로모드: 오른쪽 좁은 사이드바 */
+  @media (orientation: landscape) {
+    body.phone #sidebar { width: 150px; padding: 8px 8px; }
+    body.phone .q-dot { padding: 5px 8px; }
+  }
+  /* 폰 세로모드: 위쪽 가로 막대 (버튼 + 문제번호 가로 스크롤) */
+  @media (orientation: portrait) {
+    body.phone #body { flex-direction: column-reverse; }
+    body.phone #sidebar { width: 100%; min-width: 0; padding: 6px 8px 4px; overflow: hidden; }
+    body.phone #main { min-width: 0; width: 100%; }
+    body.phone #sidebar h4 { display: none; }
+    body.phone #side-actions { margin-bottom: 6px; }
+    body.phone #side-actions { flex-wrap: nowrap; }
+    body.phone #side-actions button { flex: 1 1 0; min-width: 0; padding: 6px 2px; font-size: 11.5px; }
+    body.phone #sa-expand, body.phone #sa-phone { flex: 0 0 34px !important; }
+    body.phone #sa-timer { flex: 0 0 auto; font-size: 13px; align-self: center; }
+    body.phone #q-grid { flex-direction: row; overflow-x: auto; gap: 4px; padding-bottom: 4px; }
+    body.phone .q-dot { width: auto; flex: 0 0 auto; padding: 5px 7px; }
+    body.phone .sidebar-score { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="title">지역사회복지론 <span>강별 연습문제</span></div>
+  <div class="right-info">
+    <span class="tag" id="mode-tag">모드 선택 중</span>
+    <span id="progress-text" style="font-size:13px;opacity:.85"></span>
+    <div id="timer-box" style="display:none;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border-radius:6px;padding:4px 12px;">
+      <span style="font-size:11px;opacity:.8;line-height:1.3;">남은<br>시간</span>
+      <span id="timer-display" style="font-size:20px;font-weight:700;letter-spacing:1px;font-variant-numeric:tabular-nums;">20:00</span>
+    </div>
+    <button id="btn-header-grade" class="header-action-btn" onclick="gradeQuiz()">📊 채점하기</button>
+    <button id="btn-header-retry" class="header-action-btn" onclick="retryQuiz()">🔄 다시하기</button>
+    <button id="btn-header-home"  class="header-action-btn" onclick="showStart()">🏠 처음으로</button>
+    <button id="btn-phone" class="header-action-btn" onclick="togglePhoneMode()">📱 폰 모드</button>
+    <button id="expand-btn" onclick="toggleExpandView()" title="전체보기/한문제씩" style="display:none;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:6px;color:#fff;width:38px;height:38px;font-size:20px;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;">⇅</button>
+  </div>
+</div>
+
+
+<div id="body">
+  <div id="main">
+    <!-- Start Screen -->
+    <div id="start-screen">
+      <h2>📚 지역사회복지론</h2>
+      <p>1강~14강 연습문제 · 총 42문항</p><p style="font-size:12px;color:#b03a2e;margin-top:-20px;margin-bottom:18px;">※ 제공된 PDF는 14강까지 수록되어 있어 15강 문제는 포함되지 않았습니다.</p>
+      <div class="start-options">
+        <button class="start-btn" onclick="startQuiz('random')">
+          <span class="icon">🎲</span>
+          <div>
+            랜덤 30문제
+            <small>전체 문제 중 무작위로 30문항 출제 · ⏱ 20분 제한</small>
+          </div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('all')">
+          <span class="icon">📋</span>
+          <div>
+            전체 문제 풀기
+            <small>1강부터 14강까지 전체 42문항 · 시간 제한 없음</small>
+          </div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('bookmark')">
+          <span class="icon">🔖</span>
+          <div>
+            책갈피 문제만 풀기
+            <small>저장된 책갈피 문제만 출제</small>
+          </div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('wrong')">
+          <span class="icon">❌</span>
+          <div>
+            틀린 문제만 다시 풀기
+            <small>이전 채점에서 틀린 문제만 출제</small>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden">
+      <div class="q-num" id="q-num-label"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-box hidden" id="q-box"></div>
+      <div class="options" id="options"></div>
+      <div class="explanation hidden" id="explanation">
+        <div id="exp-feedback"></div>
+        <div class="exp-label">💡 해설</div>
+        <div id="exp-text"></div>
+      </div>
+      <div class="q-nav">
+        <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">◀ 이전</button>
+        <div style="display:flex;gap:10px;">
+          <button class="bm-btn" id="bm-btn" onclick="toggleBookmark()">🔖 책갈피</button>
+        </div>
+        <button class="nav-btn primary" id="btn-next" onclick="navigate(1)">다음 ▶</button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden">
+      <h2>🎉 채점 결과</h2>
+      <div class="score-big" id="res-score"></div>
+      <div class="score-sub" id="res-sub"></div>
+      <div class="result-grid">
+        <div class="result-stat c"><div class="label">✅ 정답</div><div class="val" id="res-c"></div></div>
+        <div class="result-stat w"><div class="label">❌ 오답</div><div class="val" id="res-w"></div></div>
+        <div class="result-stat b"><div class="label">🔖 책갈피</div><div class="val" id="res-b"></div></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-a" onclick="startQuiz('wrong')">❌ 틀린 문제만 다시 풀기</button>
+        <button class="btn-b" onclick="startQuiz('bookmark')">🔖 책갈피 문제 풀기</button>
+        <button class="btn-c" onclick="startQuiz('all')">📋 전체 문제 다시 풀기</button>
+        <button class="btn-d" onclick="showStart()">🏠 처음으로</button>
+      </div>
+    </div>
+
+    <!-- Expand All Screen -->
+    <div id="expand-all-screen"></div>
+  </div>
+
+  <div id="sidebar" class="hidden">
+    <div id="side-actions">
+      <button id="sa-grade" onclick="gradeQuiz()">📊 채점하기</button>
+      <button id="sa-retry" onclick="retryQuiz()">🔄 다시하기</button>
+      <button id="sa-home" onclick="showStart()">🏠 처음으로</button>
+      <button id="sa-expand" onclick="toggleExpandView()" title="전체보기/한문제씩">⇅</button>
+      <button id="sa-phone" onclick="togglePhoneMode()" title="폰 모드 끄기 (PC 화면)">PC</button>
+      <div id="sa-timer" class="hidden"></div>
+    </div>
+    <h4>문제 현황</h4>
+    <div id="q-grid"></div>
+  </div>
+</div>
+
+<script>
+// ==============================
+// QUESTION DATA (6강~15강, 43 questions)
+// ==============================
+const ALL_QUESTIONS = [
+  {
+    "lec": 1,
+    "q": "다음 중 적절하게 연결된 것은?",
+    "opts": [
+      "인식→판단→행위 : 본능체계",
+      "인식→판단→행위 : 즉자적 존재",
+      "인식→판단→행위 : 사고체계",
+      "인식→판단→행위 : AI 체계"
+    ],
+    "ans": 2,
+    "exp": "인식, 판단, 행위는 자연이 인간에게만 부여한 절대적인 과정임"
+  },
+  {
+    "lec": 1,
+    "q": "인간 사고체계 궁극의 목적은 무엇인가?",
+    "opts": [
+      "돈",
+      "명예",
+      "권력",
+      "행복"
+    ],
+    "ans": 3,
+    "exp": "‘궁극’에 담겨 있는 의미를 파악해야 함"
+  },
+  {
+    "lec": 1,
+    "q": "생각은 사회를 변화시키는 (   ) 이다.",
+    "opts": [
+      "제도",
+      "윤활유",
+      "힘",
+      "촉매제"
+    ],
+    "ans": 2,
+    "exp": "인간의 역사가 발전(변화)하는 근본적 원인은 인간의 사고임"
+  },
+  {
+    "lec": 2,
+    "q": "지역사회는 개인의 삶이 (    )되고, (    )되며 (    )하는 (    )의 장이다. 괄호 안에 위치할 단어가 적절한 순서로 배치된 것을 고르시오.",
+    "opts": [
+      "유지, 형성, 관계, 변화",
+      "형성, 유지, 변화, 관계",
+      "변화, 관계, 유지, 형성",
+      "형성, 변화, 유지, 관계"
+    ],
+    "ans": 1,
+    "exp": "제2강 첫 장에 제시된 문장의 맥락에 기반함."
+  },
+  {
+    "lec": 2,
+    "q": "인간은 독립적이지만, 동시에 (    ) 속에서 살아가는 존재다. 괄호 안에 들어갈 가장 본질적 의미의 개념을 선택하시오.",
+    "opts": [
+      "투쟁",
+      "거래",
+      "관계",
+      "협력"
+    ],
+    "ans": 2,
+    "exp": "‘본질적 의미’에 초점을 맞추어야 함."
+  },
+  {
+    "lec": 2,
+    "q": "‘사회복지사는 지역사회에서 개인을 결코 문제로 보면 안된다’는 의미로 가장 적절한 것은?",
+    "opts": [
+      "그 사람의 문제 원인은 빈곤 때문이다.",
+      "그 사람의 문제 원인은 정서 때문이다.",
+      "그 사람의 문제 원인은 가족 때문이다.",
+      "그 사람이 닥친 현 상황은 그와 관계된 다양한 관계속에서 발현된 원인들이 작용한 결과다."
+    ],
+    "ans": 3,
+    "exp": "지역사회에서 인간은 관계에 의해 규정되면서 다양한 삶이 형성됨."
+  },
+  {
+    "lec": 3,
+    "q": "모든 이슈의 결과는 (     )를 거치게 된다. 괄호 안에 들어갈 단어로 가장 적절한 것을 고르시오.",
+    "opts": [
+      "구조화",
+      "가시화",
+      "이상화",
+      "형상화"
+    ],
+    "ans": 0,
+    "exp": "이슈는 대화와 토론의 과정을 거쳐 지역사회의 구조와 질서를 변화시킴."
+  },
+  {
+    "lec": 3,
+    "q": "다음 보기 중 현실을 비판적으로 이해하는 과정으로 가장 적절한 것은?",
+    "opts": [
+      "신문읽기",
+      "사설읽기",
+      "뉴스보기",
+      "세상읽기"
+    ],
+    "ans": 3,
+    "exp": "사회복지사는 시민들의 삶의 맥락을 읽을 수 있어야 함."
+  },
+  {
+    "lec": 3,
+    "q": "사회복지사가 지역사회 이슈를 발견하고자 할 때 최우선적으로 활용해야 할 방법은 무엇인가?",
+    "opts": [
+      "국가 통계자료를 활용하여 발견한다.",
+      "언론보도를 활용하여 발견한다.",
+      "주민의 일상과 경험 속에서 발견한다.",
+      "조용한 곳에서 명상을 활용하여 발견한다."
+    ],
+    "ans": 2,
+    "exp": "이슈는 지역사회에 살고 있는 개인의 생각 차이에서 시작됨"
+  },
+  {
+    "lec": 4,
+    "q": "(          )는 누군가를 지역사회 밖으로 밀어내는 과정이다. 지역사회복지는 배제된 사람을 다시 (       )와 연결하는 실천이다.",
+    "opts": [
+      "사회적 통합, 공동체",
+      "사회적 배제, 공동체",
+      "물리적 배제, 공동체",
+      "물리적 통합, 공동체"
+    ],
+    "ans": 1,
+    "exp": "제4강 첫 장에 제시된 문장의 맥락에 기반함."
+  },
+  {
+    "lec": 4,
+    "q": "무엇을 문제로 볼 것인지, 누구의 의견을 공식적인 주민 의견으로 인정할 것인지 등 지역사회의 규칙과 우선 순위를 결정하는 힘을 무엇이라 표현하는가?",
+    "opts": [
+      "권리",
+      "권한",
+      "권력",
+      "권능"
+    ],
+    "ans": 2,
+    "exp": "영어로는 Power. Power to the people"
+  },
+  {
+    "lec": 4,
+    "q": "다음 중 연결이 적절하지 않은 것은?",
+    "opts": [
+      "경제적 배제 : 소득, 일자리, 자산의 부족",
+      "공간적 배제 : 교통, 병원, 학교, 복지기관의 접근 어려움",
+      "문화적 배제 : 특정 집단에 대한 편견과 낙인",
+      "정치적 배제 : 지지하는 정당이 다르면 시설 이용을 금지함"
+    ],
+    "ans": 3,
+    "exp": "지역사회에서의 정치는 생활임"
+  },
+  {
+    "lec": 5,
+    "q": "(     )은 누구나 인간다운 삶을 살아갈 수 있도록 서로 다른 조건을 함께 고려하는 것이다.",
+    "opts": [
+      "친절",
+      "자선",
+      "평등",
+      "권력"
+    ],
+    "ans": 2,
+    "exp": "제5강 첫 장에 제시된 문장의 맥락에 기반함."
+  },
+  {
+    "lec": 5,
+    "q": "불평등은 (     )의 불균등한 배분이다. 괄호 안에 들어갈 개념으로 적절하지 않은 것을 고르시오.",
+    "opts": [
+      "안전",
+      "소득",
+      "권력",
+      "자선"
+    ],
+    "ans": 3,
+    "exp": "불평등은 사회적 자원의 불균등한 배분임. 자선은 자원의 개념과 무관함."
+  },
+  {
+    "lec": 5,
+    "q": "지역사회복지에서 평등을 실천하는 최선의 방법은 무엇인가?",
+    "opts": [
+      "보이지 않는 불평등 드러내기",
+      "자원을 불평등하게 배분하기",
+      "기회가 마련된 주민의 참여를 보장하기",
+      "기회가 마련된 주민의 권리를 보장하기"
+    ],
+    "ans": 0,
+    "exp": "숨겨져 있는 불평등한 상황과 현상을 드러내야 함."
+  },
+  {
+    "lec": 6,
+    "q": "(   )은 (   )를 막고 (   )하게 만든다. 괄호 안에 들어갈 개념의 순서로 적절한 것을 고르시오.",
+    "opts": [
+      "억압-참여-침묵",
+      "침묵-참여-억압",
+      "불평등-평등-억압",
+      "평등-불평등-침묵"
+    ],
+    "ans": 0,
+    "exp": "제6강 첫 장에 제시된 문장의 맥락에 기반함."
+  },
+  {
+    "lec": 6,
+    "q": "지역사회복지는 주민이 자신의 (     )로 결정에 (    )하여 변화를 만들어 가는 과정이다.",
+    "opts": [
+      "소득, 소비",
+      "목소리, 참여",
+      "기회, 반대",
+      "참여, 반대"
+    ],
+    "ans": 1,
+    "exp": "제6강 첫 장에 제시된 문장의 맥락에 기반함."
+  },
+  {
+    "lec": 6,
+    "q": "참여는 지역 (       )의 실천이다.",
+    "opts": [
+      "이기주의",
+      "자본주의",
+      "권위주의",
+      "민주주의"
+    ],
+    "ans": 3,
+    "exp": "참여에 내재된 철학적 가치는 민주주의 이데올로기에 기반함."
+  },
+  {
+    "lec": 7,
+    "q": "(   )는 시민이 함께 (    ) 참여할 수 있는 공동체를 만드는 과정이다.",
+    "opts": [
+      "연대, 말하고",
+      "참여, 말하고",
+      "연대, 웃고",
+      "참여, 웃고"
+    ],
+    "ans": 0,
+    "exp": "제7강 첫 장에 제시된 문장의 맥락에 기반함."
+  },
+  {
+    "lec": 7,
+    "q": "정보와 언어의 장벽은 주민을 (    ) 시킨다.",
+    "opts": [
+      "성장",
+      "침묵",
+      "조직화",
+      "설득"
+    ],
+    "ans": 1,
+    "exp": "외부 소통 시 장벽을 느끼게 되면 자신을 표현하는 한계가 작용함."
+  },
+  {
+    "lec": 7,
+    "q": "연대는 차이를 지우는 것이 아니라 (    )하는 것이다.",
+    "opts": [
+      "차별",
+      "설득",
+      "연결",
+      "해석"
+    ],
+    "ans": 2,
+    "exp": "연대는 차이를 인정하고 서로를 연결하는 것임."
+  },
+  {
+    "lec": 8,
+    "q": "공공성은 모든 주민이 (         )을 누릴 수 있도록 (     )의 (     )을 실천하는 원리이다.",
+    "opts": [
+      "인간다운 삶-공동-책임",
+      "시혜적인 삶-공동-책임",
+      "잔여적인 삶-책임-공동",
+      "인간다운 삶-사익-보장"
+    ],
+    "ans": 0,
+    "exp": "제8강 첫 장에 제시된 문장의 맥락에 기반함"
+  },
+  {
+    "lec": 8,
+    "q": "공공성은 시민의 (    )를 보장하는 원리다.",
+    "opts": [
+      "권력",
+      "권리",
+      "권한",
+      "권고"
+    ],
+    "ans": 1,
+    "exp": "공공성의 전제 조건은 모든 시민이 권리적 존재라는 것"
+  },
+  {
+    "lec": 8,
+    "q": "공공성은 시민의 (      ) 접근성을 보장한다.",
+    "opts": [
+      "차별적",
+      "선별적",
+      "제한적",
+      "보편적"
+    ],
+    "ans": 3,
+    "exp": "공공성은 누구에게나 적용되는 원리."
+  },
+  {
+    "lec": 9,
+    "q": "갈등은 (     )의 이슈가 아닌 (     )과 (      )를 통해 더 나은 공동체를 만들어 가는 출발점이다.",
+    "opts": [
+      "토론-참여-회피",
+      "회피-토론-참여",
+      "참여-토론-회피",
+      "회피-참여-토론"
+    ],
+    "ans": 1,
+    "exp": "제9강 첫 장에 제시된 문장의 맥락에 기반함"
+  },
+  {
+    "lec": 9,
+    "q": "갈등은 (       ) 사회현상이다.",
+    "opts": [
+      "부자연스러운",
+      "행복한",
+      "불행한",
+      "자연스러운"
+    ],
+    "ans": 3,
+    "exp": "갈등은 서로 다른 인식체계를 지닌 인간의 특징임"
+  },
+  {
+    "lec": 9,
+    "q": "토론은 (      )의 핵심이다.",
+    "opts": [
+      "민주주의",
+      "자본주의",
+      "신자유주의",
+      "국가주의"
+    ],
+    "ans": 0,
+    "exp": "토론은 1인 1표의 가치를 기본 바탕으로 함."
+  },
+  {
+    "lec": 10,
+    "q": "(         )는 주민의 삶을 이해하고 서로 배워 갈 준비에서부터 시작된다.",
+    "opts": [
+      "교육강화",
+      "현장조직화",
+      "교육조직화",
+      "교육현실화"
+    ],
+    "ans": 2,
+    "exp": "제10강 첫 장에 제시된 문장의 맥락에 기반함"
+  },
+  {
+    "lec": 10,
+    "q": "주민을 (     )하는 것은 교육의 출발점이다.",
+    "opts": [
+      "이해",
+      "오해",
+      "분석",
+      "판단"
+    ],
+    "ans": 0,
+    "exp": "학습과 성장은 지식과 지혜의 축적보다 타인의 삶에 대해 알아가는 것임"
+  },
+  {
+    "lec": 10,
+    "q": "(     )는 교육조직화의 핵심이다.",
+    "opts": [
+      "교육",
+      "대화",
+      "학습",
+      "성찰"
+    ],
+    "ans": 1,
+    "exp": "프레이리는 교육의 핵심원리로 대화를 제시함"
+  },
+  {
+    "lec": 11,
+    "q": "(         )는 함께 배우는 사람들이 서로를 변화시키고, 지역사회를 (    )시키는 힘을 만들어 가는 공동체이다.",
+    "opts": [
+      "놀이공동체, 성장",
+      "학습공동체, 변화",
+      "학습공동체, 성장",
+      "놀이공동체, 변화"
+    ],
+    "ans": 1,
+    "exp": "제10강 첫 장에 제시된 문장의 맥락에 기반함"
+  },
+  {
+    "lec": 11,
+    "q": "교육조직화는 정보를 전달하는 것이 아니라 주민과 함께 (     )을 만드는 과정이다.",
+    "opts": [
+      "신뢰",
+      "오해",
+      "질문",
+      "해답"
+    ],
+    "ans": 2,
+    "exp": "주민 교육의 핵심은 지역사회의 이슈와 현안에 대해 서로의 생각을 듣는 것"
+  },
+  {
+    "lec": 11,
+    "q": "주민은 서로에게 가장 좋은 (     )이다.",
+    "opts": [
+      "교사",
+      "친구",
+      "선배",
+      "후배"
+    ],
+    "ans": 0,
+    "exp": "주민은 서로를 성장시키는 존재임"
+  },
+  {
+    "lec": 12,
+    "q": "주민조직은 공동의 (     )를 중심으로 형성된다.",
+    "opts": [
+      "의제",
+      "사익",
+      "욕구",
+      "욕망"
+    ],
+    "ans": 0,
+    "exp": "주민이 조직되는 이유는 공동의 이슈가 적절하게 부각될 때임"
+  },
+  {
+    "lec": 12,
+    "q": "조직화는 관계를 (      )으로 전환하는 과정이다.",
+    "opts": [
+      "다툼",
+      "갈등",
+      "행동",
+      "침묵"
+    ],
+    "ans": 2,
+    "exp": "조직화는 지역사회를 변화시키기 위한 과정임"
+  },
+  {
+    "lec": 12,
+    "q": "사회복지사는 주민의 (   )을 사회적 의제로 조직한다.",
+    "opts": [
+      "사익",
+      "희망",
+      "불만",
+      "경험"
+    ],
+    "ans": 3,
+    "exp": "사회복지사는 지역사회에서 주민의 경험에 기반하여 활동해야 함"
+  },
+  {
+    "lec": 13,
+    "q": "주민운동은 조직된 주민의 힘으로 사회의 변화를 만들어 가는 (       )이다.",
+    "opts": [
+      "민주적 실천",
+      "국가적 실천",
+      "독자적 실천",
+      "개인적 실천"
+    ],
+    "ans": 0,
+    "exp": "제13장 첫 장에 제시된 문장의 맥락에 기반함."
+  },
+  {
+    "lec": 13,
+    "q": "주민운동은 (       )관계를 변화시키는 과정이다.",
+    "opts": [
+      "계약",
+      "신뢰",
+      "권력",
+      "가족"
+    ],
+    "ans": 2,
+    "exp": "지역사회에는 억압, 착취, 소외 등 불평등한 권력관계가 존재함"
+  },
+  {
+    "lec": 13,
+    "q": "2010년 지방선거의 핵심 쟁점으로 부각되면서 모든 아동에게 차별은 없어야 한다는 의제로 발전한 사회운동은 무엇인가?",
+    "opts": [
+      "무상교복",
+      "무상급식",
+      "무상의료",
+      "무상교육"
+    ],
+    "ans": 1,
+    "exp": "특히 서울시를 중심으로 하여 이 쟁점이 부각되었음"
+  },
+  {
+    "lec": 14,
+    "q": "예산은 숫자가 아니라 주민의 (   )의 우선순위를 결정하는 정책이다.",
+    "opts": [
+      "민원",
+      "욕망",
+      "삶",
+      "재산"
+    ],
+    "ans": 2,
+    "exp": "어떤 사업에 예산이 우선적으로 배정되느냐에 따라 주민의 삶은 달라짐."
+  },
+  {
+    "lec": 14,
+    "q": "주민참여예산제도가 최초로 시작된 국가와 도시가 정확히 연결된 것을 고르시오.",
+    "opts": [
+      "브라질-리우데자네이로",
+      "브라질-포르투알레그리",
+      "한국-서울시",
+      "한국-경기도"
+    ],
+    "ans": 1,
+    "exp": "1989년 브라질에서 주민참여제도가 처음 도입됨"
+  },
+  {
+    "lec": 14,
+    "q": "세금을 내는 주민은 예산 결정에도 참여할 권리가 있다는 이념적 원리는 다음 중 무엇인가?",
+    "opts": [
+      "재정국가주의",
+      "재정공산주의",
+      "재정자본주의",
+      "재정민주주의"
+    ],
+    "ans": 3,
+    "exp": "참여에 핵심의 가치가 있음."
+  }
+];
+let currentIdx = 0;
+let answers = {};       // idx → chosen option (0-based)
+let bookmarks = new Set(JSON.parse(localStorage.getItem('localwelfare_bm') || '[]'));
+let wrongSet = new Set(JSON.parse(localStorage.getItem('localwelfare_wrong') || '[]'));
+let graded = false;
+let currentMode = '';
+let expandView = false;
+
+// ── TIMER ──
+let timerInterval = null;
+let timerSeconds = 20 * 60;
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = 20 * 60;
+  updateTimerDisplay();
+  const box = document.getElementById('timer-box');
+  box.style.display = 'flex';
+  document.getElementById('sa-timer').classList.remove('hidden');
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      alert('⏰ 시험 시간이 종료되었습니다!');
+      gradeQuiz();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timer-box').style.display = 'none';
+  document.getElementById('sa-timer').classList.add('hidden');
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const txt = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const el = document.getElementById('timer-display');
+  el.textContent = txt;
+  el.className = timerSeconds <= 60 ? 'timer-danger' : '';
+  const st = document.getElementById('sa-timer');
+  st.textContent = '⏱ ' + txt;
+  st.classList.toggle('timer-danger', timerSeconds <= 60);
+}
+
+// ── EXPAND / COLLAPSE VIEW ──
+function toggleExpandView() {
+  expandView = !expandView;
+  const btn = document.getElementById('expand-btn');
+  const quizScreen = document.getElementById('quiz-screen');
+  const expandScreen = document.getElementById('expand-all-screen');
+
+  if (expandView) {
+    btn.textContent = '⊟';
+    btn.title = '한 문제씩 보기';
+    quizScreen.classList.add('hidden');
+    expandScreen.style.display = 'block';
+    renderExpandAll();
+  } else {
+    btn.textContent = '⇅';
+    btn.title = '전체 문제 보기';
+    expandScreen.style.display = 'none';
+    quizScreen.classList.remove('hidden');
+    renderQuestion();
+  }
+}
+
+function renderExpandAll() {
+  const screen = document.getElementById('expand-all-screen');
+  screen.innerHTML = '';
+  const nums = ['①','②','③','④'];
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'all-q-card';
+    card.id = `all-q-${i}`;
+
+    const numDiv = document.createElement('div');
+    numDiv.className = 'q-num';
+    numDiv.textContent = `${i + 1} / ${questions.length} 번 문제 · ${q.lec}강`;
+    card.appendChild(numDiv);
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'q-text';
+    textDiv.textContent = q.q;
+    card.appendChild(textDiv);
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options';
+    q.opts.forEach((opt, oi) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      div.innerHTML = `<span class="num">${nums[oi]}</span><span>${opt}</span>`;
+      if (graded || answers[i] !== undefined) {
+        markOption(div, oi, q.ans, answers[i]);
+      } else {
+        div.onclick = () => {
+          answers[i] = oi;
+          const y = card.getBoundingClientRect().top;
+          renderExpandAll(); renderGrid(); updateProgress();
+          // 다시 그린 뒤에도 보던 위치 유지
+          const nc = document.getElementById(`all-q-${i}`);
+          if (nc) document.getElementById('main').scrollTop += nc.getBoundingClientRect().top - y;
+        };
+      }
+      optsDiv.appendChild(div);
+    });
+    card.appendChild(optsDiv);
+
+    if (graded || answers[i] !== undefined) {
+      const expDiv = document.createElement('div');
+      expDiv.className = 'explanation show';
+      expDiv.innerHTML = feedbackHtml(q, answers[i]) + `<div class="exp-label">💡 해설</div><div>${q.exp}</div>`;
+      card.appendChild(expDiv);
+    }
+
+    screen.appendChild(card);
+  });
+}
+
+function saveBookmarks() {
+  localStorage.setItem('localwelfare_bm', JSON.stringify([...bookmarks]));
+}
+function saveWrong() {
+  localStorage.setItem('localwelfare_wrong', JSON.stringify([...wrongSet]));
+}
+
+// ==============================
+// NAVIGATION
+// ==============================
+function showStart() {
+  document.body.classList.remove('quiz-on');
+  document.getElementById('start-screen').classList.remove('hidden');
+  document.getElementById('quiz-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('expand-all-screen').style.display = 'none';
+  document.getElementById('sidebar').classList.add('hidden');
+  document.getElementById('mode-tag').textContent = '모드 선택 중';
+  document.getElementById('progress-text').textContent = '';
+  document.getElementById('expand-btn').style.display = 'none';
+  setHeaderBtns(false, false, false);
+  stopTimer();
+  graded = false;
+  answers = {};
+  questions = [];
+  currentIdx = 0;
+  expandView = false;
+}
+
+function setHeaderBtns(grade, retry, home) {
+  document.getElementById('btn-header-grade').style.display = grade ? 'inline-block' : 'none';
+  document.getElementById('btn-header-retry').style.display = retry ? 'inline-block' : 'none';
+  document.getElementById('btn-header-home').style.display = home ? 'inline-block' : 'none';
+  document.getElementById('sa-grade').style.display = grade ? '' : 'none';
+  document.getElementById('sa-retry').style.display = retry ? '' : 'none';
+  document.getElementById('sa-home').style.display = home ? '' : 'none';
+  document.getElementById('sa-expand').style.display = grade ? '' : 'none';
+}
+
+function retryQuiz() {
+  if (!confirm('다시 풀기 하면 현재 답이 초기화됩니다. 계속하시겠습니까?')) return;
+  startQuiz(currentMode);
+}
+
+function startQuiz(mode) {
+  currentMode = mode;
+  graded = false;
+  answers = {};
+  currentIdx = 0;
+  expandView = false;
+  let useTimer = false;
+
+  if (mode === 'random') {
+    questions = shuffle([...ALL_QUESTIONS]).slice(0, 30);
+    document.getElementById('mode-tag').textContent = '랜덤 30문제';
+    useTimer = true;  // 랜덤만 20분 타이머
+  } else if (mode === 'all') {
+    questions = [...ALL_QUESTIONS];
+    document.getElementById('mode-tag').textContent = `전체 ${questions.length}문제`;
+    useTimer = false; // 전체 문제는 시간제한 없음
+  } else if (mode === 'bookmark') {
+    const bmIds = [...bookmarks];
+    questions = ALL_QUESTIONS.filter((_, i) => bmIds.includes(i));
+    if (questions.length === 0) { alert('📌 책갈피된 문제가 없습니다.'); return; }
+    document.getElementById('mode-tag').textContent = `책갈피 ${questions.length}문제`;
+    useTimer = false;
+  } else if (mode === 'wrong') {
+    questions = [...wrongSet].map(i => ALL_QUESTIONS[i]).filter(Boolean);
+    if (questions.length === 0) { alert('✅ 틀린 문제가 없습니다!'); return; }
+    document.getElementById('mode-tag').textContent = `오답 ${questions.length}문제`;
+    useTimer = false;
+  }
+
+  document.getElementById('start-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('expand-all-screen').style.display = 'none';
+  document.getElementById('quiz-screen').classList.remove('hidden');
+  document.getElementById('sidebar').classList.remove('hidden');
+  document.body.classList.add('quiz-on');
+  document.getElementById('expand-btn').style.display = 'flex';
+  document.getElementById('expand-btn').textContent = '⇅';
+  setHeaderBtns(true, true, true);
+
+  if (useTimer) {
+    startTimer();
+  } else {
+    stopTimer();
+  }
+
+  renderQuestion();
+  renderGrid();
+}
+
+function navigate(dir) {
+  const newIdx = currentIdx + dir;
+  if (newIdx < 0 || newIdx >= questions.length) return;
+  currentIdx = newIdx;
+  renderQuestion();
+  renderGrid();
+}
+
+function goToQuestion(i) {
+  if (expandView) {
+    const card = document.getElementById(`all-q-${i}`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    currentIdx = i;
+    renderGrid();
+    return;
+  }
+  currentIdx = i;
+  renderQuestion();
+  renderGrid();
+}
+
+// ==============================
+// RENDER QUESTION
+// ==============================
+function renderQuestion() {
+  const q = questions[currentIdx];
+  if (!q) return;
+
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  const label = document.getElementById('q-num-label');
+  label.textContent = `${currentIdx + 1} / ${questions.length} 번 문제 · ${q.lec}강`;
+
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-text').style.fontWeight = '600';
+
+  const optsCont = document.getElementById('options');
+  optsCont.innerHTML = '';
+
+  const nums = ['①','②','③','④'];
+  q.opts.forEach((opt, oi) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `<span class="num">${nums[oi]}</span><span>${opt}</span>`;
+
+    if (graded || answers[currentIdx] !== undefined) {
+      markOption(div, oi, q.ans, answers[currentIdx]);
+    } else {
+      div.onclick = () => selectOption(oi);
+    }
+    optsCont.appendChild(div);
+  });
+
+  // Explanation
+  const expEl = document.getElementById('explanation');
+  const expText = document.getElementById('exp-text');
+  if (graded || answers[currentIdx] !== undefined) {
+    expEl.classList.remove('hidden');
+    expEl.classList.add('show');
+    document.getElementById('exp-feedback').innerHTML = feedbackHtml(q, answers[currentIdx]);
+    expText.textContent = q.exp;
+  } else {
+    expEl.classList.remove('show');
+  }
+
+  // Bookmark btn
+  const bmBtn = document.getElementById('bm-btn');
+  if (bookmarks.has(origIdx)) {
+    bmBtn.classList.add('bookmarked');
+    bmBtn.textContent = '🔖 책갈피됨';
+  } else {
+    bmBtn.classList.remove('bookmarked');
+    bmBtn.textContent = '🔖 책갈피';
+  }
+
+  // prev/next
+  document.getElementById('btn-prev').disabled = currentIdx === 0;
+  document.getElementById('btn-next').textContent = currentIdx === questions.length - 1 ? '완료' : '다음 ▶';
+
+  // progress
+  updateProgress();
+
+}
+
+function selectOption(oi) {
+  if (graded || answers[currentIdx] !== undefined) return;   // 한 번 고르면 바로 채점, 변경 불가
+  answers[currentIdx] = oi;
+  renderQuestion();
+  renderGrid();
+}
+
+// 정답/오답 표시 (고른 답이 틀리면 빨강, 정답은 항상 초록)
+function markOption(div, oi, ans, chosen) {
+  div.classList.add('locked');
+  if (oi === ans) div.classList.add('correct');
+  else if (chosen === oi) div.classList.add('wrong');
+}
+
+function feedbackHtml(q, chosen) {
+  const nums = ['①','②','③','④'];
+  if (chosen === undefined) return `<div class="feedback ng">미응답 · 정답 ${nums[q.ans]}</div>`;
+  if (chosen === q.ans) return `<div class="feedback ok">⭕ 정답입니다</div>`;
+  return `<div class="feedback ng">❌ 오답입니다 · 정답 ${nums[q.ans]}</div>`;
+}
+
+function updateProgress() {
+  const answered = Object.keys(answers).length;
+  const right = questions.filter((q, i) => answers[i] === q.ans).length;
+  document.getElementById('progress-text').textContent =
+    `${answered} / ${questions.length} 문제 응답 · 정답 ${right}`;
+}
+
+function toggleBookmark() {
+  const q = questions[currentIdx];
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  if (bookmarks.has(origIdx)) bookmarks.delete(origIdx);
+  else bookmarks.add(origIdx);
+  saveBookmarks();
+  renderQuestion();
+  renderGrid();
+}
+
+// ==============================
+// RENDER GRID
+// ==============================
+function renderGrid() {
+  const grid = document.getElementById('q-grid');
+  grid.innerHTML = '';
+  const nums = ['①','②','③','④'];
+  questions.forEach((q, i) => {
+    const origIdx = ALL_QUESTIONS.indexOf(q);
+    const div = document.createElement('div');
+    div.className = 'q-dot';
+
+    const numEl = document.createElement('span');
+    numEl.className = 'dot-num';
+    numEl.textContent = i + 1;
+    div.appendChild(numEl);
+
+    if (answers[i] !== undefined) {
+      const ansEl = document.createElement('span');
+      ansEl.className = 'dot-ans';
+      ansEl.textContent = nums[answers[i]];
+      div.appendChild(ansEl);
+    }
+
+    div.onclick = () => goToQuestion(i);
+
+    if (i === currentIdx) div.classList.add('current');
+    if (bookmarks.has(origIdx)) div.classList.add('bookmarked-dot');
+    if (answers[i] === q.ans) div.classList.add('correct-dot');
+    else if (answers[i] !== undefined) div.classList.add('wrong-dot');
+    grid.appendChild(div);
+  });
+}
+
+// ==============================
+// GRADE
+// ==============================
+function gradeQuiz() {
+  graded = true;
+  stopTimer();
+  document.getElementById('expand-btn').style.display = 'none';
+  document.getElementById('expand-all-screen').style.display = 'none';
+  expandView = false;
+  let correct = 0, wrong = 0;
+  const newWrong = new Set();
+  questions.forEach((q, i) => {
+    const origIdx = ALL_QUESTIONS.indexOf(q);
+    if (answers[i] === q.ans) { correct++; wrongSet.delete(origIdx); }
+    else { wrong++; newWrong.add(origIdx); wrongSet.add(origIdx); }
+  });
+  saveWrong();
+
+  const unanswered = questions.length - Object.keys(answers).length;
+  const score = Math.round((correct / questions.length) * 100);
+
+  document.getElementById('result-screen').classList.remove('hidden');
+  document.getElementById('quiz-screen').classList.add('hidden');
+  document.getElementById('res-score').textContent = `${score}점`;
+  document.getElementById('res-sub').textContent = `총 ${questions.length}문제 중 ${correct}문제 정답`;
+  document.getElementById('res-c').textContent = correct;
+  // wrong 에는 이미 미응답이 포함되어 있음 (정답이 아니면 모두 오답으로 셈)
+  document.getElementById('res-w').textContent = wrong;
+  document.getElementById('res-b').textContent = bookmarks.size;
+  setHeaderBtns(false, false, true);
+
+  renderGrid();
+  document.getElementById('main').scrollTop = 0;
+}
+
+// ==============================
+// PHONE MODE
+// ==============================
+// 저장된 선택이 없으면 화면이 작은 기기(폰)에서 자동으로 켬
+function initPhoneMode() {
+  let saved = null;
+  try { saved = localStorage.getItem('localwelfare_phone'); } catch (e) {}
+  const small = window.matchMedia('(max-width: 900px), (max-height: 500px)').matches;
+  setPhoneMode(saved === null ? small : saved === '1');
+}
+function setPhoneMode(on) {
+  document.body.classList.toggle('phone', on);
+  document.getElementById('btn-phone').textContent = on ? '🖥 PC 모드' : '📱 폰 모드';
+}
+function togglePhoneMode() {
+  const on = !document.body.classList.contains('phone');
+  setPhoneMode(on);
+  try { localStorage.setItem('localwelfare_phone', on ? '1' : '0'); } catch (e) {}
+}
+initPhoneMode();
+
+// ==============================
+// UTILS
+// ==============================
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+</script>
+</body>
+</html>
