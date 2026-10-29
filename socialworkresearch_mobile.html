@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사회복지조사론 워크북 연습문제</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+  :root {
+    --primary: #1a5276;
+    --primary-light: #2e86c1;
+    --accent: #e74c3c;
+    --accent2: #f39c12;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --sidebar: #1a3a5c;
+    --sidebar-text: #cfe2f3;
+    --correct: #1e8449;
+    --wrong: #c0392b;
+    --bookmark: #e67e22;
+    --border: #d5e8f0;
+    --text: #1a252f;
+    --muted: #7f8c8d;
+    --header-h: 56px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: var(--header-h);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    z-index: 100;
+  }
+  #header .title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  #header .title span { font-weight: 300; font-size: 14px; margin-left: 8px; opacity: 0.8; }
+  #header .right-info { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  #header .right-info .tag { background: rgba(255,255,255,0.15); border-radius: 4px; padding: 3px 9px; font-size: 12px; }
+
+  /* 헤더 우상단 채점/처음으로 버튼 */
+  .header-action-btn {
+    padding: 6px 13px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    transition: opacity .15s;
+    display: none;
+  }
+  .header-action-btn:hover { opacity: .85; }
+  #btn-header-grade { background: #e74c3c; color: #fff; }
+  #btn-header-retry { background: #e67e22; color: #fff; }
+  #btn-header-home  { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+
+  /* ── TAB BAR ── */
+  #tabbar {
+    background: #eaf2f8;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 20px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .tab-btn {
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background: #dce9f5;
+    color: var(--primary);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    transition: background .15s;
+  }
+  .tab-btn.active { background: var(--card); color: var(--primary); font-weight: 700; }
+
+  /* ── BODY LAYOUT ── */
+  #body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── MAIN AREA ── */
+  #main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    position: relative;
+  }
+
+  /* ── START SCREEN ── */
+  #start-screen {
+    max-width: 560px;
+    margin: 60px auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 48px 40px;
+    text-align: center;
+  }
+  #start-screen h2 { font-size: 22px; color: var(--primary); margin-bottom: 8px; }
+  #start-screen p { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+  .start-options { display: flex; flex-direction: column; gap: 14px; }
+  .start-btn {
+    padding: 18px 24px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: #f7fbff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    transition: all .2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .start-btn:hover { border-color: var(--primary-light); background: #eaf3fb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .start-btn .icon { font-size: 26px; }
+  .start-btn small { display: block; font-size: 12px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+
+  /* ── QUESTION CARD ── */
+  .q-num { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+  .q-text {
+    font-size: 15px;
+    line-height: 1.75;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .q-box {
+    background: #f8fbfd;
+    border-left: 3px solid var(--primary-light);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #1c2e3e;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--card);
+    transition: all .15s;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .option:hover { border-color: var(--primary-light); background: #eaf3fb; }
+  /* 사용자가 선택한 답: 파란 배경으로 문제번호와 명확히 구분 */
+  .option.selected { border-color: var(--primary); background: #d6eaf8; color: var(--primary); font-weight: 600; }
+  .option.correct { border-color: var(--correct); background: #eafaf1; color: var(--correct); }
+  .option.wrong { border-color: var(--wrong); background: #fdedec; color: var(--wrong); }
+  .option.show-correct { border-color: var(--correct); background: #eafaf1; color: var(--correct); }
+  .option .num { font-weight: 700; min-width: 20px; }
+
+  /* explanation */
+  .explanation {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: #fdfaf0;
+    border-left: 3px solid var(--accent2);
+    border-radius: 4px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #5d4037;
+  }
+  .explanation.show { display: block; }
+  #exp-text, .explanation > div:last-child { white-space: pre-line; }
+  .exp-label { font-weight: 700; color: var(--accent2); margin-bottom: 4px; }
+
+  /* bottom nav */
+  .q-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    padding: 9px 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+    transition: all .15s;
+  }
+  .nav-btn:hover { background: #eaf3fb; border-color: var(--primary-light); }
+  .nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .nav-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .nav-btn.primary:hover { background: var(--primary-light); }
+
+  .bm-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all .15s;
+  }
+  .bm-btn.bookmarked { color: var(--bookmark); border-color: var(--bookmark); background: #fef5e7; }
+  .bm-btn:hover { border-color: var(--bookmark); color: var(--bookmark); }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 220px;
+    background: var(--sidebar);
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 16px 12px;
+  }
+  #sidebar h4 { color: var(--sidebar-text); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; }
+  #q-grid { display: flex; flex-direction: column; gap: 4px; }
+  .q-dot {
+    width: 100%;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all .15s;
+    border: 1.5px solid transparent;
+  }
+  .q-dot:hover { background: rgba(255,255,255,0.2); }
+  .q-dot.current { border-color: #7fb3d3; color: #fff; background: rgba(255,255,255,0.15); }
+  .q-dot.answered { background: rgba(255,255,255,0.15); color: #aed6f1; }
+  .q-dot.bookmarked-dot { background: rgba(230,126,34,0.35); border-color: var(--bookmark); color: #f0a500; }
+  .q-dot.correct-dot { background: rgba(30,132,73,0.4); color: #82e0aa; }
+  .q-dot.wrong-dot { background: rgba(192,57,43,0.45); color: #f1948a; }
+
+  .q-dot .dot-num {
+    min-width: 22px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.75);
+    font-size: 11px;
+  }
+  /* 선택된 답 표시: 흰 배경 뱃지 - 문제번호와 배경 명확히 구분 */
+  .q-dot .dot-ans {
+    font-size: 12px;
+    margin-left: 4px;
+    background: rgba(255,255,255,0.88);
+    color: var(--sidebar);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-weight: 700;
+  }
+
+  .sidebar-score {
+    margin-top: 18px;
+    padding: 12px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 8px;
+    color: var(--sidebar-text);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .sidebar-score strong { font-size: 20px; color: #fff; }
+
+  .score-actions { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .score-actions button {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .btn-grade { background: var(--accent); color: #fff; }
+  .btn-retry { background: var(--bookmark); color: #fff; }
+  .btn-home { background: rgba(255,255,255,0.15); color: #fff; }
+
+  /* result screen */
+  #result-screen {
+    max-width: 580px;
+    margin: 40px auto;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 40px 36px;
+    text-align: center;
+  }
+  #result-screen h2 { font-size: 24px; color: var(--primary); margin-bottom: 6px; }
+  .score-big { font-size: 64px; font-weight: 700; color: var(--primary); line-height: 1; margin: 20px 0 8px; }
+  .score-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+  .result-grid { display: flex; gap: 16px; justify-content: center; margin-bottom: 28px; }
+  .result-stat { flex: 1; padding: 16px; border-radius: 10px; }
+  .result-stat.c { background: #eafaf1; color: var(--correct); }
+  .result-stat.w { background: #fdedec; color: var(--wrong); }
+  .result-stat.b { background: #fef5e7; color: var(--bookmark); }
+  .result-stat .label { font-size: 12px; margin-bottom: 4px; }
+  .result-stat .val { font-size: 28px; font-weight: 700; }
+  .result-actions { display: flex; flex-direction: column; gap: 10px; }
+  .result-actions button {
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    transition: opacity .15s;
+  }
+  .result-actions button:hover { opacity: .85; }
+  .btn-a { background: var(--accent); color: #fff; }
+  .btn-b { background: var(--bookmark); color: #fff; }
+  .btn-c { background: var(--primary); color: #fff; }
+  .btn-d { background: #ecf0f1; color: var(--text); }
+
+  .hidden { display: none !important; }
+
+  /* ── EXPAND ALL VIEW ── */
+  #expand-all-screen { display: none; padding: 24px 28px; }
+  #expand-all-screen.active { display: block; }
+  .all-q-card {
+    background: var(--card);
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .all-q-card .q-num { font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 700; }
+  .all-q-card .q-text { font-size: 14px; font-weight: 600; margin-bottom: 14px; line-height: 1.7; }
+  .all-q-card .options { gap: 7px; }
+  .all-q-card .option { padding: 9px 13px; font-size: 13px; }
+
+  #timer-box { display: none; }
+
+  .timer-danger { color: #ff6b6b !important; animation: blink .8s step-end infinite; }
+  @keyframes blink { 50% { opacity: .4; } }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-thumb { background: #b0c4d8; border-radius: 3px; }
+
+  /* 답을 고른 문제는 바로 채점되므로 더 이상 바꿀 수 없음 */
+  .option.locked { cursor: default; }
+  .option.locked:hover { border-color: inherit; }
+  .option.correct.locked:hover, .option.show-correct.locked:hover { border-color: var(--correct); background: #eafaf1; }
+  .option.wrong.locked:hover { border-color: var(--wrong); background: #fdedec; }
+  .option.locked:not(.correct):not(.wrong):hover { border-color: var(--border); background: var(--card); }
+  .feedback { font-weight: 700; margin-bottom: 4px; }
+  .feedback.ok { color: var(--correct); }
+  .feedback.ng { color: var(--wrong); }
+
+  /* 사이드바 상단 버튼 묶음 (폰 모드에서만 표시) */
+  #side-actions { display: none; }
+  #btn-phone { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); display: inline-block; }
+
+  /* ── PHONE MODE ── */
+  body.phone { height: 100dvh; }
+  body.phone #header { height: 40px; padding: 0 10px; }
+  body.phone #header .title { font-size: 14px; }
+  body.phone #header .title span { display: none; }
+  body.phone.quiz-on #header { display: none; }
+  body.phone #main { padding: 10px 12px; }
+  body.phone #start-screen { margin: 12px auto; padding: 22px 16px; }
+  body.phone #start-screen h2 { font-size: 18px; }
+  body.phone #start-screen p { margin-bottom: 16px; }
+  body.phone .start-options { gap: 8px; }
+  body.phone .start-btn { padding: 11px 14px; font-size: 14px; }
+  body.phone .start-btn .icon { font-size: 20px; }
+
+  body.phone .q-num { font-size: 11px; margin-bottom: 4px; }
+  body.phone .q-text { font-size: 14.5px; line-height: 1.55; margin-bottom: 10px; }
+  body.phone .q-box { padding: 8px 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.6; }
+  body.phone .options { gap: 5px; }
+  body.phone .option { padding: 8px 10px; gap: 8px; font-size: 13.5px; line-height: 1.45; border-radius: 6px; }
+  body.phone .explanation { margin-top: 8px; padding: 8px 10px; font-size: 12.5px; line-height: 1.55; }
+  body.phone .q-nav { margin-top: 12px; padding-top: 10px; }
+  body.phone .nav-btn { padding: 8px 14px; }
+  body.phone .bm-btn { padding: 7px 11px; }
+  body.phone #expand-all-screen { padding: 0; }
+  body.phone .all-q-card { padding: 10px 12px; margin-bottom: 10px; }
+  body.phone .all-q-card .q-text { margin-bottom: 8px; }
+  body.phone .all-q-card .options { gap: 5px; }
+  body.phone .all-q-card .option { padding: 7px 10px; }
+  body.phone #result-screen { margin: 12px auto; padding: 20px 16px; }
+  body.phone .score-big { font-size: 44px; margin: 10px 0 6px; }
+  body.phone .result-grid { gap: 8px; margin-bottom: 14px; }
+  body.phone .result-stat { padding: 10px 6px; }
+  body.phone .result-actions button { padding: 10px; }
+
+  body.phone #side-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  body.phone #side-actions button {
+    flex: 1 1 auto; padding: 7px 6px; border-radius: 6px; border: none; cursor: pointer;
+    font-family: inherit; font-size: 12px; font-weight: 700; white-space: nowrap;
+  }
+  #sa-grade { background: #e74c3c; color: #fff; }
+  #sa-retry { background: #e67e22; color: #fff; }
+  #sa-home, #sa-expand, #sa-phone { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3) !important; }
+  #sa-timer { flex-basis: 100%; text-align: center; color: #fff; font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+
+  /* 폰 가로모드: 오른쪽 좁은 사이드바 */
+  @media (orientation: landscape) {
+    body.phone #sidebar { width: 150px; padding: 8px 8px; }
+    body.phone .q-dot { padding: 5px 8px; }
+  }
+  /* 폰 세로모드: 위쪽 가로 막대 (버튼 + 문제번호 가로 스크롤) */
+  @media (orientation: portrait) {
+    body.phone #body { flex-direction: column-reverse; }
+    body.phone #sidebar { width: 100%; min-width: 0; padding: 6px 8px 4px; overflow: hidden; }
+    body.phone #main { min-width: 0; width: 100%; }
+    body.phone #sidebar h4 { display: none; }
+    body.phone #side-actions { margin-bottom: 6px; }
+    body.phone #side-actions { flex-wrap: nowrap; }
+    body.phone #side-actions button { flex: 1 1 0; min-width: 0; padding: 6px 2px; font-size: 11.5px; }
+    body.phone #sa-expand, body.phone #sa-phone { flex: 0 0 34px !important; }
+    body.phone #sa-timer { flex: 0 0 auto; font-size: 13px; align-self: center; }
+    body.phone #q-grid { flex-direction: row; overflow-x: auto; gap: 4px; padding-bottom: 4px; }
+    body.phone .q-dot { width: auto; flex: 0 0 auto; padding: 5px 7px; }
+    body.phone .sidebar-score { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="title">사회복지조사론 <span>워크북 연습문제</span></div>
+  <div class="right-info">
+    <span class="tag" id="mode-tag">모드 선택 중</span>
+    <span id="progress-text" style="font-size:13px;opacity:.85"></span>
+    <div id="timer-box" style="display:none;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border-radius:6px;padding:4px 12px;">
+      <span style="font-size:11px;opacity:.8;line-height:1.3;">남은<br>시간</span>
+      <span id="timer-display" style="font-size:20px;font-weight:700;letter-spacing:1px;font-variant-numeric:tabular-nums;">20:00</span>
+    </div>
+    <button id="btn-header-grade" class="header-action-btn" onclick="gradeQuiz()">📊 채점하기</button>
+    <button id="btn-header-retry" class="header-action-btn" onclick="retryQuiz()">🔄 다시하기</button>
+    <button id="btn-header-home"  class="header-action-btn" onclick="showStart()">🏠 처음으로</button>
+    <button id="btn-phone" class="header-action-btn" onclick="togglePhoneMode()">📱 폰 모드</button>
+    <button id="expand-btn" onclick="toggleExpandView()" title="전체보기/한문제씩" style="display:none;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:6px;color:#fff;width:38px;height:38px;font-size:20px;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;">⇅</button>
+  </div>
+</div>
+
+
+<div id="body">
+  <div id="main">
+    <!-- Start Screen -->
+    <div id="start-screen">
+      <h2>📚 사회복지조사론</h2>
+      <p>1강~15강 워크북 연습문제 · 총 75문항</p>
+      <div class="start-options">
+        <button class="start-btn" onclick="startQuiz('random')">
+          <span class="icon">🎲</span>
+          <div>
+            랜덤 30문제
+            <small>전체 문제 중 무작위로 30문항 출제 · ⏱ 20분 제한</small>
+          </div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('all')">
+          <span class="icon">📋</span>
+          <div>
+            전체 문제 풀기
+            <small>1강부터 15강까지 전체 75문항 · 시간 제한 없음</small>
+          </div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('bookmark')">
+          <span class="icon">🔖</span>
+          <div>
+            책갈피 문제만 풀기
+            <small>저장된 책갈피 문제만 출제</small>
+          </div>
+        </button>
+        <button class="start-btn" onclick="startQuiz('wrong')">
+          <span class="icon">❌</span>
+          <div>
+            틀린 문제만 다시 풀기
+            <small>이전 채점에서 틀린 문제만 출제</small>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden">
+      <div class="q-num" id="q-num-label"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-box hidden" id="q-box"></div>
+      <div class="options" id="options"></div>
+      <div class="explanation hidden" id="explanation">
+        <div id="exp-feedback"></div>
+        <div class="exp-label">💡 해설</div>
+        <div id="exp-text"></div>
+      </div>
+      <div class="q-nav">
+        <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">◀ 이전</button>
+        <div style="display:flex;gap:10px;">
+          <button class="bm-btn" id="bm-btn" onclick="toggleBookmark()">🔖 책갈피</button>
+        </div>
+        <button class="nav-btn primary" id="btn-next" onclick="navigate(1)">다음 ▶</button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden">
+      <h2>🎉 채점 결과</h2>
+      <div class="score-big" id="res-score"></div>
+      <div class="score-sub" id="res-sub"></div>
+      <div class="result-grid">
+        <div class="result-stat c"><div class="label">✅ 정답</div><div class="val" id="res-c"></div></div>
+        <div class="result-stat w"><div class="label">❌ 오답</div><div class="val" id="res-w"></div></div>
+        <div class="result-stat b"><div class="label">🔖 책갈피</div><div class="val" id="res-b"></div></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-a" onclick="startQuiz('wrong')">❌ 틀린 문제만 다시 풀기</button>
+        <button class="btn-b" onclick="startQuiz('bookmark')">🔖 책갈피 문제 풀기</button>
+        <button class="btn-c" onclick="startQuiz('all')">📋 전체 문제 다시 풀기</button>
+        <button class="btn-d" onclick="showStart()">🏠 처음으로</button>
+      </div>
+    </div>
+
+    <!-- Expand All Screen -->
+    <div id="expand-all-screen"></div>
+  </div>
+
+  <div id="sidebar" class="hidden">
+    <div id="side-actions">
+      <button id="sa-grade" onclick="gradeQuiz()">📊 채점하기</button>
+      <button id="sa-retry" onclick="retryQuiz()">🔄 다시하기</button>
+      <button id="sa-home" onclick="showStart()">🏠 처음으로</button>
+      <button id="sa-expand" onclick="toggleExpandView()" title="전체보기/한문제씩">⇅</button>
+      <button id="sa-phone" onclick="togglePhoneMode()" title="폰 모드 끄기 (PC 화면)">PC</button>
+      <div id="sa-timer" class="hidden"></div>
+    </div>
+    <h4>문제 현황</h4>
+    <div id="q-grid"></div>
+  </div>
+</div>
+
+<script>
+// ==============================
+// QUESTION DATA (1강~15강, 75 questions)
+// ==============================
+const ALL_QUESTIONS = [
+  // 1강
+  {lec:1, q:"사회복지조사에 대한 설명으로 옳지 않은 것은?", opts:["사회복지조사는 사회복지학이 과학이 될 수 있는 기초를 제공한다", "사회복지조사는 정책을 결정하는 데에만 필요하다", "사회복지조사는 사회복지의 목적을 달성하기 위한 도구이다", "사회복지조사에서는 관점과 이론이 중요하다"], ans:1, exp:"사회복지조사는 정책 결정뿐만 아니라 사회문제의 원인을 탐색하는과정, 정책에 따라 이루어진 실천을 평가하는 과정등 모든 과정에서 필요하다."},
+  {lec:1, q:"찰스부스의 사회조사에 대한 설명으로 옳지 않은 것은?", opts:["런던 인구의 30% 이상이 빈곤층임을 밝혀냈다", "찰스부스의 조사는 이후 소수파 보고서에 영향을 미쳤다", "빈곤의 주요한 원인이 사회구조의 문제임을 밝혀냈다", "사회민주연맹에서 발표한 자료를 지지하기 위해 실행되었다."], ans:3, exp:"사회민주연맹에서 발표한 빈곤에 대한 자료를 반박하기 위해 조사를 시작하였다."},
+  {lec:1, q:"다수파 보고서에 대한 설명으로 옳지 않은 것은?", opts:["열등처우의 원칙을 지지하였다", "페이비언주의자들이 작성한 보고서이다", "구빈제도를 존속해야한다고 보았다", "빈곤의 원인을 개인의 책임으로 보았다"], ans:1, exp:"페이비언주의자들이 작성한 보고서는 소수파 보고서이다."},
+  {lec:1, q:"사회복지조사의 필요성에 대한 설명으로 옳은 것은?", opts:["자연과학을 모방하기 위해서이다", "자본주의가 가진 문제점을 숨기기 위해서이다", "사회복지조사는 사회과학이 본연의 목적을 달성하는데 필요한 기본적인 도구이다", "사회복지에 대한 비판적인 시각에 대응하기 위해서이다"], ans:2, exp:"사회복지조사는 설명,예측,서술을 목적으로 하는 사회과학의 본연의 목적을 달성하는 데 중요한 도구로 활용된다."},
+  {lec:1, q:"사회복지조사의 전제에 대한 설명으로 옳지 않은 것은?", opts:["사회복지조사는 그 시대의 사회적 관점과 깊은 연관되어 있다", "사회복지조사를 수행하기 위해서는 자신이 가진 관점을 계속 성찰하는 자세가 필요하다", "의미 있는 사회복지조사를 수행하기 위해서는 좋은 질문을 하는 것이 중요하다", "사회복지조사와 관련된 지식은 어느 시대에나 변함없이 고정적이다"], ans:3, exp:"지식이라는 것은 점진적이고 시대에 따라 다를 수 있기 때문에 늘 논박당할 수 있다는 태도를 가질 필요가 있다."},
+  // 2강
+  {lec:2, q:"인식론적 패러다임의 접근방법 중 해석주의의 특징이 아닌 것은?", opts:["인간의 의미 있는 사회적 행동에 초점을 둔다", "사람은 자유의지를 가진다", "사회복지조사의 목적은 법칙을 발견하는 것이다", "사람은 상호작용을 통해 의미를 창조한다"], ans:2, exp:"법칙을 발견하는 것은 자연과학의 조사 목적이다."},
+  {lec:2, q:"과학적 방법의 특징이 아닌 것은?", opts:["논리적", "추상적", "결정론적", "설명적"], ans:1, exp:"과학적 방법은 추상적이 아니라 구체적인 특성을 가진다."},
+  {lec:2, q:"다음 설명에 해당하는 것은?", opts:["선별적 관찰", "과도한 일반화", "비논리적 추론", "성급한 종결"], ans:0, exp:"선별적 관찰에 대한 설명이다.", box:["특수한 사례나 상황만을 부각하여 관찰하는 것으로, 특히 잘못된 고정관념, 편견, 선입견 등을 가지고 관찰하는 경우에 발생하기 쉬운 오류이다"]},
+  {lec:2, q:"구체적인 현상들에서 출발하여 보편적인 결론으로 귀결하는 방법론은 무엇인가?", opts:["귀납적 방법", "변증법적 방법", "논리적 방법", "연역적 방법"], ans:0, exp:"귀납적 방법은 사례를 충분히 관찰한 뒤 특정한 유형이나 패턴을 발견하고 이를 바탕으로 보편적인 결론을 이끌어 내는 방법이다."},
+  {lec:2, q:"연역적 방법에 대한 설명으로 옳은 것은?", opts:["탐색적 성격이 강하다", "이론적 배경이 없어도 조사가 가능하다", "다소 보수적인 성향을 가진 방법이다", "질적 조사에 주로 활용된다"], ans:2, exp:"연역적 방법은 현재 크게 힘을 얻고 있는 이론을 강화하는 방향으로 작동하는 경향이 있으므로 보수적인 속성을 가질 수 있다는 비난을 받기도 한다."},
+  // 3강
+  {lec:3, q:"증거기반 실천에 대한 내용으로 적절하지 않은 것은?", opts:["증거기반실천을 위해 사회복지사는 과학적인 근거를 수집하고 활용해야한다", "증거기반 의학과 다르게 증거기반실천에서는 사회복지사의 임상적 전문성이 필요하지 않다", "증거기반실천은 1980년대 의료 전문가들이 사용했던 증거기반 의학에서 확장된 것이다", "사회복지뿐만 아니라 교육, 보건, 간호 등 많은 분야에서 증거기반실천을 적용하고 있다"], ans:1, exp:"증거기반 실천은 클라이언트의 특성과 실천의 상황, 최선의 근거를 포괄저긍로 고려 할 수 있는 사회복지사의 임상적 전문성이 요구된다."},
+  {lec:3, q:"증거기반실천의 필수적인 세 가지 요소가 아닌 것은?", opts:["최선의 연구 증거", "실천가의 전문성", "선배 전문가의 조언", "클라리언트의 특성"], ans:2, exp:"증거기반실천의 필수적인 세가지 요소는 최선의 연구 증거, 실천가의 전문성, 클라이언트의 특성이다."},
+  {lec:3, q:"증거기반실천의 6단계 중 첫 번째 단계는 무엇인가?", opts:["증거찾기", "가장 적절한 증거기반 개입을 결정하기", "발견한 증거와 관련 연구를 비판적으로 검토하기", "실천욕구에 답하기 위한 질문 만들기"], ans:3, exp:"증거기반 실천의 첫 번째 단계는 최선의 결정을 내리기 위해 필요한 정보를 질문으로 전환하는 질문 만들기 단계이다."},
+  {lec:3, q:"증거기반실천에서 과학적 근거를 찾기 위한 질문으로 적절하지 않은 것은?", opts:["과학적 근거를 찾기 위해 얼마의 시간이 필요한가?", "개입의 효과를 측정하는 데 가장 적절한 측정도구는 무엇인가?", "클라이언트가 가진 고유한 특성은 무엇인가?", "클라이언트가 가진 특정 문제를 해결하는데 어떤 개입이 가장 효과적이었는가?"], ans:0, exp:"실천욕구에 답하기 위한 질문은 크게 네 가지로 범주화할 수 있다. 첫째. 특정 문제를 해결하는데 어떤 개입, 프로그램, 정책이 가장 효과적이었는가. 둘째, 어떤 요인이 바람직한 상황이나 바람직하지 못한 결과를 가장 잘 예측할 수 있는가. 셋째, 클라이언트의 특성은 어떠한가. 넷째. 어떤 측정도구를 사용하는 것이 가장 적절한가 이다."},
+  {lec:3, q:"증거기반실천과 관련된 쟁점에 대한 설명으로 옳은 것은?", opts:["증거기반실천을 뒷받침할 만한 최선의 연구 증거를 찾으려고 노력하는 것이 중요하다", "증거기반실천은 과학적 증거를 중시하기 때문에 클라이언트의 가치가 반영되지 않는다", "사회복지는 실천이 중요하므로 과학적 증거보다는 실천 현장의 전통과 권위를 따르는 것이 더 중요하다", "증거기반실천의 세 가지 요소 중 가장 중요한 것은 최선의 연구 증거이다"], ans:0, exp:"증거기반 실천은 클라이언트의 특성을 파악하는 과정에서 클라이언트와의 상호작용을 중요하게 생각한다. 증거기반실천은 가장 바람직한 실천을 위해 어떤 개입방법을 선택해야 할지 결정하는데 최선의 과학적 증거를 고려하는 것을 중요하게 여긴다. 증거기반실천의 세가지 요소중에서 가장 중요한 것은 실천의 전문성이다. 사회복지사의 실천지례가 없으면 증거기반 실천은 실행 될 수 없다."},
+  // 4강
+  {lec:4, q:"연구윤리 발생 배경에 대한 설명으로 옳지 않은 것은?", opts:["뉘른베르크 강령은 세계 최초의 연구윤리 강령이다", "스탠퍼드 대학교의 감옥실험은 이후 연구윤리와 관련된 문제를 제기하게 된 실험은 아니다", "제 2차 세계대전은 인간을 대상으로 수행된 연구 및 연구윤리에 대한 사회적 관심을 촉발시킨 역사적 사건이다", "벨몬트 보고서는 인간존중, 선행, 정의의 원칙을 제시하였다"], ans:1, exp:"스텐포드 대학교의 감옥실험은 연구 참여자들을 정신적, 심리적, 스트레스 상황에 방치하게 두는 등의 문제가 있어 연구윤리 문제가 있어 연구 윤리 문제를 고려하는 계기를 제공한 사건이다."},
+  {lec:4, q:"사회복지조사의 익명성과 비밀보장에 대한 설명으로 옳은 것은?", opts:["익명성과 비밀보장은 조사의 응답률과는 상관없다", "응답자가 신원을 밝히지 않고 응답하도록 하는 것이 비밀보장이다", "익명성과 비밀보장은 사회조사의 윤리적 측면에서 중요하다", "익명성보다는 비밀보장이 더 중요하다"], ans:2, exp:"1)익명성과 비밀보장은 조사의 응답률에 영향을 미친다.\n2) 응답자가 신원을 밝히지 않고 응답하도록 하는 것은 익명성이라고 한다.\n4) 연구윤리에서 익명성과 비밀 보장은 모두 중요하다"},
+  {lec:4, q:"인간을 대상으로 하는 연구가 윤리적으로 문제가 없는지를 판단하는 전문적인 심사기관은?", opts:["OECD", "ILO", "WHO", "IRB"], ans:3, exp:"IRB는 특정 연구가 윤리적인지 아닌지를 판단하는 독립적이고 전문적인 심사기관인 기관 생명윤리 위원회이다."},
+  {lec:4, q:"조사 과정에서 연구윤리상 문제가 있는 것은?", opts:["연구보고서를 통해 설문 응답자가 누구인지 파악할 수 있다", "중학생을 대상으로 하는 설문조사를 실시하기 위해 사전동의서를 받는다", "연구방법으로 개별인터뷰를 실시하기 위해 사전 IRB심의를 받는다", "수엉내용에 대한 학생들의 평가는 교사가 참관하지 않은 상황에서 이루어진다"], ans:0, exp:"응답자의 익명성 보장 원칙을 지켜야 하므로 설문 응답자에 대한 개별 정보가 드러나서는 안 된다."},
+  {lec:4, q:"조사연구의 정치성에 대한 설명으로 옳지 않은 것은?", opts:["사회조사에서는 윤리성보다 정치성이 훨씬 더 중요하다", "사회조사가 특정집단을 차별하고 있는지에 대한 민감성이 필요하다", "조사연구의 정치성 측면에서 볼 때 올바르거나 정당하지 않은 것이 무엇인지 분명하지 않은 경우가 많다", "연구 주제는 과학적 문제라기보다는 이데올로기의 문제이다"], ans:0, exp:"사회조사에 윤리성과 정치성은 함께 고려 되어야 하는 중요한 요소이다."},
+  // 5강
+  {lec:5, q:"사회복지조사의 첫단계로서 연구의 필요성 및 연구질문 등을 제기하는 과정은?", opts:["자료수집", "문제제기", "조사설계", "자료분석"], ans:1, exp:"문제제기는 연구문제를 설정하는 단계로 조사연구의 첫 단계이다."},
+  {lec:5, q:"연구문제 설정 시 고려해야 할 내용으로 옳지 않은 것은?", opts:["개인적인 경험도 연구문제로 선정할 수 있다", "연구문제는 의문을 가지고 질문을 던지는 것부터 시작된다", "연구질문에 대한 개념화가 필요하다", "구체적 질문보다는 일반적 질문을 해야한다"], ans:3, exp:"연구질문은 구체적으로 설정하는 것이 이후 연구진행 과정 등을 고려했을 때 바람직하다."},
+  {lec:5, q:"사회복지조사의 일반적인 과정에 대한 설명으로 옳지 않은 것은?", opts:["조사연구의 과정은 자료분석으로 마무리 된다", "연구문제 설정은 조사연구의 핵심적인 과정이다", "조사설계는 자료수집의 전단계이다", "사회조사의 모든 과정에서 윤리적인 고려가 필요하다"], ans:0, exp:"조사연구의 마지막 과정은 보고서를 작성한 것이다."},
+  {lec:5, q:"연구주제에 대해 어떤것들이 이미 알려져 있는지를 확인하는 과정을 무엇이라고 하는가?", opts:["자료수집", "가설설정", "문헌고찰", "표본추출"], ans:2, exp:"특정 영역에 대한 관련 자료를 찾아서 분석하고 확인하는 과정은 문헌고찰이다."},
+  {lec:5, q:"가설에 대한 설명으로 옳은 것은?", opts:["가설은 이론과는 관련이 없다", "가설은 검증 가능해야한다", "대립가설은 연구자가 검증하고자 하는 가설과 반대되는 가설을 말한다", "가설이란 네 개 이상의 변수 간의 관계를 예측하는 것이다."], ans:1, exp:"1)가설은 이론과 관련성을 가지고 있다.\n3) 대립가설(연구가설)은 연구자의 주장이 담긴 가설로 검증될 때까지 연구문제에 대한 잠정적인 해답으로 간주된다. <-> 귀무가설(영가설)\n4) 가설이란 두 개 이상의 변수 가의 관계를 여측하는 것이다.\n※ 이름 때문에 헷갈림 중의 * 귀무가설: 현재의 기본상태(효과없음) 무죄추정의 원칙 대립가설: 기존상태에 대립하는 새로운 대안(효과 있음, 유죄 = 연구자주장)"},
+  // 6강
+  {lec:6, q:"내적 타당도에 대한 설명으로 옳지 않은 것은?", opts:["내적타당도란 인과성을 확인하는 정도를 말한다", "내적 타당도가 높은 연구는 인과관계를 확신하는 연구라는 것을 의미한다", "우연한 사건은 내적 타당도 저해요인이다", "내적타당도 저해요인 중 선정편향은 시간이 흐르면서 자연스럽게 나타나는 조사대상자의 심리적 변화 등을 말한다"], ans:3, exp:"시간이 흐르면서 자연스럽게 나타나는 조사대상자의 심리적 변화 등은 ‘성숙효과’이다."},
+  {lec:6, q:"순수실험설계에 해당하는 유형은?", opts:["시계열 설계", "통제집단 사후검사 설계", "비동일통제집단 설계", "패널조사"], ans:1, exp:"순수실험설계에는 통제집단 사전-사후검사 설계, 통제집단 사후검사 설계 등이 있다.\n순수(true)실험설계(통유 무유) 유사(quasi)실험설계 (통유 무무) 전(pre)실험설계(통무 무무)"},
+  {lec:6, q:"실험설계에 대한 설명으로 옳지 않은 것은?", opts:["모든 설계가 무작위 활당을 사용한다", "인과관계를 규명하는 것이 주 목적이다", "기관프로그램 평가에 주로 활용된다", "실험설계는 순수실험설계, 유사실험설계, 전실험설계로 구분할 수 있다"], ans:0, exp:"실험설계 중 무작위 할당을 사용하는 설계는 순수실험설계이고 무작위 할당을 사용하지 않는 설계는 유사실험설계, 전 실험실계이다."},
+  {lec:6, q:"다음 설명에 해당하는 단일사례 조사설계의 유형은?", opts:["B설계", "AB설계", "ABAB설계", "ABCD설계"], ans:1, exp:"AB 설계는 단일 사례 조사의 가장 기본적인 유형으로 사회복지사들이 가장 많이 사용하는 유형이다.", box:["단일사례 조사설계의 가장 기본적인 유형으로 개입이후 클라이언트이 변화를 개입전과 비교하여 제시할 수 있다"]},
+  {lec:6, q:"단일사례 조사설계에 대한 설명으로 옳지 않은 것은?", opts:["N=1 설계라고도 한다", "사회복지사의 개입전후 효과성을 평가하는데 주로 활용된다", "단일사례 조사설계의 마지막 단계는 표적행동을 결정하는 것이다", "기초선은 일반적으로 ‘A’로 표시한다."], ans:2, exp:"단일사례 조사설계으 마지막 단계는 조사 실시 후 개입의 효과를 평가하는 과정이다."},
+  // 7강
+  {lec:7, q:"측정 과정에서 무작위 오류를 줄이는 방법으로 옳지 않은 것은?", opts:["측정도구의 모호성을 제거하여 측정 도구의 내용을 명확히 한다", "조사대상자가 잘 모르거나 전혀 관심이 없는 내용도 설득하여 응답하도록 한다", "동일하거나 유사한 질문을 2회 이상 하는 방법을 사용한다", "표준화된 측정도구를 사용한다"], ans:1, exp:"조사대상자가 잘 모르거나 전혀 관심이 없는 내용은 측정하지 않는 것이 좋다."},
+  {lec:7, q:"측정의 신뢰도에 대한 설명으로 옳지 않은 것은?", opts:["측정값의 일관성을 의미한다", "측정의 안정성과 관련이 있다", "신뢰도가 높다는 것은 예측가능성이 높다는 것을 의미한다", "측정도구의 정확성을 의미한다"], ans:3, exp:"측정도구의 정확성을 의미하는 것은 측정의 타당도이다."},
+  {lec:7, q:"내적 일관성 신뢰도를 평가하는 가장 보편적인 방법은?", opts:["대안법", "반분법", "크론바흐 알파", "검사-재검사법"], ans:2, exp:"크론바흐 알파는 가장 보편적인 신뢰도 평가방법이며, SPSS 등 통계 프로그램을 통해 산출한다."},
+  {lec:7, q:"( )에 들어갈 알 맞은 말은?", opts:["예측", "동시", "내용", "판별"], ans:0, exp:"현재 상태로부터 미래의 상태 변화를 예측해 내는 측정도구의 능력이 어느 정도인가를 진단하는 방법은 예측타당도이다.", box:["대학수학능력시험의 ( )타당도를 확인하기 위해 3년간 학생 개개인의 입학 시 대학수학능력시험 점수와 입학 후 첫학기 학점 간 상관관계를 분석하였다."]},
+  {lec:7, q:"측정의 신뢰도와 타당도에 대한 설명으로 옳은 것은?", opts:["신뢰도가 높으면 타당도도 높다", "검사-재검사는 타당도를 측정하는 방법이다", "타당도는 측정을 반복했을 때 결과가 동일한 정도를 말한다", "신뢰도는 높지만 타당도가 낮은 측정도 있다"], ans:3, exp:"1)신뢰도가 높다고 해서 빈드시 타당도가 높은 것은 아니다.\n2) 검사-재검사는 신뢰도를 측정하는 방법이다.\n3) 측정을 반복했을 때 결과가 동일한 정도는 신뢰도에 해당한다."},
+  // 8강
+  {lec:8, q:"척도의 요건에 대한 설명으로 옳지 않은 것은?", opts:["척도는 복수의 지표로 구성되어야 한다", "척도는 복합적이므로 다차원성이 확보되어야 한다", "척도는 신뢰도와 타당도가 확보 되어야 한다", "척도의 지표는 개념이나 변수의 다양한 측면을 고려하여 구성되어야 한다"], ans:1, exp:"척도는 단일차원성이 확보되어야 한다"},
+  {lec:8, q:"측정의 수준에 대한 설명으로 옳지 않은 것은?", opts:["명목수준 변수의 속성에 부여된 값들은 수적인 의미가 없다", "서열수준에서 서열 사이의 간격은 동일하지 않다", "비율수준은 등간수준의 속성에 절대 영점의 의미가 추가된 것인가", "등간수준의 예로는 자녀 수가 있다"], ans:3, exp:"자녀 수는 비율수준의 예에 해당된다."},
+  {lec:8, q:"다음에 설명에 해당하는 척도는?", opts:["리커트 척도", "명목척도", "의미분화척도", "거트만 척도"], ans:2, exp:"사물이나 개념의 의미를 측정하는 의미분화척도에 대한 설명이다.", box:["양 극단에 서로 상반되는 형용사를 배치하여, 그 속성에 대한 평가를 내리도록 하는 척도"]},
+  {lec:8, q:"리커트 척도에 대한 설명으로 옳지 않은 것은?", opts:["각 항목의 단순 합산을 통해 서열성을 산축한다", "거의 사용하지 않는 척도이다", "순위척도라고도 한다", "보통 4~5개의 범주로 구성한다"], ans:1, exp:"리커트 척도는 사회조사에서 가장 빈번하게 사용하는 척도이다."},
+  {lec:8, q:"척도에 대한 설명으로 옳지 않은 것은?", opts:["서열촉도에는 리커트 척도와 거트만 척도가 있다", "거트만 척도에서 가장 중요한 것은 응답의 일관성이다", "리커트 척도는 각 항목의 단순 합상을 통해 서열성을 산출하는 것을 말한다", "명목척도는 포괄성만 고려하여 구성하면 된다"], ans:3, exp:"명목척도는 포괄성과 함께 상호배타성을 고려해야 한다."},
+  // 9강
+  {lec:9, q:"표본추출에 대한 설명으로 옳지 않은 것은?", opts:["표본의 크기가 클수록 표집오차는 커진다", "표본은 전체를 대표하기 위해 선택된 일부를 말한다", "표본의 특성을 나타내는 수치를 통계치라고 한다", "표본추출의 첫단계는 모집단을 선정하는 것이다"], ans:0, exp:"일반적으로 표본의 크기가 클수록 확률표집을 할수록, 모집단이 동질적일수록 표집오차는 줄어든다."},
+  {lec:9, q:"다음 설명에 해당하는 표본 추출 방법은?", opts:["체계적 표본추출", "단순무작위 표본추출", "층화 표본추출", "집락 표본추출"], ans:2, exp:"확률 표본추출 방법 중 총화 표분추출에 대한 설명이다.", box:["모집단의 속성에 대한 이해를 바탕으로 모집단을 동질적인 요소들끼리 묶은 몇 개의 층으로 나눈 다음, 각 층별로 일정한 크기의 표본을 무작위로 추출하는 방법"]},
+  {lec:9, q:"확률 표본추출에 대한 설명으로 옳은 것은?", opts:["층화 표본추출은 확률 표본추출이 아니다", "대표적 방법은 편의 표본추출이다", "표본추출에 확률 이론을 적용한 방법이다", "무작위 방법이 아니다"], ans:2, exp:"1) 총화 표분 추출은 확률 표분추출의 한가지 방법이다.\n2) 편의 표본추출은 비확률 표분추출 방법이다.\n3) 확률 표분추출은 무작위 방법을 사용한다."},
+  {lec:9, q:"노숙자 등 모집단 구성원을 찾기 어려운 대상을 연구할 때 적합한 표본추출 방법은?", opts:["눈덩이 표본추출", "집락 표본추출", "할당 표본추출", "임의 표본추출"], ans:0, exp:"눈덩이 표본추출은 연구 대상을 찾기 어려운 경우에 주로 사용하며 눈덩이를 굴리는 것처럼 해당되는 표분 대상을 하나씩 늘려가는 방식이다."},
+  {lec:9, q:"확률 표본추출 방법이 아닌 것은?", opts:["집락 표본추출", "단순무작위 표본추출", "체계적 표볹추출", "할당 표본추출"], ans:3, exp:"할당 표분추출은 비확률 표본추출 방법이다."},
+  // 10강
+  {lec:10, q:"자료수집 방법에 대한 설명으로 옳은 것은?", opts:["우편 설문조사는 전자 설문조사에 비해 비용이 적게 든다", "면접조사는 다른 조사에 비해 라포 형성이 용이하다", "면접조사는 전화 설문조사에 비해 시간이 적게 소요된다", "면접조사는 항상 응답의 정확성이 높다"], ans:1, exp:"1) 우편설문조사는 전자 설문조사에 비해 비용이 많이든다.\n3) 면접조사는 전화 설문자조사에 비해 많은 시간이 소요된다.\n4) 면접조사는 상황에따라 응답의 정확성이 떨어 질수 있다."},
+  {lec:10, q:"면접조사와 비교했을 때 우편 설문조사의 장점은?", opts:["응답률이 높다", "질문 내용을 명확히 전달할 수 있다", "익명성이 보장된다", "응답상황에 대한 통제가 어렵다"], ans:2, exp:"우편 설문조사는 면접조사와 달리 조사원과 응답자가 직접 만나지 않아도 된다. 따라서 면접조사에 비해 익명성을 보장 할 수 있다."},
+  {lec:10, q:"전자 설문조사의 장점으로 옳지 않은 것은?", opts:["시간과 비용을 절감할 수 있다", "통계처리를 하기 용이하다", "표본집단의 대표성을 확보하기 쉽다", "표본 수가 증가해도 추가적인 비용이 발생하지 않는다"], ans:2, exp:"이 메일 목록이나 홈페이지 방문자 등과 같이 조사자가 확보한 목록에 포함된 대상자만 조사 할 수 있어 표본집단의 대표성을 확보하기 어렵다."},
+  {lec:10, q:"관찰조사의 장점으로 옳지 않은 것은?", opts:["자료수집 과정에서 관찰자의 선입견과 편견이 개입되지 않는다", "비언어적 및 자연스러운 행동에 대한 자료수집이 가능하다", "소수민족에 대한 연구방법으로 적합하다", "실시간으로 자료수집이 가능하므로 정확성이 높다고 할 수 있다."], ans:0, exp:"기본적으로 관찰자의 관찰을 통해 조사연구를 진행하므로 관찰자의 선입견과 편견이 개입 될 여지가 높다."},
+  {lec:10, q:"다음 설명에 해당하는 자료수집의 유형은?", opts:["문헌연구", "내용분석", "2차 자료분석", "포커스그룹 면접"], ans:2, exp:"2차 자료분석은 기존에 존재하는 통계나 연구자료를 활용하여 새로운 연구의 목적에 맞게 분석하는 방법이다.", box:["기말과제를 수행하기 위해 관심 있는 주제에 대한 현황을 조사할 수 있는 ‘한국복지패널’의 데이터를 내려받아서 활용하였다."]},
+  // 11강
+  {lec:11, q:"자료분석을 위해 사회과학에서 주로 사용하는 통계프로그램이 아닌 것은?", opts:["SPSS", "IBM", "SAS", "Stata"], ans:1, exp:"사회과학에서 주로 사용하는 통계 프로그램은 SPSS,SAS,Stata 등이다."},
+  {lec:11, q:"자료분석 과정을 바르게 나열한 것은?", opts:["코딩→ 데이터 입력 및 통계작업 →자료정리 → 통계 산출물 해석", "코딩→ 통계 산출물 해석→ 데이터 입력 및 통계작업 →자료 정리", "자료정리 → 데이터 입력 및 통계작업 →코팅 →통계 산출물 해석", "자료정리 →코딩 →데이터 입력 및 통계작업→통계 산출물 해석"], ans:3, exp:"자료분석은 수집된 자료를 컴퓨토에 입력하기 전 자료의 누락된 부분과 오류를 검토하는 자료 정리 과정을 거친후 코딩을 하고 , 자료를 컴퓨터 프로그램에 입력하고 통계기법을 실행한후 통계적인 산출을 해석하고 필요한 정보를 구성하는 과정으로 이루어진다."},
+  {lec:11, q:"수집된 자료들을 일정한 규칙에 따라 숫자, 문자와 같은 기호를 부여하는 과정을 무엇이라고 하는가?", opts:["2차 자료분석", "코딩", "프로빙", "데이터클리닝"], ans:1, exp:"코딩에 대한 설명이다."},
+  {lec:11, q:"통계기법 중 변수에 대한 가장 기초적인 정보를 제공하고, 명목변수와 서열변수를 설명하는데 유용한 것은?", opts:["기술통계", "차이분석", "빈도분석", "관계분석"], ans:2, exp:"빈도란 변숫값이 몇 번 나타나고 있는지를 의미하며, 빈도분석은 빈도결과를 빈도표, 그래프를 통해 자료의 특성을 정리하는 것이다."},
+  {lec:11, q:"차이본석 방법이 아닌 것은?", opts:["카이제곱 검정", "독립표본 t-검정", "대응표본 t-검정", "회귀분석"], ans:3, exp:"회귀분석은 관계분석 방법에 해당하며 변수 간의 예측 문제를 다룬다."},
+  // 12강
+  {lec:12, q:"욕구조사에 대한 설명으로 옳지 않은 것은?", opts:["욕구조사는 서비스 제공자를 위한 조사라고 볼 수 있다", "욕구조사 내용에는 지역사회 자원에 대한 자료가 포함되어 있다", "욕구조사는 프로그램이 제공된 다음에 이루어지는 조사이다", "욕구조사의 자료수집 방법에는 지역주민 조사, 델파이 기법 등이 있다"], ans:2, exp:"욕구조사는 일반적으로 프로그램을 개발하거나 실행하기 위해 사전에 실시하는 경우가 많다."},
+  {lec:12, q:"브래드쇼가 제시한 욕구의 유형 중 동일한 특징을 가진사람들 간의 서비스 수혜여부를 비교하여 파악된 욕구를 무엇이라 하는가?", opts:["인식된 욕구", "비교 욕구", "규범적 욕구", "표출된 욕구"], ans:1, exp:"비교 욕구에 대한 설명으로 상대적 욕구라고도 한다."},
+  {lec:12, q:"욕구조사의 필요성에 대한 설명으로 옳지 않은 것은?", opts:["기관 프로그램을 서비스 제공자 친화적인 방향으로 운영하기 위해서이다", "기관의 자원을 효율적으로 활용하고, 체계적으로 조직화하기 위해서이다", "기관의 정체성을 확립하고 저직의 정당을 마련하기 위해서이다", "빠르게 변화하는 환경 변화에 대응하기 위해서이다"], ans:0, exp:"욕구조사의 궁극적인 목적은 이용자의 욕구를 파악하여 이용자 중심의 프로그램을 개발하는 것이다."},
+  {lec:12, q:"욕구조사의 자료수집 방법 중 지역사회의 어떤 문제에 대해 전문가들의 합의점을 찾는 방법은 무엇인가?", opts:["사회지표조사", "서비스 이용자 조사", "지역사회 공개토론회", "델파이 기법"], ans:3, exp:"델파이 기법은 전문자들의 의견이나 정보를 수집하여 분석한 결과를 다시 응답한 전문가들 에게 보내 의견을 묻는 식으로 만족스러운 결과를 얻을 때까지 계속하는 방법이다."},
+  {lec:12, q:"초점집단 면접에 대한 설명으로 옳지 않은 것은?", opts:["심층면접을 으용한 방법으로 의도적 표집이 이루어진다", "참여자들은 6명 이하로 구성해야한다", "진행자의 역할이 무엇보다도 중요하다", "진행자의 토론 내용을 녹음하거나 비디오로 녹화하여 추후 분석에 이용할 수 있다"], ans:1, exp:"초점집단 면접은 일반적으로 6~8명의 참여자들로 구성하여 이루어진다."},
+  // 13강
+  {lec:13, q:"질적연구방법에 대한 설명으로 옳은 것은?", opts:["잘 알려지지 않은 주제에 대한 연구가 필요할 때 주로 사용한다", "연구대상자의 환경을 질적 연구에 적합하도록 변경하면 더욱 효과적이다", "양적 연구보다 일반화 가능성이 조금 더 높다", "질적 연구는 17세기 말 비서양문화를 대상으로 하는 민속지학에서 유래 되었다"], ans:0, exp:"2)질적 연구는 연구대상자가 처해 있는 자연스러운 환경에서 수행되어야 한다.\n3)질적 연구는 소수의 표분을 사용하는 경우가 많아 양적 연구에 비해 일반화 가능성이 상대적으로 낮다.\n4)질적 연구는 19세기 말 비서양문화를 대상으로 하는 민소지학에서 유래되었다."},
+  {lec:13, q:"질적연구방법을 적용한 연구에 해당하지 않는 것은?", opts:["A기관을 이용하는 시각장애인들의 자녀양육 경험을 살펴보고자, 여성 시각장애인 5명을 인터뷰하여 양육경험의 본질을 기술하였다.", "B지역에 부임한 신입교사들이 학교생활에 얼마나 잘 적응하는지 파악하고자 신입교사 50명을 인터뷰한 자료를 분석하여 하나의 도형으로 설명되는 이론을 도출하였다", "C회사의 신입회사들이 직장생활에 얼마나 만족하고 있는지 파악하고자 신입직원 50명에게 설문조사를 실시하여 결과보고서를 작성하였다", "D국가에 살고 있는 대한민국 이민자들의 삶을 살펴보기 위해 30명의 이민자들과 함께 생활하며 그들의 관찰한 결과를 기술하였다."], ans:2, exp:"설문조사를 실시하여 결과보고서를 작성하는 것은 양적 연구 방법이다.\n1)은 현상적 연구,\n2)는 근거이론 연구,\n4)는 문화기술지 연구에 해당한다."},
+  {lec:13, q:"질적 연구방법을 적용하기에 적합한 상황이라고 할 수 없는 것은?", opts:["접근하기 어려운 대상자에 대해 연구하고자 할 때", "양적 연구로 파악된 결과에 대한 추가적 설명이 필요할 때", "민감한 주제에 대해 연구하고자 할 때", "대부분의 사람들이 공통적으로 경험한 내용을 확인하고 싶을 때"], ans:3, exp:"질적 연구방법은 대부분의 사람들이경험하지 못해 잘 알려져 있지 않은 대상이나 주제에 대해 연구하고자 할 때 유용하게 적용되는 방법이다."},
+  {lec:13, q:"질적 연구방법과 양적 연구방법의 공통점에 대한 설명으로 옳은 것은?", opts:["자료수집을 통해 결론을 도출하는 과학적 연구방법이다", "인과관계 또는 상관관계를 파악하는 것이 연구의 목적이다", "가능한 한 많은 수의 표본을 활용하는 것이 좋다", "누구나 인정하는 객관적 실재는 없다고 가정한다"], ans:0, exp:"2)와3)은 양적 연구 방법,\n4)질적 연구방법에 대한 설명이다."},
+  {lec:13, q:"다음 설명에 해당하는 질적 연구방법의 유형은?", opts:["근거이론 연구", "내러티브 연구", "사례연구", "문화기술지 연구"], ans:1, exp:"내러티브 연구에 대한 설명이다.", box:["개인 또는 다수의 사람들이 경험한 인상사를 깊이 있게 탐색하고자 할 때 사용하는 바업ㅂ이다. 대상자의 이야기가 주된 자료수집원이 되며, 자료분석시 종종 연대기가 사용된다"]},
+  // 14강
+  {lec:14, q:"질적연구 과정을 순서대로 바르게 나열한 것은?", opts:["자료분류 및 코드화→연구문제 형성→연구설계→분석과 설명→표집→자료수집", "연구문제 형성→연구설계→ 표집→자료수집→자료 분류 및 코드화→분석과 설명", "표집→자료수집→자료 분류 및 코드화→연구문제 형성→연구 설계→분석과 설명", "연구문제 형성→연구설계→표집→자료 분류 및 코드화→자료수집→분석과 설명"], ans:1, exp:"질적연구는 연구의 특성에 딸 진행 순서가 상이하나 대체적으로 연구문제형성-연구설계-표집-자료수집-자료분류 및 코드화-분석과 설명의 과정으로 이루어진다."},
+  {lec:14, q:"다음 설명에 해당하는 질적 연구의 과정은?", opts:["자료 분류 및 코드화", "자료수집", "표집", "분석과 설명"], ans:1, exp:"질적연구에서는 현장에서 연구자가 경험하는 모든 것이 자료로 활용될 수 있으며 주로 면접 관찰, 문서 및 시작자료 분석 등을 통해 자료를 수집한다.", box:["주로 면접, 관찰, 문서 및 시각자료 분석 등을 통해 이루어지며, 연구자와 연구참여자 간의 상호작용 범위와 깊이에 따라 결과물이 달라질 수 있다"]},
+  {lec:14, q:"질적 연구 과정에 대한 설명으로 옳지 않은 것은?", opts:["질적 연구에서는 수집된 자료를 분류하고 코드화하는 과정이 필요하다", "질적 연구의 과정은 연구 특성에 따라 진행 순서가 달라질 수 있다", "질적 연구에서 표집되는 표본은 양적 연구에 비해 상대적으로 적다", "질적 연구에서는 사람의 경험보다는 사람 자체에 관심을 두고 표집을 수행한다"], ans:3, exp:"질적 연구에서는 사람 자체보다는 사람의 경험에 관심을 두고 표집을 수행한다."},
+  {lec:14, q:"질적 연구의 엄격성 확보를 위한 조치가 아닌 것은?", opts:["한명의 연구참여자를 여러 명의 연구자가 관찰한다", "연구에 관여하지 않은 동일 분야 전문가에게 연구 내용을 검토 받는다", "연구참여자가 스스로 선택하여 연구에 참여한 것인지 확인한다", "연구자가 연구참여자에게 갖고 있는 편견과 선입견을 충분히 점검한다"], ans:2, exp:"연구참여자가 타인의 강압이 아니라 스스로 선택하여 연구에 참여하도록 하는 것은 연구의 윤리적 영역에 관한 부분이다."},
+  {lec:14, q:"질적 연구의 윤리성을 고려한 조치에 해당하는 것은?", opts:["연구참여자와 관련된 연구 내용에 대해 비밀을 보장한다", "자료는 한 가지 이상의 출처를 통해 수집하도록 한다", "연구의 전과정을 자료로 남겨 언제든지 연구내용을 확인하고 재현할 수 있도록 한다", "연구참여자의 이야기를 연구자가 제대로 이해했는지 확인이 필요한 경우에는 연구참여자에게 검토를 요청한다"], ans:0, exp:"2-3-4는 질적 연구의 엄격성 확보를 위한 조치에 해당한다."},
+  // 15강
+  {lec:15, q:"조사계획서에 포함되어야 할 내용으로 적절하지 않은 것은?", opts:["조사의 중요성", "분석결과", "명확한 가설", "실험설계 계획"], ans:1, exp:"분석결과는 조사연구가 이루어진 다음 조사보고서에 포함되어야 할 내용이다."},
+  {lec:15, q:"조사보고서 작성의 원칙이 아닌 것은?", opts:["간략성", "포괄성", "정확성", "명확성"], ans:0, exp:"조사보고서 작성의 원칙은 포괄성, 정확성, 효율성이다."},
+  {lec:15, q:"조사보고서 작성 시 ‘조사방법’에 포함되어야 할 내용은?", opts:["이론적 배경", "연구의 필요성", "자료분석 방법", "분석 내용"], ans:2, exp:"조사 방법에서는 수집된 자료를 바탕으로 가서을 검증하기 위해 어떠한 통계기법이 활용되었는지 등의 자료 분석방법이 기술되어야 한다."},
+  {lec:15, q:"다음 설명에 해당하는 것은?", opts:["이론적 배경", "초록", "서론", "함의"], ans:1, exp:"초록은 보고서의 핵심적인 내용을 간추린 것으로 짧은 시간에 보고서의 내용을 이해 할 수 있게 한다.", box:["조사보고서의 핵심적인 내용을 요약하여 정리한 것으로 조사목적, 조사 설계와 방법, 조사결과 드으이 내용을 75단어에서 150단어 사이의 길이로 작성한다"]},
+  {lec:15, q:"조사보고서 작성과 관련된 설명으로 옳지 않은 것은?", opts:["조사보고서 제목은 연구 내용을 한눈에 확인할 수 있는 키워드를 사용하여 내용을 함축해야한다", "서론에서는 연구하고자 하는 바를 명확하게 전달해야한다", "참고문헌은 국내문헌, 해외문헌 순으로 작성해야한다", "결론 및 제언은 생략해도 상관 없다"], ans:3, exp:"조사자는 조사를 통해 자신이 내린 결론에 근거하여 사회복지실천과 정책을 위한 합의를 도출해야 하므로 결론 및 제언은 반드시 필요한 부분이다."},
+];
+
+// ==============================
+// STATE
+// ==============================
+let questions = [];
+let currentIdx = 0;
+let answers = {};       // idx → chosen option (0-based)
+let bookmarks = new Set(JSON.parse(localStorage.getItem('swr_bm') || '[]'));
+let wrongSet = new Set(JSON.parse(localStorage.getItem('swr_wrong') || '[]'));
+let graded = false;
+let currentMode = '';
+let expandView = false;
+
+// ── TIMER ──
+let timerInterval = null;
+let timerSeconds = 20 * 60;
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = 20 * 60;
+  updateTimerDisplay();
+  const box = document.getElementById('timer-box');
+  box.style.display = 'flex';
+  document.getElementById('sa-timer').classList.remove('hidden');
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      alert('⏰ 시험 시간이 종료되었습니다!');
+      gradeQuiz();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timer-box').style.display = 'none';
+  document.getElementById('sa-timer').classList.add('hidden');
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const txt = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const el = document.getElementById('timer-display');
+  el.textContent = txt;
+  el.className = timerSeconds <= 60 ? 'timer-danger' : '';
+  const st = document.getElementById('sa-timer');
+  st.textContent = '⏱ ' + txt;
+  st.classList.toggle('timer-danger', timerSeconds <= 60);
+}
+
+// ── EXPAND / COLLAPSE VIEW ──
+function toggleExpandView() {
+  expandView = !expandView;
+  const btn = document.getElementById('expand-btn');
+  const quizScreen = document.getElementById('quiz-screen');
+  const expandScreen = document.getElementById('expand-all-screen');
+
+  if (expandView) {
+    btn.textContent = '⊟';
+    btn.title = '한 문제씩 보기';
+    quizScreen.classList.add('hidden');
+    expandScreen.style.display = 'block';
+    renderExpandAll();
+  } else {
+    btn.textContent = '⇅';
+    btn.title = '전체 문제 보기';
+    expandScreen.style.display = 'none';
+    quizScreen.classList.remove('hidden');
+    renderQuestion();
+  }
+}
+
+function renderExpandAll() {
+  const screen = document.getElementById('expand-all-screen');
+  screen.innerHTML = '';
+  const nums = ['①','②','③','④','⑤'];
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'all-q-card';
+    card.id = `all-q-${i}`;
+
+    const numDiv = document.createElement('div');
+    numDiv.className = 'q-num';
+    numDiv.textContent = `${i + 1} / ${questions.length} 번 문제 · ${q.lec}강`;
+    card.appendChild(numDiv);
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'q-text';
+    textDiv.textContent = q.q;
+    card.appendChild(textDiv);
+
+    if (q.box && q.box.length) {
+      const boxDiv = document.createElement('div');
+      boxDiv.className = 'q-box';
+      q.box.forEach(t => { const d = document.createElement('div'); d.textContent = t; boxDiv.appendChild(d); });
+      card.appendChild(boxDiv);
+    }
+
+    const optsDiv = document.createElement('div');
+    optsDiv.className = 'options';
+    q.opts.forEach((opt, oi) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      div.innerHTML = `<span class="num">${nums[oi]}</span><span>${opt}</span>`;
+      if (graded || answers[i] !== undefined) {
+        markOption(div, oi, q.ans, answers[i]);
+      } else {
+        div.onclick = () => {
+          answers[i] = oi;
+          const y = card.getBoundingClientRect().top;
+          renderExpandAll(); renderGrid(); updateProgress();
+          // 다시 그린 뒤에도 보던 위치 유지
+          const nc = document.getElementById(`all-q-${i}`);
+          if (nc) document.getElementById('main').scrollTop += nc.getBoundingClientRect().top - y;
+        };
+      }
+      optsDiv.appendChild(div);
+    });
+    card.appendChild(optsDiv);
+
+    if (graded || answers[i] !== undefined) {
+      const expDiv = document.createElement('div');
+      expDiv.className = 'explanation show';
+      expDiv.innerHTML = feedbackHtml(q, answers[i]) + `<div class="exp-label">💡 해설</div><div>${q.exp}</div>`;
+      card.appendChild(expDiv);
+    }
+
+    screen.appendChild(card);
+  });
+}
+
+function saveBookmarks() {
+  localStorage.setItem('swr_bm', JSON.stringify([...bookmarks]));
+}
+function saveWrong() {
+  localStorage.setItem('swr_wrong', JSON.stringify([...wrongSet]));
+}
+
+// ==============================
+// NAVIGATION
+// ==============================
+function showStart() {
+  document.body.classList.remove('quiz-on');
+  document.getElementById('start-screen').classList.remove('hidden');
+  document.getElementById('quiz-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('expand-all-screen').style.display = 'none';
+  document.getElementById('sidebar').classList.add('hidden');
+  document.getElementById('mode-tag').textContent = '모드 선택 중';
+  document.getElementById('progress-text').textContent = '';
+  document.getElementById('expand-btn').style.display = 'none';
+  setHeaderBtns(false, false, false);
+  stopTimer();
+  graded = false;
+  answers = {};
+  questions = [];
+  currentIdx = 0;
+  expandView = false;
+}
+
+function setHeaderBtns(grade, retry, home) {
+  document.getElementById('btn-header-grade').style.display = grade ? 'inline-block' : 'none';
+  document.getElementById('btn-header-retry').style.display = retry ? 'inline-block' : 'none';
+  document.getElementById('btn-header-home').style.display = home ? 'inline-block' : 'none';
+  document.getElementById('sa-grade').style.display = grade ? '' : 'none';
+  document.getElementById('sa-retry').style.display = retry ? '' : 'none';
+  document.getElementById('sa-home').style.display = home ? '' : 'none';
+  document.getElementById('sa-expand').style.display = grade ? '' : 'none';
+}
+
+function retryQuiz() {
+  if (!confirm('다시 풀기 하면 현재 답이 초기화됩니다. 계속하시겠습니까?')) return;
+  startQuiz(currentMode);
+}
+
+function startQuiz(mode) {
+  currentMode = mode;
+  graded = false;
+  answers = {};
+  currentIdx = 0;
+  expandView = false;
+  let useTimer = false;
+
+  if (mode === 'random') {
+    questions = shuffle([...ALL_QUESTIONS]).slice(0, 30);
+    document.getElementById('mode-tag').textContent = '랜덤 30문제';
+    useTimer = true;  // 랜덤만 20분 타이머
+  } else if (mode === 'all') {
+    questions = [...ALL_QUESTIONS];
+    document.getElementById('mode-tag').textContent = `전체 ${questions.length}문제`;
+    useTimer = false; // 전체 문제는 시간제한 없음
+  } else if (mode === 'bookmark') {
+    const bmIds = [...bookmarks];
+    questions = ALL_QUESTIONS.filter((_, i) => bmIds.includes(i));
+    if (questions.length === 0) { alert('📌 책갈피된 문제가 없습니다.'); return; }
+    document.getElementById('mode-tag').textContent = `책갈피 ${questions.length}문제`;
+    useTimer = false;
+  } else if (mode === 'wrong') {
+    questions = [...wrongSet].map(i => ALL_QUESTIONS[i]).filter(Boolean);
+    if (questions.length === 0) { alert('✅ 틀린 문제가 없습니다!'); return; }
+    document.getElementById('mode-tag').textContent = `오답 ${questions.length}문제`;
+    useTimer = false;
+  }
+
+  document.getElementById('start-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('expand-all-screen').style.display = 'none';
+  document.getElementById('quiz-screen').classList.remove('hidden');
+  document.getElementById('sidebar').classList.remove('hidden');
+  document.body.classList.add('quiz-on');
+  document.getElementById('expand-btn').style.display = 'flex';
+  document.getElementById('expand-btn').textContent = '⇅';
+  setHeaderBtns(true, true, true);
+
+  if (useTimer) {
+    startTimer();
+  } else {
+    stopTimer();
+  }
+
+  renderQuestion();
+  renderGrid();
+}
+
+function navigate(dir) {
+  const newIdx = currentIdx + dir;
+  if (newIdx < 0 || newIdx >= questions.length) return;
+  currentIdx = newIdx;
+  renderQuestion();
+  renderGrid();
+}
+
+function goToQuestion(i) {
+  if (expandView) {
+    const card = document.getElementById(`all-q-${i}`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    currentIdx = i;
+    renderGrid();
+    return;
+  }
+  currentIdx = i;
+  renderQuestion();
+  renderGrid();
+}
+
+// ==============================
+// RENDER QUESTION
+// ==============================
+function renderQuestion() {
+  const q = questions[currentIdx];
+  if (!q) return;
+
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  const label = document.getElementById('q-num-label');
+  label.textContent = `${currentIdx + 1} / ${questions.length} 번 문제 · ${q.lec}강`;
+
+  document.getElementById('q-text').textContent = q.q;
+  const boxEl = document.getElementById('q-box');
+  if (q.box && q.box.length) {
+    boxEl.innerHTML = '';
+    q.box.forEach(t => { const d = document.createElement('div'); d.textContent = t; boxEl.appendChild(d); });
+    boxEl.classList.remove('hidden');
+  } else {
+    boxEl.classList.add('hidden');
+  }
+  document.getElementById('q-text').style.fontWeight = '600';
+
+  const optsCont = document.getElementById('options');
+  optsCont.innerHTML = '';
+
+  const nums = ['①','②','③','④','⑤'];
+  q.opts.forEach((opt, oi) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `<span class="num">${nums[oi]}</span><span>${opt}</span>`;
+
+    if (graded || answers[currentIdx] !== undefined) {
+      markOption(div, oi, q.ans, answers[currentIdx]);
+    } else {
+      div.onclick = () => selectOption(oi);
+    }
+    optsCont.appendChild(div);
+  });
+
+  // Explanation
+  const expEl = document.getElementById('explanation');
+  const expText = document.getElementById('exp-text');
+  if (graded || answers[currentIdx] !== undefined) {
+    expEl.classList.remove('hidden');
+    expEl.classList.add('show');
+    document.getElementById('exp-feedback').innerHTML = feedbackHtml(q, answers[currentIdx]);
+    expText.textContent = q.exp;
+  } else {
+    expEl.classList.remove('show');
+  }
+
+  // Bookmark btn
+  const bmBtn = document.getElementById('bm-btn');
+  if (bookmarks.has(origIdx)) {
+    bmBtn.classList.add('bookmarked');
+    bmBtn.textContent = '🔖 책갈피됨';
+  } else {
+    bmBtn.classList.remove('bookmarked');
+    bmBtn.textContent = '🔖 책갈피';
+  }
+
+  // prev/next
+  document.getElementById('btn-prev').disabled = currentIdx === 0;
+  document.getElementById('btn-next').textContent = currentIdx === questions.length - 1 ? '완료' : '다음 ▶';
+
+  // progress
+  updateProgress();
+
+}
+
+function selectOption(oi) {
+  if (graded || answers[currentIdx] !== undefined) return;   // 한 번 고르면 바로 채점, 변경 불가
+  answers[currentIdx] = oi;
+  renderQuestion();
+  renderGrid();
+}
+
+// 정답/오답 표시 (고른 답이 틀리면 빨강, 정답은 항상 초록)
+function markOption(div, oi, ans, chosen) {
+  div.classList.add('locked');
+  if (oi === ans) div.classList.add('correct');
+  else if (chosen === oi) div.classList.add('wrong');
+}
+
+function feedbackHtml(q, chosen) {
+  const nums = ['①','②','③','④','⑤'];
+  if (chosen === undefined) return `<div class="feedback ng">미응답 · 정답 ${nums[q.ans]}</div>`;
+  if (chosen === q.ans) return `<div class="feedback ok">⭕ 정답입니다</div>`;
+  return `<div class="feedback ng">❌ 오답입니다 · 정답 ${nums[q.ans]}</div>`;
+}
+
+function updateProgress() {
+  const answered = Object.keys(answers).length;
+  const right = questions.filter((q, i) => answers[i] === q.ans).length;
+  document.getElementById('progress-text').textContent =
+    `${answered} / ${questions.length} 문제 응답 · 정답 ${right}`;
+}
+
+function toggleBookmark() {
+  const q = questions[currentIdx];
+  const origIdx = ALL_QUESTIONS.indexOf(q);
+  if (bookmarks.has(origIdx)) bookmarks.delete(origIdx);
+  else bookmarks.add(origIdx);
+  saveBookmarks();
+  renderQuestion();
+  renderGrid();
+}
+
+// ==============================
+// RENDER GRID
+// ==============================
+function renderGrid() {
+  const grid = document.getElementById('q-grid');
+  grid.innerHTML = '';
+  const nums = ['①','②','③','④','⑤'];
+  questions.forEach((q, i) => {
+    const origIdx = ALL_QUESTIONS.indexOf(q);
+    const div = document.createElement('div');
+    div.className = 'q-dot';
+
+    const numEl = document.createElement('span');
+    numEl.className = 'dot-num';
+    numEl.textContent = i + 1;
+    div.appendChild(numEl);
+
+    if (answers[i] !== undefined) {
+      const ansEl = document.createElement('span');
+      ansEl.className = 'dot-ans';
+      ansEl.textContent = nums[answers[i]];
+      div.appendChild(ansEl);
+    }
+
+    div.onclick = () => goToQuestion(i);
+
+    if (i === currentIdx) div.classList.add('current');
+    if (bookmarks.has(origIdx)) div.classList.add('bookmarked-dot');
+    if (answers[i] === q.ans) div.classList.add('correct-dot');
+    else if (answers[i] !== undefined) div.classList.add('wrong-dot');
+    grid.appendChild(div);
+  });
+}
+
+// ==============================
+// GRADE
+// ==============================
+function gradeQuiz() {
+  graded = true;
+  stopTimer();
+  document.getElementById('expand-btn').style.display = 'none';
+  document.getElementById('expand-all-screen').style.display = 'none';
+  expandView = false;
+  let correct = 0, wrong = 0;
+  const newWrong = new Set();
+  questions.forEach((q, i) => {
+    const origIdx = ALL_QUESTIONS.indexOf(q);
+    if (answers[i] === q.ans) { correct++; wrongSet.delete(origIdx); }
+    else { wrong++; newWrong.add(origIdx); wrongSet.add(origIdx); }
+  });
+  saveWrong();
+
+  const unanswered = questions.length - Object.keys(answers).length;
+  const score = Math.round((correct / questions.length) * 100);
+
+  document.getElementById('result-screen').classList.remove('hidden');
+  document.getElementById('quiz-screen').classList.add('hidden');
+  document.getElementById('res-score').textContent = `${score}점`;
+  document.getElementById('res-sub').textContent = `총 ${questions.length}문제 중 ${correct}문제 정답`;
+  document.getElementById('res-c').textContent = correct;
+  // wrong 에는 이미 미응답이 포함되어 있음 (정답이 아니면 모두 오답으로 셈)
+  document.getElementById('res-w').textContent = wrong;
+  document.getElementById('res-b').textContent = bookmarks.size;
+  setHeaderBtns(false, false, true);
+
+  renderGrid();
+  document.getElementById('main').scrollTop = 0;
+}
+
+// ==============================
+// PHONE MODE
+// ==============================
+// 저장된 선택이 없으면 화면이 작은 기기(폰)에서 자동으로 켬
+function initPhoneMode() {
+  let saved = null;
+  try { saved = localStorage.getItem('swr_phone'); } catch (e) {}
+  const small = window.matchMedia('(max-width: 900px), (max-height: 500px)').matches;
+  setPhoneMode(saved === null ? small : saved === '1');
+}
+function setPhoneMode(on) {
+  document.body.classList.toggle('phone', on);
+  document.getElementById('btn-phone').textContent = on ? '🖥 PC 모드' : '📱 폰 모드';
+}
+function togglePhoneMode() {
+  const on = !document.body.classList.contains('phone');
+  setPhoneMode(on);
+  try { localStorage.setItem('swr_phone', on ? '1' : '0'); } catch (e) {}
+}
+initPhoneMode();
+
+// ==============================
+// UTILS
+// ==============================
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+</script>
+</body>
+</html>
