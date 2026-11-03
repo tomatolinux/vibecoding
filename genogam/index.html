@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가계도·생태도 편집기</title>
+<style>
+:root{--bg:#eef0f3;--panel:#fff;--line:#d9dce1;--text:#1f2328;--muted:#667085;--accent:#2563eb;--accent-weak:#e8f0fe}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;font-size:13px;color:var(--text);background:var(--bg);
+  display:grid;grid-template-columns:190px 1fr 260px;grid-template-rows:auto 1fr auto;
+  grid-template-areas:"top top top" "tools canvas props" "status status status";overflow:hidden}
+header{grid-area:top;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+header h1{font-size:15px;margin:0 8px 0 0;white-space:nowrap}
+header input[type=text]{flex:1 1 180px;min-width:120px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;font:inherit}
+header .grp{display:flex;gap:4px;flex-wrap:wrap}
+button{font:inherit;color:inherit}
+.btn{padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer;white-space:nowrap}
+.btn:hover{background:#f3f4f6}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#1d4ed8}
+#tools{grid-area:tools;background:var(--panel);border-right:1px solid var(--line);overflow:auto;padding:8px}
+#tools h4{margin:10px 4px 4px;font-size:11px;color:var(--muted);font-weight:bold}
+.tool{display:flex;align-items:center;gap:8px;width:100%;padding:4px 6px;border:1px solid transparent;border-radius:6px;background:none;cursor:pointer;text-align:left}
+.tool:hover{background:#f3f4f6}
+.tool.on{background:var(--accent-weak);border-color:var(--accent)}
+.tool svg{flex:none}
+#canvasWrap{grid-area:canvas;position:relative;overflow:hidden;background-color:#fafbfc;
+  background-image:radial-gradient(circle,#cfd4dc 1px,transparent 1.2px)}
+#cv{width:100%;height:100%;display:block;touch-action:none;cursor:default;user-select:none}
+#cv.linking{cursor:crosshair}
+#empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;color:var(--muted);text-align:center;line-height:1.8}
+#zoomBox{position:absolute;right:10px;bottom:10px;display:flex;gap:4px}
+#zoomBox .btn{padding:4px 9px;background:rgba(255,255,255,.95)}
+#props{grid-area:props;background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:10px 12px}
+#props h3{font-size:13px;margin:4px 0 10px}
+#props label{display:block;margin:0 0 9px;color:var(--muted);font-size:12px}
+#props label.chk{display:flex;align-items:center;gap:6px;color:var(--text);font-size:13px}
+#props input[type=text],#props input[type=number],#props select,#props textarea{display:block;width:100%;margin-top:3px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;font:inherit;color:var(--text);background:#fff}
+#props input[type=color]{display:block;margin-top:3px;width:60px;height:28px;padding:0 2px;border:1px solid var(--line);border-radius:6px;background:#fff}
+#props textarea{resize:vertical}
+#props .acts{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0 4px}
+#props .acts .btn{padding:5px 8px;font-size:12px}
+#props .btn.del{color:#b42318;border-color:#f4c7c3}
+#props ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.7;font-size:12px}
+#props kbd{font:11px monospace;background:#f3f4f6;border:1px solid var(--line);border-radius:3px;padding:0 3px}
+footer{grid-area:status;display:flex;justify-content:space-between;gap:10px;padding:5px 12px;background:var(--panel);border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+#hint{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:820px){
+  body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr auto auto;grid-template-areas:"top" "tools" "canvas" "props" "status";overflow-x:hidden;overflow-y:auto}
+  body>*,footer>*{min-width:0}
+  #tools{display:flex;gap:4px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:6px}
+  #tools h4{display:none}
+  .tool{width:auto;white-space:nowrap}
+  #canvasWrap{min-height:55vh}
+  #props{max-height:40vh;border-left:0;border-top:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>가계도·생태도 편집기</h1>
+  <input type="text" id="title" placeholder="제목 (이미지 위쪽에 표시)">
+  <div class="grp">
+    <button class="btn" id="bNew" title="새로 만들기">새로</button>
+    <button class="btn" id="bSampleG">가계도 예시</button>
+    <button class="btn" id="bSampleE">생태도 예시</button>
+    <button class="btn" id="bOpen" title="저장해 둔 .json 파일 열기">열기</button>
+    <button class="btn" id="bSave" title="나중에 다시 편집할 수 있는 .json 파일로 저장">저장</button>
+    <input type="file" id="file" accept=".json,application/json" hidden>
+  </div>
+  <div class="grp">
+    <button class="btn" id="bUndo" title="실행 취소 (Ctrl+Z)">↶</button>
+    <button class="btn" id="bRedo" title="다시 실행 (Ctrl+Y)">↷</button>
+  </div>
+  <div class="grp">
+    <button class="btn primary" id="bJpg">JPG 내보내기</button>
+    <button class="btn" id="bPng">PNG</button>
+    <button class="btn" id="bSvg">SVG</button>
+  </div>
+</header>
+
+<nav id="tools"></nav>
+
+<main id="canvasWrap">
+  <svg id="cv" xmlns="http://www.w3.org/2000/svg">
+    <g id="view"><g id="content"></g><g id="overlay" pointer-events="none"></g></g>
+  </svg>
+  <div id="empty">왼쪽 도구에서 사람이나 체계를 추가하거나<br>위쪽의 <b>가계도 예시</b> · <b>생태도 예시</b>로 시작해 보세요.</div>
+  <div id="zoomBox">
+    <button class="btn" id="bZoomOut" title="축소">−</button>
+    <button class="btn" id="bFit" title="화면에 맞추기">맞춤</button>
+    <button class="btn" id="bZoomIn" title="확대">+</button>
+  </div>
+</main>
+
+<aside id="props"></aside>
+
+<footer><span id="hint"></span><span id="zoomLbl">100%</span></footer>
+
+<script>
+'use strict';
+/* ---------- 상수 ---------- */
+const FONT = "'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans KR',sans-serif";
+const GRID = 10, STORE = 'genogram-editor.v1', K = '#222';
+const PT = [['M','남성'],['F','여성'],['U','성별 미상'],['preg','임신'],['misc','자연유산'],['abort','인공유산']];
+const FILLS = [['none','없음'],['left','신체·정신 질환 (왼쪽 절반)'],['bottom','알코올·약물 남용 (아래 절반)'],['both','질환 + 약물 남용 (왼쪽·아래)'],['full','전체 칠하기']];
+const COUPLE = [['married','결혼'],['cohabit','동거'],['engaged','약혼'],['separated','별거'],['divorced','이혼']];
+const CHILD = [['bio','친자녀'],['adopt','입양 자녀'],['foster','위탁 자녀']];
+const REL = [['close','친밀'],['fused','밀착(융합)'],['distant','소원'],['cutoff','단절'],['conflict','갈등'],['fusedConflict','밀착-갈등'],['hostile','적대'],['abuse','학대·폭력'],
+             ['strong','강한 관계'],['normal','보통 관계'],['weak','약한(희미한) 관계'],['stress','스트레스 관계']];
+const ARROW = [['none','없음'],['fwd','→ A에서 B로'],['back','← B에서 A로'],['both','↔ 양방향']];
+const COUPLE_DASH = {cohabit:'6 4', engaged:'2 3'};
+const CHILD_DASH = {adopt:'6 4', foster:'2 3'};
+const label = (list, k) => (list.find(x => x[0] === k) || [k, k])[1];
+
+/* ---------- 상태 ---------- */
+const $ = s => document.querySelector(s);
+const svgEl = $('#cv'), viewG = $('#view'), contentG = $('#content'), overlayG = $('#overlay'), wrap = $('#canvasWrap');
+let doc = blankDoc(), sel = [], tool = {mode:'select'}, pending = null, act = null, mouse = null;
+let view = {x:0, y:0, k:1}, undoStack = [], redoStack = [];
+
+function blankDoc(){ return {v:1, title:'', legend:true, grid:true, nodes:[], links:[]}; }
+function uid(p){ return p + Date.now().toString(36).slice(-4) + Math.random().toString(36).slice(2,7); }
+const N = id => doc.nodes.find(n => n.id === id);
+const LK = id => doc.links.find(l => l.id === id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const lines = s => String(s ?? '').split('\n');
+const P = (x, y) => `${+x.toFixed(1)} ${+y.toFixed(1)}`;
+const dashAttr = d => d ? ` stroke-dasharray="${d}"` : '';
+const g = v => doc.grid ? Math.round(v / GRID) * GRID : Math.round(v);
+const mctx = document.createElement('canvas').getContext('2d');
+function tw(t, fs, bold){ mctx.font = `${bold ? 'bold ' : ''}${fs}px ${FONT}`; return mctx.measureText(String(t)).width; }
+
+function defaults(kind){
+  if (kind === 'person') return {kind, pt:'M', x:0, y:0, name:'', age:'', years:'', dead:false, client:false, fill:'none', memo:''};
+  if (kind === 'system') return {kind, shape:'ellipse', x:0, y:0, w:130, h:80, label:'체계', dash:'solid', bg:'#ffffff', lpos:'c'};
+  return {kind:'text', x:0, y:0, text:'텍스트', fs:14, bold:false, color:'#222222'};
+}
+function makeNode(kind, o){ return Object.assign(defaults(kind), {id:uid('n')}, o); }
+
+/* ---------- 도형 치수 ---------- */
+function rr(n){ return 20 + (n.client ? 4.5 : 0); }
+function pTopOff(n){ if (n.pt === 'misc') return 8; if (n.pt === 'abort') return 9; return n.pt === 'U' ? rr(n) * 1.1 : rr(n); }
+function pBotOff(n){ if (n.pt === 'misc') return 8; if (n.pt === 'abort') return 9; const r = rr(n); return n.pt === 'U' ? r * 1.1 : n.pt === 'preg' ? r * .8 : r; }
+function nodeTop(n){ return n.kind === 'person' ? n.y - pTopOff(n) : n.kind === 'system' ? n.y - n.h / 2 : textBox(n).y0; }
+function nodeBottom(n){ return n.kind === 'person' ? n.y + pBotOff(n) : n.kind === 'system' ? n.y + n.h / 2 : textBox(n).y1; }
+function personLabels(n){ const a = []; if (n.name) a.push(n.name); for (const l of lines(n.memo)) if (l.trim()) a.push(l); return a; }
+function textBottom(n){ const k = n.kind === 'person' ? personLabels(n).length : 0; return nodeBottom(n) + (k ? 14 * k + 4 : 0); }
+function textBox(n){
+  const ls = lines(n.text), lh = n.fs * 1.3;
+  const w = Math.max(20, ...ls.map(l => tw(l, n.fs, n.bold))), h = ls.length * lh;
+  return {x0:n.x - w / 2, y0:n.y - h / 2, x1:n.x + w / 2, y1:n.y + h / 2, lh};
+}
+// 다른 점 (tx,ty) 방향으로 도형 테두리 위의 점
+function boundary(n, tx, ty){
+  let dx = tx - n.x, dy = ty - n.y; const L = Math.hypot(dx, dy);
+  const ux = L ? dx / L : 1, uy = L ? dy / L : 0; let d;
+  if (n.kind === 'person'){
+    const r = rr(n);
+    if (n.pt === 'M') d = r / Math.max(Math.abs(ux), Math.abs(uy));
+    else if (n.pt === 'U') d = r * 1.1 / (Math.abs(ux) + Math.abs(uy));
+    else if (n.pt === 'misc') d = 8; else if (n.pt === 'abort') d = 10; else d = r;
+    d += 4;
+  } else if (n.kind === 'system'){
+    const rx = n.w / 2, ry = n.h / 2;
+    d = n.shape === 'rect' ? Math.min(Math.abs(ux) > 1e-6 ? rx / Math.abs(ux) : 1e9, Math.abs(uy) > 1e-6 ? ry / Math.abs(uy) : 1e9)
+                           : 1 / Math.sqrt((ux / rx) ** 2 + (uy / ry) ** 2);
+    d += 3;
+  } else { const b = textBox(n); d = Math.min((b.x1 - b.x0) / 2 / Math.max(Math.abs(ux), 1e-6), (b.y1 - b.y0) / 2 / Math.max(Math.abs(uy), 1e-6)) + 5; }
+  return {x:n.x + ux * d, y:n.y + uy * d};
+}
+
+/* ---------- SVG 조각 ---------- */
+function txt(x, y, str, o = {}){
+  const fs = o.fs || 12, lh = o.lh || Math.round(fs * 1.25);
+  const halo = o.halo ? ' stroke="#fff" stroke-width="3.5" stroke-linejoin="round" paint-order="stroke"' : '';
+  return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="${o.anchor || 'middle'}" fill="${o.fill || K}"${o.bold ? ' font-weight="bold"' : ''}${halo}>` +
+    lines(str).map((l, i) => `<tspan x="${x}"${i ? ` dy="${lh}"` : ''}>${esc(l) || ' '}</tspan>`).join('') + '</text>';
+}
+function shapeSVG(n, r, attr){
+  const {x, y} = n;
+  switch (n.pt){
+    case 'F': return `<circle cx="${x}" cy="${y}" r="${r}" ${attr}/>`;
+    case 'U': { const d = r * 1.1; return `<polygon points="${x},${y - d} ${x + d},${y} ${x},${y + d} ${x - d},${y}" ${attr}/>`; }
+    case 'preg': return `<polygon points="${x},${y - r} ${x + r},${y + r * .8} ${x - r},${y + r * .8}" ${attr}/>`;
+    default: return `<rect x="${x - r}" y="${y - r}" width="${2 * r}" height="${2 * r}" ${attr}/>`;
+  }
+}
+function fillPart(n, part){
+  const {x, y} = n, a = 'fill="#333"', poly = (...p) => `<polygon points="${p.join(' ')}" ${a}/>`;
+  switch (n.pt){
+    case 'F': return part === 'left' ? `<path d="M${x} ${y - 20}A20 20 0 0 0 ${x} ${y + 20}Z" ${a}/>` : `<path d="M${x - 20} ${y}A20 20 0 0 0 ${x + 20} ${y}Z" ${a}/>`;
+    case 'U': return part === 'left' ? poly(`${x},${y - 22}`, `${x - 22},${y}`, `${x},${y + 22}`) : poly(`${x - 22},${y}`, `${x + 22},${y}`, `${x},${y + 22}`);
+    case 'preg': return part === 'left' ? poly(`${x},${y - 20}`, `${x - 20},${y + 16}`, `${x},${y + 16}`) : poly(`${x - 11.1},${y}`, `${x + 11.1},${y}`, `${x + 20},${y + 16}`, `${x - 20},${y + 16}`);
+    default: return part === 'left' ? `<rect x="${x - 20}" y="${y - 20}" width="20" height="40" ${a}/>` : `<rect x="${x - 20}" y="${y}" width="40" height="20" ${a}/>`;
+  }
+}
+function personCore(n){
+  const {x, y} = n;
+  if (n.pt === 'misc') return `<circle cx="${x}" cy="${y}" r="8" fill="${K}"/>`;
+  if (n.pt === 'abort') return `<path d="M${x - 9} ${y - 9}L${x + 9} ${y + 9}M${x + 9} ${y - 9}L${x - 9} ${y + 9}" stroke="${K}" stroke-width="2.4"/>`;
+  let s = shapeSVG(n, 20, 'fill="#fff"');
+  const f = n.fill || 'none';
+  if (f === 'full') s += shapeSVG(n, 20, 'fill="#333"');
+  if (f === 'left' || f === 'both') s += fillPart(n, 'left');
+  if (f === 'bottom' || f === 'both') s += fillPart(n, 'bottom');
+  s += shapeSVG(n, 20, `fill="none" stroke="${K}" stroke-width="1.6"`);
+  if (n.client) s += shapeSVG(n, 24.5, `fill="none" stroke="${K}" stroke-width="1.6"`);
+  if (n.age !== undefined && n.age !== '')
+    s += txt(x, y + (n.pt === 'preg' ? 8 : 4.5), n.age, {fs:13, fill:f === 'full' ? '#fff' : K, halo:f !== 'none' && f !== 'full'});
+  if (n.dead){ const d = {F:17, U:14, preg:12}[n.pt] || 22; s += `<path d="M${x - d} ${y - d}L${x + d} ${y + d}M${x + d} ${y - d}L${x - d} ${y + d}" stroke="${K}" stroke-width="1.8"/>`; }
+  return s;
+}
+function personSVG(n, ed){
+  let s = `<g data-id="${n.id}">`;
+  if (ed) s += `<rect x="${n.x - 27}" y="${n.y - 27}" width="54" height="54" fill="transparent"/>`;
+  s += personCore(n);
+  if (n.years) s += txt(n.x + rr(n) + 3, n.y - rr(n) + 8, n.years, {fs:10, anchor:'start', fill:'#555', halo:true});
+  let yy = nodeBottom(n) + 14;
+  personLabels(n).forEach((l, i) => {
+    const isName = i === 0 && n.name;
+    s += txt(n.x, yy, l, {fs:isName ? 12 : 11, fill:isName ? '#111' : '#555', bold:isName && n.client, halo:true});
+    yy += 14;
+  });
+  return s + '</g>';
+}
+function systemSVG(n, ed){
+  const rx = n.w / 2, ry = n.h / 2;
+  const a = `fill="${n.bg || '#fff'}" stroke="#333" stroke-width="1.6"${dashAttr(n.dash === 'dashed' ? '7 5' : '')}${ed ? ' pointer-events="all"' : ''}`;
+  let s = `<g data-id="${n.id}">`;
+  s += n.shape === 'rect' ? `<rect x="${n.x - rx}" y="${n.y - ry}" width="${n.w}" height="${n.h}" rx="10" ${a}/>`
+                          : `<ellipse cx="${n.x}" cy="${n.y}" rx="${rx}" ry="${ry}" ${a}/>`;
+  const lh = 16, y0 = n.lpos === 't' ? n.y - ry + 20 : n.y - lines(n.label).length * lh / 2 + 12;
+  s += txt(n.x, y0, n.label, {fs:13, lh});
+  if (ed && sel.length === 1 && sel[0] === n.id){
+    const hs = 10 / view.k;
+    s += `<rect data-handle="${n.id}" x="${n.x + rx - hs / 2}" y="${n.y + ry - hs / 2}" width="${hs}" height="${hs}" fill="#2563eb" style="cursor:nwse-resize"/>`;
+  }
+  return s + '</g>';
+}
+function textSVG(n, ed){
+  const b = textBox(n);
+  let s = `<g data-id="${n.id}">`;
+  if (ed) s += `<rect x="${b.x0 - 4}" y="${b.y0 - 2}" width="${b.x1 - b.x0 + 8}" height="${b.y1 - b.y0 + 4}" fill="transparent"/>`;
+  s += txt(n.x, b.y0 + b.lh * .78, n.text, {fs:n.fs, lh:b.lh, bold:n.bold, fill:n.color || K});
+  return s + '</g>';
+}
+
+// 관계선 본체 (p1 → p2)
+function relBody(p1, p2, style, c){
+  const L = Math.hypot(p2.x - p1.x, p2.y - p1.y) || 1, ux = (p2.x - p1.x) / L, uy = (p2.y - p1.y) / L, nx = -uy, ny = ux;
+  const at = (t, o) => P(p1.x + ux * t + nx * o, p1.y + uy * t + ny * o);
+  const st = (w, dash) => `fill="none" stroke="${c}" stroke-width="${w}"${dashAttr(dash)}`;
+  const line = (o = 0, w = 1.6, dash, a = 0, b = L) => `<path d="M${at(a, o)}L${at(b, o)}" ${st(w, dash)}/>`;
+  const tick = (t, h = 7) => `<path d="M${at(t, -h)}L${at(t, h)}" ${st(1.6)}/>`;
+  const zig = (amp = 5, w = 1.6) => {
+    const step = 7, m = Math.min(6, L / 4);
+    let d = `M${at(0, 0)}L${at(m, 0)}`, t = m + step / 2, sg = 1;
+    while (t < L - m - step / 2 + .01){ d += `L${at(t, amp * sg)}`; sg = -sg; t += step; }
+    return `<path d="${d}L${at(L - m, 0)}L${at(L, 0)}" ${st(w)} stroke-linejoin="round"/>`;
+  };
+  switch (style){
+    case 'close': return line(-2.5) + line(2.5);
+    case 'fused': return line(-4) + line(0) + line(4);
+    case 'distant': return line(0, 1.6, '6 5');
+    case 'cutoff': { const m = L / 2; return line(0, 1.6, null, 0, m - 5) + line(0, 1.6, null, m + 5, L) + tick(m - 5, 8) + tick(m + 5, 8); }
+    case 'conflict': return zig();
+    case 'fusedConflict': return line(-6) + line(6) + zig(3.5);
+    case 'hostile': return line(0) + zig(6, 1.8);
+    case 'abuse': return zig(6, 1.8);
+    case 'strong': return line(0, 4);
+    case 'weak': return line(0, 1.6, '8 6');
+    case 'stress': { let s = line(0); for (let t = 9; t < L - 7; t += 9) s += tick(t, 6); return s; }
+    default: return line(0);
+  }
+}
+function drawRel(p1, p2, style, color, arrow){
+  const c = color || K, L = Math.hypot(p2.x - p1.x, p2.y - p1.y) || 1, ux = (p2.x - p1.x) / L, uy = (p2.y - p1.y) / L;
+  const fwd = arrow === 'fwd' || arrow === 'both', back = arrow === 'back' || arrow === 'both';
+  const q1 = back ? {x:p1.x + ux * 9, y:p1.y + uy * 9} : p1, q2 = fwd ? {x:p2.x - ux * 9, y:p2.y - uy * 9} : p2;
+  const head = (tip, dir) => {
+    const bx = tip.x - ux * dir * 12, by = tip.y - uy * dir * 12;
+    return `<polygon points="${P(tip.x, tip.y)} ${P(bx - uy * 5.5, by + ux * 5.5)} ${P(bx + uy * 5.5, by - ux * 5.5)}" fill="${c}"/>`;
+  };
+  return relBody(q1, q2, style, c) + (fwd ? head(p2, 1) : '') + (back ? head(p1, -1) : '');
+}
+
+/* ---------- 연결선 ---------- */
+function coupleY(l){
+  const A = N(l.a), B = N(l.b);
+  return Math.max(nodeBottom(A) + 22, nodeBottom(B) + 22, textBottom(A) + 10, textBottom(B) + 10);
+}
+function parentPoint(pid){
+  const l = LK(pid);
+  if (l && l.type === 'couple'){ const A = N(l.a), B = N(l.b); return A && B ? {x:(A.x + B.x) / 2, y:coupleY(l)} : null; }
+  const n = N(pid); return n ? {x:n.x, y:nodeBottom(n)} : null;
+}
+function hiPath(d, id){
+  let s = '';
+  if (sel.includes(id) || pending === id) s += `<path d="${d}" fill="none" stroke="${pending === id ? '#f59e0b' : '#2563eb'}" stroke-opacity=".3" stroke-width="9"/>`;
+  return s + `<path d="${d}" fill="none" stroke="transparent" stroke-width="13"/>`;
+}
+function slashes(x, y, st){
+  const one = dx => `<path d="M${x + dx - 4} ${y + 7}L${x + dx + 4} ${y - 7}" stroke="${K}" stroke-width="1.6"/>`;
+  return st === 'separated' ? one(0) : st === 'divorced' ? one(-4) + one(4) : '';
+}
+function coupleSVG(l, ed){
+  const A = N(l.a), B = N(l.b); if (!A || !B) return '';
+  const y = coupleY(l), mx = (A.x + B.x) / 2, d = `M${A.x} ${nodeBottom(A)}V${y}H${B.x}V${nodeBottom(B)}`;
+  let s = `<g data-id="${l.id}">` + (ed ? hiPath(d, l.id) : '');
+  s += `<path d="${d}" fill="none" stroke="${K}" stroke-width="1.6"${dashAttr(COUPLE_DASH[l.status])}/>` + slashes(mx, y, l.status);
+  if (l.label) s += txt(mx, y - 6, l.label, {fs:11, fill:'#333', halo:true});
+  return s + '</g>';
+}
+function childrenSVG(ed){
+  const groups = {};
+  for (const l of doc.links) if (l.type === 'child') (groups[l.p] = groups[l.p] || []).push(l);
+  let s = '';
+  for (const p in groups){
+    const pp = parentPoint(p); if (!pp) continue;
+    const kids = groups[p].map(l => ({l, n:N(l.c)})).filter(k => k.n); if (!kids.length) continue;
+    let bar = Math.min(...kids.map(k => nodeTop(k.n))) - 24;
+    if (bar < pp.y + 12) bar = pp.y + 12;
+    const xs = kids.map(k => k.n.x).concat(pp.x);
+    s += `<path d="M${pp.x} ${pp.y}V${bar}M${Math.min(...xs)} ${bar}H${Math.max(...xs)}" fill="none" stroke="${K}" stroke-width="1.6"/>`;
+    for (const {l, n} of kids){
+      const top = nodeTop(n);
+      s += `<g data-id="${l.id}">` + (ed ? hiPath(`M${pp.x} ${bar}H${n.x}V${top}`, l.id) : '') +
+           `<path d="M${n.x} ${bar}V${top}" fill="none" stroke="${K}" stroke-width="1.6"${dashAttr(CHILD_DASH[l.kind])}/></g>`;
+    }
+  }
+  return s;
+}
+function relSVG(l, ed){
+  const A = N(l.a), B = N(l.b); if (!A || !B) return '';
+  const p1 = boundary(A, B.x, B.y), p2 = boundary(B, A.x, A.y);
+  let s = `<g data-id="${l.id}">` + (ed ? hiPath(`M${P(p1.x, p1.y)}L${P(p2.x, p2.y)}`, l.id) : '');
+  s += drawRel(p1, p2, l.style, l.color, l.arrow);
+  if (l.label){
+    const L = Math.hypot(p2.x - p1.x, p2.y - p1.y) || 1; let nx = -(p2.y - p1.y) / L, ny = (p2.x - p1.x) / L;
+    if (ny > 0){ nx = -nx; ny = -ny; }
+    s += txt((p1.x + p2.x) / 2 + nx * 13, (p1.y + p2.y) / 2 + ny * 13 + 4, l.label, {fs:11, fill:l.color || K, halo:true});
+  }
+  return s + '</g>';
+}
+
+/* ---------- 범위·범례 ---------- */
+function nodeExt(n){
+  if (n.kind === 'system') return {x0:n.x - n.w / 2, y0:n.y - n.h / 2, x1:n.x + n.w / 2, y1:n.y + n.h / 2};
+  if (n.kind === 'text') return textBox(n);
+  const r = rr(n) + 4, b = {x0:n.x - r, y0:n.y - pTopOff(n) - 4, x1:n.x + r, y1:textBottom(n)};
+  personLabels(n).forEach(l => { const h = tw(l, 12) / 2 + 3; b.x0 = Math.min(b.x0, n.x - h); b.x1 = Math.max(b.x1, n.x + h); });
+  if (n.years){ b.x1 = Math.max(b.x1, n.x + rr(n) + 5 + tw(n.years, 10)); b.y0 = Math.min(b.y0, n.y - rr(n) - 4); }
+  return b;
+}
+function nodesBBox(){
+  if (!doc.nodes.length) return null;
+  const b = {x0:1e9, y0:1e9, x1:-1e9, y1:-1e9}, add = e => { b.x0 = Math.min(b.x0, e.x0); b.y0 = Math.min(b.y0, e.y0); b.x1 = Math.max(b.x1, e.x1); b.y1 = Math.max(b.y1, e.y1); };
+  doc.nodes.forEach(n => add(nodeExt(n)));
+  doc.links.forEach(l => { if (l.type === 'couple' && N(l.a) && N(l.b)){ const y = coupleY(l); add({x0:b.x0, y0:y, x1:b.x1, y1:y + 4}); } });
+  return b;
+}
+function legendRows(){
+  const rows = [], persons = doc.nodes.filter(n => n.kind === 'person');
+  const pts = new Set(persons.map(n => n.pt));
+  PT.forEach(([k, l]) => { if (pts.has(k)) rows.push({t:'p', n:{pt:k}, l}); });
+  if (persons.some(n => n.dead && n.pt !== 'misc' && n.pt !== 'abort')) rows.push({t:'p', n:{pt:'M', dead:true}, l:'사망'});
+  if (persons.some(n => n.client)) rows.push({t:'p', n:{pt:'F', client:true}, l:'클라이언트 (IP)'});
+  const fills = new Set(persons.map(n => n.fill));
+  FILLS.slice(1).forEach(([k, l]) => { if (fills.has(k)) rows.push({t:'p', n:{pt:'M', fill:k}, l}); });
+  const cs = new Set(doc.links.filter(l => l.type === 'couple').map(l => l.status));
+  COUPLE.forEach(([k, l]) => { if (cs.has(k)) rows.push({t:'c', k, l}); });
+  const ks = new Set(doc.links.filter(l => l.type === 'child').map(l => l.kind));
+  CHILD.slice(1).forEach(([k, l]) => { if (ks.has(k)) rows.push({t:'k', k, l}); });
+  const rels = doc.links.filter(l => l.type === 'rel'), rs = new Set(rels.map(l => l.style));
+  REL.forEach(([k, l]) => { if (rs.has(k)) rows.push({t:'r', k, l, arrow:k === 'abuse' ? 'fwd' : 'none'}); });
+  if (rels.some(l => l.arrow && l.arrow !== 'none' && l.style !== 'abuse')) rows.push({t:'r', k:'normal', l:'자원·에너지의 흐름', arrow:'fwd'});
+  return rows;
+}
+function legendSample(r, cx, cy){
+  if (r.t === 'p') return `<g transform="translate(${cx} ${cy}) scale(.42)">${personCore(Object.assign(defaults('person'), r.n))}</g>`;
+  if (r.t === 'c') return `<path d="M${cx - 20} ${cy - 7}V${cy + 4}H${cx + 20}V${cy - 7}" fill="none" stroke="${K}" stroke-width="1.6"${dashAttr(COUPLE_DASH[r.k])}/>` + slashes(cx, cy + 4, r.k);
+  if (r.t === 'k') return `<path d="M${cx - 20} ${cy}H${cx + 20}" stroke="${K}" stroke-width="1.6"${dashAttr(CHILD_DASH[r.k])}/>`;
+  return drawRel({x:cx - 21, y:cy}, {x:cx + 21, y:cy}, r.k, K, r.arrow);
+}
+function legend(bb){
+  const rows = doc.legend && bb ? legendRows() : [];
+  if (!rows.length) return {svg:'', box:null};
+  const x = bb.x1 + 40, y = bb.y0, w = 12 + 50 + 10 + Math.max(...rows.map(r => tw(r.l, 12))) + 14, h = 34 + rows.length * 24;
+  let s = `<g pointer-events="none"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="#fff" stroke="#999"/>` + txt(x + 12, y + 20, '범례', {fs:13, bold:true, anchor:'start'});
+  rows.forEach((r, i) => { const cy = y + 40 + i * 24; s += legendSample(r, x + 37, cy) + txt(x + 72, cy + 4, r.l, {fs:12, anchor:'start'}); });
+  return {svg:s + '</g>', box:{x0:x, y0:y, x1:x + w, y1:y + h}};
+}
+function fullBBox(){
+  const b = nodesBBox(); if (!b) return null;
+  const lg = legend(b).box;
+  return lg ? {x0:Math.min(b.x0, lg.x0), y0:Math.min(b.y0, lg.y0), x1:Math.max(b.x1, lg.x1), y1:Math.max(b.y1, lg.y1)} : b;
+}
+
+/* ---------- 그리기 ---------- */
+function buildContent(ed){
+  let s = '';
+  doc.nodes.filter(n => n.kind === 'system').sort((a, b) => b.w * b.h - a.w * a.h).forEach(n => s += systemSVG(n, ed));
+  doc.links.filter(l => l.type === 'couple').forEach(l => s += coupleSVG(l, ed));
+  s += childrenSVG(ed);
+  doc.links.filter(l => l.type === 'rel').forEach(l => s += relSVG(l, ed));
+  doc.nodes.filter(n => n.kind === 'person').forEach(n => s += personSVG(n, ed));
+  doc.nodes.filter(n => n.kind === 'text').forEach(n => s += textSVG(n, ed));
+  return s + legend(nodesBBox()).svg;
+}
+function selBox(n){
+  if (n.kind === 'person'){ const r = rr(n) + 5; return {x0:n.x - r, y0:n.y - pTopOff(n) - 5, x1:n.x + r, y1:n.y + pBotOff(n) + 5}; }
+  const e = nodeExt(n); return {x0:e.x0 - 4, y0:e.y0 - 4, x1:e.x1 + 4, y1:e.y1 + 4};
+}
+function renderOverlay(){
+  const k = view.k, box = (b, c) => `<rect x="${b.x0}" y="${b.y0}" width="${b.x1 - b.x0}" height="${b.y1 - b.y0}" rx="3" fill="none" stroke="${c}" stroke-width="${1.3 / k}" stroke-dasharray="${4 / k} ${3 / k}"/>`;
+  let s = '';
+  sel.forEach(id => { const n = N(id); if (n) s += box(selBox(n), '#2563eb'); });
+  if (pending){
+    const n = N(pending); if (n) s += box(selBox(n), '#f59e0b');
+    const src = n ? {x:n.x, y:n.y} : parentPoint(pending);
+    if (src && mouse) s += `<path d="M${P(src.x, src.y)}L${P(mouse.x, mouse.y)}" stroke="#f59e0b" stroke-width="${1.5 / k}" stroke-dasharray="${5 / k} ${4 / k}"/>`;
+  }
+  if (act && act.type === 'box') s += `<rect x="${Math.min(act.x0, act.x1)}" y="${Math.min(act.y0, act.y1)}" width="${Math.abs(act.x1 - act.x0)}" height="${Math.abs(act.y1 - act.y0)}" fill="rgba(37,99,235,.08)" stroke="#2563eb" stroke-width="${1 / k}"/>`;
+  overlayG.innerHTML = s;
+}
+function render(){
+  contentG.innerHTML = buildContent(true);
+  renderOverlay();
+  $('#empty').hidden = doc.nodes.length > 0;
+}
+function applyView(){
+  viewG.setAttribute('transform', `translate(${view.x} ${view.y}) scale(${view.k})`);
+  wrap.style.backgroundSize = `${20 * view.k}px ${20 * view.k}px`;
+  wrap.style.backgroundPosition = `${view.x}px ${view.y}px`;
+  $('#zoomLbl').textContent = Math.round(view.k * 100) + '%';
+}
+let saveTimer;
+function save(){ clearTimeout(saveTimer); saveTimer = setTimeout(() => { try { localStorage.setItem(STORE, JSON.stringify(doc)); } catch (e) {} }, 300); }
+function refresh(){ render(); renderPanel(); renderTools(); setHint(); save(); $('#title').value = doc.title || ''; }
+
+/* ---------- 실행 취소 ---------- */
+function snap(){
+  const s = JSON.stringify(doc);
+  if (undoStack[undoStack.length - 1] !== s){ undoStack.push(s); if (undoStack.length > 200) undoStack.shift(); }
+  redoStack = [];
+}
+function undo(){ if (!undoStack.length) return; redoStack.push(JSON.stringify(doc)); doc = JSON.parse(undoStack.pop()); sel = []; pending = null; refresh(); }
+function redo(){ if (!redoStack.length) return; undoStack.push(JSON.stringify(doc)); doc = JSON.parse(redoStack.pop()); sel = []; pending = null; refresh(); }
+
+/* ---------- 편집 동작 ---------- */
+function viewCenter(){ const r = svgEl.getBoundingClientRect(); return {x:(r.width / 2 - view.x) / view.k, y:(r.height / 2 - view.y) / view.k}; }
+function addNode(kind, o){
+  snap();
+  const c = viewCenter(), off = (doc.nodes.length % 5) * 20;
+  const n = makeNode(kind, Object.assign({x:g(c.x + off), y:g(c.y + off)}, o));
+  doc.nodes.push(n); sel = [n.id]; tool = {mode:'select'}; pending = null; refresh();
+  return n;
+}
+function delSel(){
+  if (!sel.length) return;
+  snap();
+  const del = new Set(sel);
+  doc.nodes = doc.nodes.filter(n => !del.has(n.id));
+  let changed = true;
+  while (changed){
+    changed = false;
+    doc.links = doc.links.filter(l => {
+      const bad = del.has(l.id) || [l.a, l.b, l.p, l.c].some(r => r && del.has(r));
+      if (bad){ del.add(l.id); changed = true; }
+      return !bad;
+    });
+  }
+  sel = []; refresh();
+}
+function spousesOf(id){ return doc.links.filter(l => l.type === 'couple' && (l.a === id || l.b === id)); }
+function parentLinkOf(id){ return doc.links.find(l => l.type === 'child' && l.c === id); }
+function addChildTo(pid, pt){
+  const pp = parentPoint(pid); if (!pp) return;
+  const kids = doc.links.filter(l => l.type === 'child' && l.p === pid).map(l => N(l.c)).filter(Boolean);
+  const x = kids.length ? Math.max(...kids.map(k => k.x)) + 80 : pp.x, y = kids.length ? kids[0].y : pp.y + 90;
+  const n = makeNode('person', {pt, x:g(x), y:g(y)});
+  doc.nodes.push(n); doc.links.push({id:uid('l'), type:'child', p:pid, c:n.id, kind:'bio'});
+  return n;
+}
+function action(a){
+  const o = N(sel[0]) || LK(sel[0]);
+  if (a === 'del') return delSel();
+  if (a === 'swap' && o){ snap(); [o.a, o.b] = [o.b, o.a]; return refresh(); }
+  if (['alignY', 'alignX', 'distH'].includes(a)){
+    const ns = sel.map(N).filter(Boolean); if (ns.length < 2) return; snap();
+    if (a === 'alignY'){ const y = g(ns.reduce((s, n) => s + n.y, 0) / ns.length); ns.forEach(n => n.y = y); }
+    if (a === 'alignX'){ const x = g(ns.reduce((s, n) => s + n.x, 0) / ns.length); ns.forEach(n => n.x = x); }
+    if (a === 'distH'){ ns.sort((p, q) => p.x - q.x); const x0 = ns[0].x, step = (ns[ns.length - 1].x - x0) / (ns.length - 1); ns.forEach((n, i) => n.x = g(x0 + step * i)); }
+    return refresh();
+  }
+  if (!o) return;
+  snap();
+  let made;
+  if (a === 'spouse'){
+    const pt = o.pt === 'M' ? 'F' : 'M', k = spousesOf(o.id).length + 1, dir = o.pt === 'F' ? -1 : 1;
+    made = makeNode('person', {pt, x:g(o.x + dir * 120 * k), y:o.y}); doc.nodes.push(made);
+    const [a1, b1] = pt === 'F' ? [o.id, made.id] : [made.id, o.id];
+    doc.links.push({id:uid('l'), type:'couple', a:a1, b:b1, status:'married', label:''});
+  } else if (a === 'son' || a === 'daughter'){
+    const pid = o.type === 'couple' ? o.id : ((spousesOf(o.id)[0] || {}).id || o.id);
+    made = addChildTo(pid, a === 'son' ? 'M' : 'F');
+  } else if (a === 'bro' || a === 'sis'){
+    const pl = parentLinkOf(o.id); if (pl) made = addChildTo(pl.p, a === 'bro' ? 'M' : 'F');
+  } else if (a === 'parents'){
+    const f = makeNode('person', {pt:'M', x:g(o.x - 60), y:g(o.y - 130)}), m = makeNode('person', {pt:'F', x:g(o.x + 60), y:g(o.y - 130)});
+    const cp = {id:uid('l'), type:'couple', a:f.id, b:m.id, status:'married', label:''};
+    doc.nodes.push(f, m);
+    doc.links = doc.links.filter(l => !(l.type === 'child' && l.c === o.id));
+    doc.links.push(cp, {id:uid('l'), type:'child', p:cp.id, c:o.id, kind:'bio'});
+    made = f;
+  }
+  if (made) sel = [made.id];
+  refresh();
+}
+function duplicate(){
+  const ids = sel.filter(id => N(id)); if (!ids.length) return;
+  snap();
+  const map = {}, lmap = {};
+  ids.forEach(id => { const c = JSON.parse(JSON.stringify(N(id))); c.id = uid('n'); c.x += 40; c.y += 40; map[id] = c.id; doc.nodes.push(c); });
+  doc.links.slice().forEach(l => { if (l.type !== 'child' && map[l.a] && map[l.b]){ const c = {...l, id:uid('l'), a:map[l.a], b:map[l.b]}; lmap[l.id] = c.id; doc.links.push(c); } });
+  doc.links.slice().forEach(l => { if (l.type === 'child' && map[l.c] && (map[l.p] || lmap[l.p])) doc.links.push({...l, id:uid('l'), p:map[l.p] || lmap[l.p], c:map[l.c]}); });
+  sel = Object.values(map); refresh();
+}
+function linkClick(id){
+  const node = N(id), link = LK(id), t = tool.ltype;
+  if (!pending){
+    if (t === 'couple' && !(node && node.kind === 'person')) return flash('사람을 클릭하세요.');
+    if (t === 'child' && !(node && node.kind === 'person') && !(link && link.type === 'couple')) return flash('부모의 혼인선(또는 한부모인 사람)을 먼저 클릭하세요.');
+    if (t === 'rel' && !node) return;
+    pending = id; render(); setHint(); return;
+  }
+  if (id === pending){ pending = null; render(); setHint(); return; }
+  if (!node) return;
+  let nl;
+  if (t === 'couple'){
+    if (node.kind !== 'person') return flash('사람을 클릭하세요.');
+    snap();
+    nl = doc.links.find(l => l.type === 'couple' && ((l.a === pending && l.b === id) || (l.a === id && l.b === pending)));
+    if (nl) nl.status = tool.status;
+    else { nl = {id:uid('l'), type:'couple', a:pending, b:id, status:tool.status, label:''}; doc.links.push(nl); }
+  } else if (t === 'child'){
+    if (node.kind !== 'person') return flash('자녀가 될 사람을 클릭하세요.');
+    const pl = LK(pending); if (pl && (pl.a === id || pl.b === id)) return flash('부모 자신을 자녀로 연결할 수 없습니다.');
+    snap();
+    doc.links = doc.links.filter(l => !(l.type === 'child' && l.c === id));
+    nl = {id:uid('l'), type:'child', p:pending, c:id, kind:tool.kind}; doc.links.push(nl);
+  } else {
+    snap();
+    nl = {id:uid('l'), type:'rel', a:pending, b:id, style:tool.style, arrow:tool.style === 'abuse' ? 'fwd' : 'none', color:tool.style === 'abuse' ? '#c62828' : '#222222', label:''};
+    doc.links.push(nl);
+  }
+  pending = null; sel = [nl.id]; refresh();
+}
+
+/* ---------- 도구 팔레트 ---------- */
+const PALETTE = [
+  {h:'', items:[{k:'select', l:'선택 · 이동', icon:'<svg width="26" height="18" viewBox="0 0 26 18"><path d="M9 2l0 13 3.5-3.5 2.5 5 2-1-2.5-5 4.5 0z" fill="#333"/></svg>'}]},
+  {h:'사람 (가계도)', items:PT.map(([pt, l]) => ({k:'person', pt, l}))},
+  {h:'생태도 · 기타', items:[{k:'system', shape:'ellipse', l:'체계 (원)'}, {k:'system', shape:'rect', l:'체계 (사각형)'}, {k:'text', l:'글상자'}]},
+  {h:'가족 구조선', items:COUPLE.map(([st, l]) => ({k:'link', ltype:'couple', status:st, l})).concat(CHILD.map(([kd, l]) => ({k:'link', ltype:'child', kind:kd, l:kd === 'bio' ? '자녀 연결' : l})))},
+  {h:'정서적 관계', items:REL.slice(0, 8).map(([st, l]) => ({k:'link', ltype:'rel', style:st, l}))},
+  {h:'생태도 관계선', items:REL.slice(8).map(([st, l]) => ({k:'link', ltype:'rel', style:st, l}))},
+];
+const PAL = PALETTE.flatMap(s => s.items);
+function iconOf(it){
+  if (it.icon) return it.icon;
+  if (it.k === 'person') return `<svg width="26" height="22" viewBox="-13 -11 26 22"><g transform="scale(.48)">${personCore(Object.assign(defaults('person'), {pt:it.pt}))}</g></svg>`;
+  if (it.k === 'system') return `<svg width="26" height="18" viewBox="0 0 26 18">${it.shape === 'rect' ? '<rect x="2" y="3" width="22" height="12" rx="3"' : '<ellipse cx="13" cy="9" rx="11" ry="6.5"'} fill="#fff" stroke="#333" stroke-width="1.3"/></svg>`;
+  if (it.k === 'text') return '<svg width="26" height="18" viewBox="0 0 26 18"><text x="13" y="14" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">T</text></svg>';
+  const r = it.ltype === 'couple' ? {t:'c', k:it.status} : it.ltype === 'child' ? {t:'k', k:it.kind} : {t:'r', k:it.style, arrow:it.style === 'abuse' ? 'fwd' : 'none'};
+  return `<svg width="46" height="18" viewBox="0 0 46 18">${legendSample(r, 23, 9)}</svg>`;
+}
+function isOn(it){
+  if (it.k === 'select') return tool.mode === 'select';
+  if (it.k !== 'link' || tool.mode !== 'link' || tool.ltype !== it.ltype) return false;
+  return it.ltype === 'couple' ? tool.status === it.status : it.ltype === 'child' ? tool.kind === it.kind : tool.style === it.style;
+}
+function buildTools(){
+  let i = 0;
+  $('#tools').innerHTML = PALETTE.map(s => (s.h ? `<h4>${s.h}</h4>` : '') +
+    s.items.map(it => `<button class="tool" data-i="${i++}" title="${it.k === 'link' ? '선택한 뒤 두 대상을 차례로 클릭' : ''}">${iconOf(it)}<span>${it.l}</span></button>`).join('')).join('');
+}
+function renderTools(){ document.querySelectorAll('.tool').forEach(b => b.classList.toggle('on', isOn(PAL[+b.dataset.i]))); svgEl.classList.toggle('linking', tool.mode === 'link'); }
+$('#tools').addEventListener('click', e => {
+  const b = e.target.closest('.tool'); if (!b) return;
+  const it = PAL[+b.dataset.i];
+  pending = null;
+  if (it.k === 'select') tool = {mode:'select'};
+  else if (it.k === 'person') addNode('person', {pt:it.pt});
+  else if (it.k === 'system') addNode('system', {shape:it.shape, label:it.shape === 'rect' ? '체계' : '체계'});
+  else if (it.k === 'text') addNode('text', {});
+  else { tool = {mode:'link', ltype:it.ltype, status:it.status, kind:it.kind, style:it.style}; sel = []; }
+  refresh();
+});
+
+/* ---------- 속성 패널 ---------- */
+const FIELDS = {
+  person:[['pt','유형','select',PT],['name','이름','text'],['age','나이 (도형 안)','text'],['years','출생–사망 연도 (예: 1950–2015)','text'],['dead','사망','check'],['client','클라이언트 (IP, 이중선)','check'],['fill','상태 표시 (칠하기)','select',FILLS],['memo','메모 (이름 아래, 여러 줄 가능)','textarea']],
+  system:[['label','이름','textarea'],['shape','모양','select',[['ellipse','원'],['rect','사각형']]],['w','너비','number',10],['h','높이','number',10],['dash','테두리','select',[['solid','실선'],['dashed','점선 (가구 경계 등)']]],['bg','배경색','color'],['lpos','글자 위치','select',[['c','가운데'],['t','위쪽']]]],
+  text:[['text','내용','textarea'],['fs','글자 크기','number',1],['bold','굵게','check'],['color','글자색','color']],
+  couple:[['status','부부 관계','select',COUPLE],['label','표시 글 (예: 1999 결혼)','text']],
+  child:[['kind','자녀 유형','select',CHILD]],
+  rel:[['style','관계 유형','select',REL],['arrow','자원·에너지 흐름 (화살표)','select',ARROW],['color','선 색','color'],['label','표시 글','text']],
+};
+const TITLES = {person:'사람', system:'체계', text:'글상자', couple:'부부(혼인)선', child:'자녀 연결선', rel:'관계선'};
+function fieldHTML([k, l, type, opt], o){
+  const v = o[k] ?? '';
+  switch (type){
+    case 'select': return `<label>${l}<select data-k="${k}">${opt.map(([val, t]) => `<option value="${val}"${val === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label>`;
+    case 'check': return `<label class="chk"><input type="checkbox" data-k="${k}"${v ? ' checked' : ''}>${l}</label>`;
+    case 'textarea': return `<label>${l}<textarea data-k="${k}" rows="3">${esc(v)}</textarea></label>`;
+    case 'number': return `<label>${l}<input type="number" data-k="${k}" value="${v}" step="${opt}" min="${k === 'fs' ? 8 : 30}"></label>`;
+    case 'color': return `<label>${l}<input type="color" data-k="${k}" value="${v || '#222222'}"></label>`;
+    default: return `<label>${l}<input type="text" data-k="${k}" value="${esc(v)}"></label>`;
+  }
+}
+const btn = (a, l, cls = '') => `<button class="btn ${cls}" data-act="${a}">${l}</button>`;
+function renderPanel(){
+  const p = $('#props');
+  if (!sel.length){
+    p.innerHTML = `<h3>문서 설정</h3>
+      <label class="chk"><input type="checkbox" data-doc="legend"${doc.legend ? ' checked' : ''}>범례 표시 (내보낸 이미지에도 포함)</label>
+      <label class="chk"><input type="checkbox" data-doc="grid"${doc.grid ? ' checked' : ''}>격자에 맞추기</label>
+      <h3 style="margin-top:16px">사용법</h3>
+      <ul>
+        <li>왼쪽 <b>사람·체계</b>를 누르면 화면 가운데에 추가됩니다.</li>
+        <li>사람을 선택하면 이 칸에서 <b>배우자·자녀·부모</b>를 바로 추가할 수 있습니다.</li>
+        <li><b>선(관계)</b> 도구를 고른 뒤 두 대상을 차례로 클릭합니다. 자녀 연결은 혼인선 → 자녀 순서로 클릭합니다.</li>
+        <li>빈 곳 드래그: 화면 이동 · 휠: 확대/축소 · <kbd>Shift</kbd>+드래그: 범위 선택</li>
+        <li><kbd>Delete</kbd> 삭제 · <kbd>Ctrl</kbd>+<kbd>Z</kbd>/<kbd>Y</kbd> 실행 취소/다시 · <kbd>Ctrl</kbd>+<kbd>D</kbd> 복제 · 방향키 미세 이동 · <kbd>Esc</kbd> 도구 해제</li>
+        <li>작업 내용은 이 브라우저에 자동 저장됩니다. 다른 컴퓨터로 옮기려면 <b>저장</b>(.json) 후 <b>열기</b>로 불러오세요.</li>
+      </ul>`;
+    return;
+  }
+  if (sel.length > 1){
+    p.innerHTML = `<h3>${sel.length}개 선택됨</h3><div class="acts">${btn('alignY', '가로 한 줄로 맞춤')}${btn('alignX', '세로 한 줄로 맞춤')}${btn('distH', '가로 간격 균등')}${btn('del', '삭제', 'del')}</div>`;
+    return;
+  }
+  const o = N(sel[0]) || LK(sel[0]); if (!o){ sel = []; return renderPanel(); }
+  const kind = o.kind || o.type;
+  let acts = '';
+  if (kind === 'person' && !['misc', 'abort'].includes(o.pt)){
+    acts += btn('spouse', '배우자 추가') + btn('son', '아들 추가') + btn('daughter', '딸 추가') + (parentLinkOf(o.id) ? btn('bro', '남자 형제 추가') + btn('sis', '여자 형제 추가') : btn('parents', '부모 추가'));
+  }
+  if (kind === 'couple') acts += btn('son', '아들 추가') + btn('daughter', '딸 추가');
+  if (kind === 'rel') acts += btn('swap', 'A ↔ B 방향 바꾸기');
+  let head = '';
+  if (kind === 'rel'){ const A = N(o.a), B = N(o.b); head = `<label>A: ${esc(nameOf(A))} → B: ${esc(nameOf(B))}</label>`; }
+  p.innerHTML = `<h3>${TITLES[kind]}</h3>${head}${FIELDS[kind].map(f => fieldHTML(f, o)).join('')}<div class="acts">${acts}${btn('del', '삭제', 'del')}</div>`;
+}
+function nameOf(n){ if (!n) return '?'; return n.kind === 'person' ? (n.name || label(PT, n.pt)) : n.kind === 'system' ? lines(n.label)[0] : lines(n.text)[0]; }
+function applyField(t){
+  if (t.dataset.doc){ snap(); doc[t.dataset.doc] = t.checked; render(); save(); return; }
+  const k = t.dataset.k, o = N(sel[0]) || LK(sel[0]); if (!k || !o) return;
+  let v = t.type === 'checkbox' ? t.checked : t.type === 'number' ? (parseFloat(t.value) || 0) : t.value;
+  if (k === 'w' || k === 'h') v = Math.max(30, v);
+  if (k === 'fs') v = Math.max(8, v);
+  o[k] = v; render(); save();
+  if (k === 'pt') renderPanel();
+}
+const props = $('#props');
+props.addEventListener('focusin', e => { if (e.target.matches('input[type=text],input[type=number],input[type=color],textarea')) snap(); });
+props.addEventListener('input', e => { if (e.target.matches('input[type=text],input[type=number],input[type=color],textarea')) applyField(e.target); });
+props.addEventListener('change', e => { if (e.target.matches('select,input[type=checkbox]')){ if (!e.target.dataset.doc) snap(); applyField(e.target); } });
+props.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b) action(b.dataset.act); });
+
+/* ---------- 포인터 ---------- */
+function toWorld(e){ const r = svgEl.getBoundingClientRect(); return {x:(e.clientX - r.left - view.x) / view.k, y:(e.clientY - r.top - view.y) / view.k}; }
+svgEl.addEventListener('pointerdown', e => {
+  if (e.button === 2) return;
+  const w = toWorld(e), hEl = e.target.closest('[data-handle]'), idEl = e.target.closest('[data-id]'), id = idEl && idEl.dataset.id;
+  svgEl.setPointerCapture(e.pointerId);
+  if (e.button === 1){ act = {type:'pan', cx:e.clientX, cy:e.clientY, vx:view.x, vy:view.y, moved:true}; return; }
+  if (tool.mode === 'link'){
+    if (id) return linkClick(id);
+    pending = null; render(); setHint();
+    act = {type:'pan', cx:e.clientX, cy:e.clientY, vx:view.x, vy:view.y, moved:true}; return;
+  }
+  if (hEl){ const n = N(hEl.dataset.handle); act = {type:'resize', n, ow:n.w, oh:n.h, sx:w.x, sy:w.y, moved:false}; return; }
+  if (id){
+    if (e.shiftKey) sel = sel.includes(id) ? sel.filter(i => i !== id) : sel.concat(id);
+    else if (!sel.includes(id)) sel = [id];
+    act = {type:'drag', sx:w.x, sy:w.y, orig:sel.map(N).filter(Boolean).map(n => [n, n.x, n.y]), moved:false};
+    render(); renderPanel(); return;
+  }
+  if (e.shiftKey){ act = {type:'box', x0:w.x, y0:w.y, x1:w.x, y1:w.y}; return; }
+  act = {type:'pan', cx:e.clientX, cy:e.clientY, vx:view.x, vy:view.y, moved:false};
+});
+svgEl.addEventListener('pointermove', e => {
+  const w = toWorld(e); mouse = w;
+  if (!act){ if (pending) renderOverlay(); return; }
+  if (act.type === 'pan'){
+    const dx = e.clientX - act.cx, dy = e.clientY - act.cy;
+    if (Math.hypot(dx, dy) > 3) act.moved = true;
+    view.x = act.vx + dx; view.y = act.vy + dy; applyView();
+  } else if (act.type === 'drag' || act.type === 'resize'){
+    const dx = w.x - act.sx, dy = w.y - act.sy;
+    if (!act.moved){ if (Math.hypot(dx, dy) * view.k < 3) return; snap(); act.moved = true; }
+    if (act.type === 'drag') act.orig.forEach(([n, ox, oy]) => { n.x = g(ox + dx); n.y = g(oy + dy); });
+    else { act.n.w = Math.max(40, g(act.ow + 2 * dx)); act.n.h = Math.max(30, g(act.oh + 2 * dy)); }
+    render();
+  } else if (act.type === 'box'){ act.x1 = w.x; act.y1 = w.y; renderOverlay(); }
+});
+function endPointer(){
+  if (!act) return;
+  const a = act; act = null;
+  if (a.type === 'pan' && !a.moved && sel.length){ sel = []; }
+  if (a.type === 'box'){
+    const x0 = Math.min(a.x0, a.x1), x1 = Math.max(a.x0, a.x1), y0 = Math.min(a.y0, a.y1), y1 = Math.max(a.y0, a.y1);
+    const hit = doc.nodes.filter(n => n.x >= x0 && n.x <= x1 && n.y >= y0 && n.y <= y1).map(n => n.id);
+    sel = [...new Set(sel.concat(hit))];
+  }
+  refresh();
+}
+svgEl.addEventListener('pointerup', endPointer);
+svgEl.addEventListener('pointercancel', endPointer);
+svgEl.addEventListener('dblclick', e => {
+  if (!e.target.closest('[data-id]')) return;
+  const f = props.querySelector('[data-k="name"],[data-k="label"],[data-k="text"]');
+  if (f){ f.focus(); f.select && f.select(); }
+});
+svgEl.addEventListener('wheel', e => {
+  e.preventDefault();
+  const r = svgEl.getBoundingClientRect();
+  zoomAt(Math.exp(-e.deltaY * .0015), e.clientX - r.left, e.clientY - r.top);
+}, {passive:false});
+function zoomAt(f, mx, my){
+  const k = Math.min(4, Math.max(.15, view.k * f));
+  view.x = mx - (mx - view.x) * k / view.k; view.y = my - (my - view.y) * k / view.k; view.k = k;
+  applyView(); render();
+}
+function zoomBy(f){ const r = svgEl.getBoundingClientRect(); zoomAt(f, r.width / 2, r.height / 2); }
+function fit(){
+  const r = svgEl.getBoundingClientRect(), bb = fullBBox();
+  if (!bb){ view = {x:r.width / 2, y:r.height / 2, k:1}; applyView(); render(); return; }
+  const pad = 40, k = Math.min(1.5, (r.width - 2 * pad) / Math.max(1, bb.x1 - bb.x0), (r.height - 2 * pad) / Math.max(1, bb.y1 - bb.y0));
+  view.k = Math.max(.15, k);
+  view.x = r.width / 2 - (bb.x0 + bb.x1) / 2 * view.k; view.y = r.height / 2 - (bb.y0 + bb.y1) / 2 * view.k;
+  applyView(); render();
+}
+
+/* ---------- 키보드 ---------- */
+document.addEventListener('keydown', e => {
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
+  const key = e.key.toLowerCase();
+  if ((e.ctrlKey || e.metaKey) && !typing){
+    if (key === 'z' && !e.shiftKey){ undo(); e.preventDefault(); }
+    else if (key === 'y' || (key === 'z' && e.shiftKey)){ redo(); e.preventDefault(); }
+    else if (key === 'd'){ duplicate(); e.preventDefault(); }
+    else if (key === 'a'){ sel = doc.nodes.map(n => n.id); refresh(); e.preventDefault(); }
+    return;
+  }
+  if (typing) return;
+  if (e.key === 'Delete' || e.key === 'Backspace'){ delSel(); e.preventDefault(); }
+  else if (e.key === 'Escape'){ tool = {mode:'select'}; pending = null; refresh(); }
+  else if (e.key.startsWith('Arrow')){
+    const ns = sel.map(N).filter(Boolean); if (!ns.length) return;
+    snap(); const s = e.shiftKey ? 10 : 1;
+    ns.forEach(n => { n.x += {ArrowLeft:-s, ArrowRight:s}[e.key] || 0; n.y += {ArrowUp:-s, ArrowDown:s}[e.key] || 0; });
+    render(); save(); e.preventDefault();
+  }
+});
+
+/* ---------- 안내 문구 ---------- */
+let flashTimer;
+function flash(m){ $('#hint').textContent = '⚠ ' + m; $('#hint').style.color = '#b42318'; clearTimeout(flashTimer); flashTimer = setTimeout(setHint, 2200); }
+function setHint(){
+  const h = $('#hint'); h.style.color = '';
+  if (tool.mode !== 'link'){ h.textContent = '드래그: 이동 · 빈 곳 드래그: 화면 이동 · Shift+드래그: 범위 선택 · 휠: 확대/축소 · 더블클릭: 이름 편집'; return; }
+  const nm = tool.ltype === 'couple' ? label(COUPLE, tool.status) + '선' : tool.ltype === 'child' ? label(CHILD, tool.kind) + ' 연결' : label(REL, tool.style);
+  const step = tool.ltype === 'couple' ? (pending ? '배우자를 클릭하세요' : '첫 번째 사람을 클릭하세요')
+             : tool.ltype === 'child' ? (pending ? '자녀를 클릭하세요' : '부모의 혼인선(또는 한부모)을 클릭하세요')
+             : (pending ? '두 번째 대상(B)을 클릭하세요' : '첫 번째 대상(A)을 클릭하세요');
+  h.textContent = `[${nm}] ${step} · Esc: 도구 해제`;
+}
+
+/* ---------- 파일 · 내보내기 ---------- */
+function fileBase(){ return (doc.title || '가계도').replace(/[\\/:*?"<>|]/g, '_').trim() || '가계도'; }
+function download(blob, name){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function exportSVG(scale){
+  const bb = fullBBox(); if (!bb) return null;
+  const pad = 30, titleH = doc.title.trim() ? 40 : 0;
+  const x0 = bb.x0 - pad, y0 = bb.y0 - pad - titleH, W = bb.x1 - bb.x0 + 2 * pad, H = bb.y1 - bb.y0 + 2 * pad + titleH;
+  const title = titleH ? txt((bb.x0 + bb.x1) / 2, y0 + pad + 14, doc.title, {fs:20, bold:true}) : '';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(W * scale)}" height="${Math.round(H * scale)}" viewBox="${x0} ${y0} ${W} ${H}" font-family="${FONT}">` +
+              `<rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="#fff"/>${title}${buildContent(false)}</svg>`;
+  return {svg, W, H};
+}
+function exportImage(fmt){
+  const pre = exportSVG(1); if (!pre) return alert('그릴 내용이 없습니다.');
+  const scale = Math.min(2.5, 8000 / Math.max(pre.W, pre.H)), {svg, W, H} = exportSVG(scale);
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas'); c.width = Math.round(W * scale); c.height = Math.round(H * scale);
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
+    c.toBlob(b => download(b, fileBase() + (fmt === 'png' ? '.png' : '.jpg')), fmt === 'png' ? 'image/png' : 'image/jpeg', .95);
+  };
+  img.onerror = () => alert('이미지 변환에 실패했습니다. SVG로 저장해 보세요.');
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+function normalize(d){
+  const o = Object.assign(blankDoc(), d);
+  o.nodes = (o.nodes || []).filter(n => n && n.id).map(n => Object.assign(defaults(n.kind), n));
+  o.links = (o.links || []).filter(l => l && l.id);
+  return o;
+}
+function loadDoc(d, keepUndo){ if (keepUndo) snap(); doc = normalize(d); sel = []; pending = null; tool = {mode:'select'}; refresh(); fit(); }
+
+$('#bNew').onclick = () => { if (doc.nodes.length && !confirm('지금 내용을 지우고 새로 시작할까요? (실행 취소로 되돌릴 수 있습니다)')) return; loadDoc(blankDoc(), true); };
+$('#bSampleG').onclick = () => loadDoc(sampleGenogram(), true);
+$('#bSampleE').onclick = () => loadDoc(sampleEcomap(), true);
+$('#bOpen').onclick = () => $('#file').click();
+$('#file').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { try { const d = JSON.parse(rd.result); if (!Array.isArray(d.nodes)) throw 0; loadDoc(d, true); } catch (err) { alert('이 편집기에서 저장한 .json 파일이 아닙니다.'); } };
+  rd.readAsText(f, 'utf-8'); e.target.value = '';
+};
+$('#bSave').onclick = () => download(new Blob([JSON.stringify(doc, null, 1)], {type:'application/json'}), fileBase() + '.json');
+$('#bUndo').onclick = undo; $('#bRedo').onclick = redo;
+$('#bJpg').onclick = () => exportImage('jpg');
+$('#bPng').onclick = () => exportImage('png');
+$('#bSvg').onclick = () => { const r = exportSVG(1); if (!r) return alert('그릴 내용이 없습니다.'); download(new Blob([r.svg], {type:'image/svg+xml'}), fileBase() + '.svg'); };
+$('#bFit').onclick = fit; $('#bZoomIn').onclick = () => zoomBy(1.25); $('#bZoomOut').onclick = () => zoomBy(.8);
+$('#title').addEventListener('focus', snap);
+$('#title').addEventListener('input', e => { doc.title = e.target.value; save(); });
+
+/* ---------- 예시 (가상의 가족) ---------- */
+function sampleGenogram(){
+  const d = blankDoc(); d.title = '가계도 예시 (가상의 가족)';
+  const p = (id, pt, x, y, o) => d.nodes.push(Object.assign(defaults('person'), {id, pt, x, y}, o));
+  const cp = (id, a, b, status, lb) => d.links.push({id, type:'couple', a, b, status, label:lb || ''});
+  const ch = (pid, c, kind) => d.links.push({id:uid('l'), type:'child', p:pid, c, kind:kind || 'bio'});
+  const rl = (a, b, style, o) => d.links.push(Object.assign({id:uid('l'), type:'rel', a, b, style, arrow:'none', color:'#222222', label:''}, o));
+  p('gf', 'M', 120, 80, {name:'할아버지', dead:true, years:'1940–2015'});
+  p('gm', 'F', 240, 80, {name:'할머니', age:'82'});
+  p('mgf', 'M', 480, 80, {name:'외할아버지', age:'80'});
+  p('mgm', 'F', 600, 80, {name:'외할머니', dead:true, years:'1945–2019'});
+  p('aunt', 'F', 120, 260, {name:'고모', age:'50', memo:'미혼'});
+  p('dad', 'M', 260, 260, {name:'아버지', age:'53', memo:'회사원', fill:'bottom'});
+  p('mom', 'F', 460, 260, {name:'어머니', age:'50', memo:'자영업'});
+  p('uncle', 'M', 600, 260, {name:'외삼촌', age:'47'});
+  p('son', 'M', 290, 440, {name:'김지훈', age:'23', memo:'대학생'});
+  p('dau', 'F', 390, 440, {name:'김지은', age:'17', client:true, memo:'고등학생'});
+  p('misc', 'misc', 480, 440, {});
+  cp('c1', 'gf', 'gm', 'married', '1968 결혼');
+  cp('c2', 'mgf', 'mgm', 'married');
+  cp('c3', 'dad', 'mom', 'married', '1999 결혼');
+  ch('c1', 'aunt'); ch('c1', 'dad'); ch('c2', 'mom'); ch('c2', 'uncle');
+  ch('c3', 'son'); ch('c3', 'dau'); ch('c3', 'misc');
+  rl('dau', 'mom', 'conflict'); rl('dad', 'aunt', 'close'); rl('dad', 'gf', 'cutoff'); rl('mom', 'uncle', 'close'); rl('son', 'dau', 'distant');
+  return d;
+}
+function sampleEcomap(){
+  const d = blankDoc(); d.title = '생태도 예시 (가상의 가족)';
+  const p = (id, pt, x, y, o) => d.nodes.push(Object.assign(defaults('person'), {id, pt, x, y}, o));
+  const s = (id, x, y, label, o) => d.nodes.push(Object.assign(defaults('system'), {id, x, y, label, w:120, h:70}, o));
+  const rl = (a, b, style, arrow, lb) => d.links.push({id:uid('l'), type:'rel', a, b, style, arrow:arrow || 'none', color:'#222222', label:lb || ''});
+  s('fam', 460, 330, '가족', {w:320, h:270, lpos:'t'});
+  p('dad', 'M', 400, 290, {name:'아버지', age:'45'});
+  p('mom', 'F', 520, 290, {name:'어머니', age:'42'});
+  p('dau', 'F', 420, 400, {name:'딸', age:'14', client:true});
+  p('son', 'M', 500, 400, {name:'아들', age:'10'});
+  d.links.push({id:'cp', type:'couple', a:'dad', b:'mom', status:'married', label:''});
+  d.links.push({id:uid('l'), type:'child', p:'cp', c:'dau', kind:'bio'}, {id:uid('l'), type:'child', p:'cp', c:'son', kind:'bio'});
+  s('work', 460, 70, '직장\n(아버지)');
+  s('kin', 800, 80, '친가');
+  s('mkin', 830, 300, '외가');
+  s('hosp', 790, 560, '병원');
+  s('wel', 460, 640, '지역사회\n복지관');
+  s('frd', 140, 560, '친구');
+  s('sch', 100, 330, '학교');
+  s('church', 140, 90, '교회');
+  rl('dad', 'work', 'strong', 'fwd');
+  rl('dad', 'kin', 'stress');
+  rl('mom', 'mkin', 'strong', 'both');
+  rl('mom', 'hosp', 'normal', 'fwd');
+  rl('fam', 'wel', 'normal', 'back', '방과후 돌봄');
+  rl('dau', 'frd', 'strong', 'both');
+  rl('dau', 'sch', 'weak');
+  rl('fam', 'church', 'weak');
+  return d;
+}
+
+/* ---------- 시작 ---------- */
+buildTools();
+(function init(){
+  let d = null;
+  if (location.hash === '#sample-genogram') d = sampleGenogram();
+  else if (location.hash === '#sample-ecomap') d = sampleEcomap();
+  else { try { const s = localStorage.getItem(STORE); if (s) d = JSON.parse(s); } catch (e) {} }
+  doc = normalize(d || blankDoc());
+  refresh(); fit();
+})();
+window.addEventListener('resize', () => { applyView(); render(); });
+</script>
+</body>
+</html>
